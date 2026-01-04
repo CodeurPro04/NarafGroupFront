@@ -39,7 +39,7 @@ const Login = () => {
       return;
     }
     
-    // Simulation de connexion
+    // Simulation de connexion APRES TU FERAS LA LOGIQUE EN AXIOS POUR APPELER LE BACKEND
     setTimeout(() => {
       console.log('Login attempt:', formData);
       setIsLoading(false);

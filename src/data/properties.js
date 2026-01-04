@@ -1,4 +1,4 @@
-// src/data/properties.js
+
 export const properties = [
   {
     id: 1,

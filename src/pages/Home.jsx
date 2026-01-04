@@ -143,7 +143,7 @@ const Home = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", contactForm);
-    // Logique d'envoi du formulaire
+    // Logique d'envoi du formulaire QUE TU DEVRA FAIRE ICI 
   };
 
   return (

@@ -1,4 +1,3 @@
-// src/pages/PropertyDetails.jsx
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { properties } from '../data/properties';
@@ -32,7 +31,7 @@ const PropertyDetails = () => {
   const formatPrice = (price) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: 'EUR',
+      currency: 'xof',
       maximumFractionDigits: 0,
     }).format(price);
   };

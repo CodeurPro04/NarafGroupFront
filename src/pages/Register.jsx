@@ -100,7 +100,7 @@ const Register = () => {
       return;
     }
     
-    // Simulation d'inscription
+    // Simulation d'inscription tu feras la logique en axios pour appeler le backend
     setTimeout(() => {
       console.log('Registration successful:', { ...formData, userType });
       setIsLoading(false);

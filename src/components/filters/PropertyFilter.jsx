@@ -1,4 +1,3 @@
-// src/components/filters/PropertyFilter.jsx
 import { Filter, X } from 'lucide-react';
 import { useState } from 'react';
 

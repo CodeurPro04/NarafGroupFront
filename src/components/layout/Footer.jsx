@@ -1,4 +1,3 @@
-// src/components/layout/Footer.jsx
 import {
   Building2,
   Phone,

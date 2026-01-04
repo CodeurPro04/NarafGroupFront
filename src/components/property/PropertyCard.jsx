@@ -1,4 +1,3 @@
-// src/components/property/PropertyCard.jsx
 import { Bed, Bath, Square, MapPin, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
