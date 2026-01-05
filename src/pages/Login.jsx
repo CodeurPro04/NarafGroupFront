@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, CheckCircle } from 'lucide-react';
-
+import axios from "axios"
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -14,38 +14,65 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-    
-    // Validation
-    const newErrors = {};
-    
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Format d'email invalide";
+  e.preventDefault();
+  setIsLoading(true);
+  setErrors({});
+
+  const newErrors = {};
+
+  if (!formData.email.trim()) {
+    newErrors.email = "L'email est requis";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    newErrors.email = "Format d'email invalide";
+  }
+
+  if (!formData.password) {
+    newErrors.password = "Le mot de passe est requis";
+  } else if (formData.password.length < 6) {
+    newErrors.password = "Minimum 6 caractères";
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    setIsLoading(false);
+    return;
+  }
+
+  // 🔥 APPEL AXIOS
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/login",
+      {
+        email: formData.email,
+        password: formData.password
+      }
+    );
+
+    console.log("Login success:", response.data);
+
+    // Optionnel : stocker l'utilisateur
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    setIsLoading(false);
+    navigate("/");
+
+  } catch (error) {
+    setIsLoading(false);
+
+    if (error.response) {
+      // Erreurs Laravel
+      if (error.response.status === 401) {
+        setErrors({ global: "Email ou mot de passe incorrect" });
+      } else if (error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        setErrors({ global: "Erreur serveur" });
+      }
+    } else {
+      setErrors({ global: "Impossible de contacter le serveur" });
     }
-    
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Minimum 6 caractères";
-    }
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      return;
-    }
-    
-    // Simulation de connexion APRES TU FERAS LA LOGIQUE EN AXIOS POUR APPELER LE BACKEND
-    setTimeout(() => {
-      console.log('Login attempt:', formData);
-      setIsLoading(false);
-      navigate('/');
-    }, 1500);
-  };
+  }
+};
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));

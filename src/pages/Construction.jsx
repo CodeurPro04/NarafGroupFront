@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Calendar, Building, Users, MapPin, CheckCircle, TrendingUp, Shield, Clock, Home, Ruler, Hammer, Phone, Mail, Award, ArrowRight, Play } from 'lucide-react';
 
+import {Link} from 'react-router-dom'
 const Construction = () => {
   const [activeTab, setActiveTab] = useState('en-cours');
 
@@ -131,7 +132,7 @@ const Construction = () => {
         backgroundImage: "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')",
         backgroundSize: 'cover',
         backgroundPosition: 'center'
-      }}>
+       }}>
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/95 to-green-800/90"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
@@ -258,8 +259,9 @@ const Construction = () => {
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProjects.map((project) => (
-              <div key={project.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div key={project.id} className="group bg-white  shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
                 <div className="relative h-64 overflow-hidden">
+               
                   <img
                     src={project.image}
                     alt={project.title}
@@ -335,9 +337,9 @@ const Construction = () => {
                         {formatPrice(project.priceFrom)}
                       </div>
                     </div>
-                    <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors">
+                     <Link to="/property/:id"  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors">
                       En savoir plus
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

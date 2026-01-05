@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Phone, Building, Briefcase, CheckCircle, AlertCircle, Shield } from 'lucide-react';
-
+import axios from "axios"
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userType, setUserType] = useState('visitor');
+  const[message,setMessage]=useState("")
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -44,11 +45,25 @@ const Register = () => {
       color: 'purple'
     }
   ];
-
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/register",
+        formData
+      );
+
+      console.log(res.data);
+      
+    } catch (error) {
+      
+      setMessage("Erreur lors de l'inscription");
+    }
+  
+  
+    
     
     // Validation de base
     const newErrors = {};
@@ -599,7 +614,7 @@ const Register = () => {
               </div>
             </div>
           </div>
-
+{message && <p className ='text-green-500'>{message}</p>}
           {/* Login Link */}
           <div className="text-center">
             <Link 

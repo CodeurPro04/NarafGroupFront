@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from 'react-router-dom'
 import Hero from '../components/layout/Hero';
 import {
   Building2,
@@ -214,13 +215,15 @@ const Home = () => {
               <ArrowRight size={20} />
             </button>
           </div>
-
+           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
             {featuredProperties.map((property) => (
               <div
                 key={property.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                className="group bg-white  overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
               >
+              <Link to={`/property/${property.id}`}>
                 <div className="relative h-64 overflow-hidden">
                   <img
                     src={property.image}
@@ -270,8 +273,11 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
+                </Link>
               </div>
+              
             ))}
+            
           </div>
 
           <div className="text-center mt-12 md:hidden">
