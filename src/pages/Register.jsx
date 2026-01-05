@@ -1,102 +1,107 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, Phone, Building, Briefcase, CheckCircle, AlertCircle, Shield } from 'lucide-react';
-import axios from "axios"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Phone,
+  Building,
+  Briefcase,
+  CheckCircle,
+  AlertCircle,
+  Shield,
+} from "lucide-react";
+import axios from "../api/axios";
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userType, setUserType] = useState('visitor');
-  const[message,setMessage]=useState("")
+  const [userType, setUserType] = useState("visitor");
+  const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    licenseNumber: '',
-    agency: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    licenseNumber: "",
+    agency: "",
     terms: false,
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const userTypes = [
-    { 
-      value: 'visitor', 
-      label: 'Visiteur', 
+    {
+      value: "visitor",
+      label: "Visiteur",
       icon: <User size={24} />,
-      description: 'Consulter les biens et sauvegarder vos favoris',
-      color: 'blue'
+      description: "Consulter les biens et sauvegarder vos favoris",
+      color: "blue",
     },
-    { 
-      value: 'owner', 
-      label: 'Propriétaire', 
+    {
+      value: "owner",
+      label: "Propriétaire",
       icon: <Building size={24} />,
-      description: 'Publier et gérer vos propriétés',
-      color: 'emerald'
+      description: "Publier et gérer vos propriétés",
+      color: "emerald",
     },
-    { 
-      value: 'agent', 
-      label: 'Agent', 
+    {
+      value: "agent",
+      label: "Agent",
       icon: <Briefcase size={24} />,
-      description: 'Professionnel de l\'immobilier',
-      color: 'purple'
-    }
+      description: "Professionnel de l'immobilier",
+      color: "purple",
+    },
   ];
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/register",
-        formData
-      );
+    setMessage("");
 
-      console.log(res.data);
-      
-    } catch (error) {
-      
-      setMessage("Erreur lors de l'inscription");
-    }
-  
-  
-    
-    
     // Validation de base
     const newErrors = {};
-    
-    if (!formData.firstName.trim()) newErrors.firstName = "Le prénom est requis";
+
+    if (!formData.firstName.trim())
+      newErrors.firstName = "Le prénom est requis";
     if (!formData.lastName.trim()) newErrors.lastName = "Le nom est requis";
-    
+
     if (!formData.email.trim()) {
       newErrors.email = "L'email est requis";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Format d'email invalide";
     }
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = "Le téléphone est requis";
     } else if (!/^[\+]?[0-9\s\-\(\)]+$/.test(formData.phone)) {
       newErrors.phone = "Format de téléphone invalide";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
     } else if (formData.password.length < 8) {
       newErrors.password = "Minimum 8 caractères";
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = "Le mot de passe doit contenir des minuscules";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = "Le mot de passe doit contenir des majuscules";
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = "Le mot de passe doit contenir des chiffres";
     }
-    
+
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Confirmez votre mot de passe";
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     }
-    
+
     // Validation spécifique agent
-    if (userType === 'agent') {
+    if (userType === "agent") {
       if (!formData.licenseNumber.trim()) {
         newErrors.licenseNumber = "Le numéro de carte est requis";
       }
@@ -104,35 +109,111 @@ const handleSubmit = async (e) => {
         newErrors.agency = "Le nom de l'agence est requis";
       }
     }
-    
+
     if (!formData.terms) {
       newErrors.terms = "Vous devez accepter les conditions";
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setIsLoading(false);
       return;
     }
-    
-    // Simulation d'inscription tu feras la logique en axios pour appeler le backend
-    setTimeout(() => {
-      console.log('Registration successful:', { ...formData, userType });
+
+    try {
+      // Mapper userType vers les valeurs attendues par Laravel
+      const roleMapping = {
+        visitor: "visiteur",
+        owner: "proprietaire",
+        agent: "agent",
+      };
+
+      // Préparer les données pour l'API Laravel
+      const registrationData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword,
+        role: roleMapping[userType],
+      };
+
+      // Appel API avec axios (sans CSRF pour tester)
+      const response = await axios.post("/auth/register", registrationData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      // Vérifier le succès
+      if (response.data.success) {
+        // Sauvegarder le token et les données utilisateur
+        localStorage.setItem("auth_token", response.data.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
+
+        // Message de succès
+        setMessage("Inscription réussie ! Redirection...");
+
+        // Redirection vers la page d'accueil après 1.5s
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      }
+    } catch (error) {
       setIsLoading(false);
-      navigate('/');
-    }, 1500);
+
+      // Gestion des erreurs de validation Laravel
+      if (error.response?.status === 422 && error.response?.data?.errors) {
+        const serverErrors = {};
+        const laravelErrors = error.response.data.errors;
+
+        // Mapper les erreurs Laravel vers les champs du formulaire
+        if (laravelErrors.first_name) {
+          serverErrors.firstName = laravelErrors.first_name[0];
+        }
+        if (laravelErrors.last_name) {
+          serverErrors.lastName = laravelErrors.last_name[0];
+        }
+        if (laravelErrors.email) {
+          serverErrors.email = laravelErrors.email[0];
+        }
+        if (laravelErrors.phone) {
+          serverErrors.phone = laravelErrors.phone[0];
+        }
+        if (laravelErrors.password) {
+          serverErrors.password = laravelErrors.password[0];
+        }
+        if (laravelErrors.role) {
+          setMessage(laravelErrors.role[0]);
+        }
+
+        setErrors(serverErrors);
+      }
+      // Erreur générale
+      else if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      }
+      // Erreur réseau ou autre
+      else {
+        setMessage("Erreur lors de l'inscription. Veuillez réessayer.");
+      }
+
+      console.error("Erreur inscription:", error);
+    }
   };
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   const PasswordStrength = ({ password }) => {
     if (!password) return null;
-    
+
     const getStrength = () => {
       let score = 0;
       if (password.length >= 8) score++;
@@ -140,32 +221,38 @@ const handleSubmit = async (e) => {
       if (/[A-Z]/.test(password)) score++;
       if (/\d/.test(password)) score++;
       if (/[!@#$%^&*]/.test(password)) score++;
-      
-      if (score <= 2) return { level: 'Faible', color: 'red', percent: 40 };
-      if (score <= 3) return { level: 'Moyen', color: 'yellow', percent: 70 };
-      return { level: 'Fort', color: 'green', percent: 100 };
+
+      if (score <= 2) return { level: "Faible", color: "red", percent: 40 };
+      if (score <= 3) return { level: "Moyen", color: "yellow", percent: 70 };
+      return { level: "Fort", color: "green", percent: 100 };
     };
-    
+
     const strength = getStrength();
-    
+
     return (
       <div className="mt-2 space-y-2">
         <div className="flex justify-between text-xs">
           <span className="text-gray-600">Force du mot de passe</span>
-          <span className={`font-semibold ${
-            strength.color === 'red' ? 'text-red-600' :
-            strength.color === 'yellow' ? 'text-yellow-600' :
-            'text-green-600'
-          }`}>
+          <span
+            className={`font-semibold ${
+              strength.color === "red"
+                ? "text-red-600"
+                : strength.color === "yellow"
+                ? "text-yellow-600"
+                : "text-green-600"
+            }`}
+          >
             {strength.level}
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className={`h-2 rounded-full transition-all duration-500 ${
-              strength.color === 'red' ? 'bg-red-500' :
-              strength.color === 'yellow' ? 'bg-yellow-500' :
-              'bg-green-500'
+              strength.color === "red"
+                ? "bg-red-500"
+                : strength.color === "yellow"
+                ? "bg-yellow-500"
+                : "bg-green-500"
             }`}
             style={{ width: `${strength.percent}%` }}
           />
@@ -176,7 +263,7 @@ const handleSubmit = async (e) => {
 
   const UserTypeCard = ({ type }) => {
     const isSelected = userType === type.value;
-    
+
     return (
       <button
         type="button"
@@ -184,29 +271,35 @@ const handleSubmit = async (e) => {
         className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
           isSelected
             ? `border-${type.color}-600 bg-${type.color}-50 shadow-lg`
-            : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+            : "border-gray-200 hover:border-gray-300 hover:shadow-md"
         }`}
       >
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
-            <div className={`p-3 rounded-xl ${
-              isSelected 
-                ? `bg-${type.color}-100 text-${type.color}-600` 
-                : 'bg-gray-100 text-gray-600'
-            }`}>
+            <div
+              className={`p-3 rounded-xl ${
+                isSelected
+                  ? `bg-${type.color}-100 text-${type.color}-600`
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
               {type.icon}
             </div>
             {isSelected && (
-              <div className={`w-6 h-6 rounded-full bg-${type.color}-600 flex items-center justify-center`}>
+              <div
+                className={`w-6 h-6 rounded-full bg-${type.color}-600 flex items-center justify-center`}
+              >
                 <CheckCircle className="w-4 h-4 text-white" />
               </div>
             )}
           </div>
-          
+
           <div>
-            <h3 className={`text-lg font-semibold ${
-              isSelected ? `text-${type.color}-900` : 'text-gray-900'
-            }`}>
+            <h3
+              className={`text-lg font-semibold ${
+                isSelected ? `text-${type.color}-900` : "text-gray-900"
+              }`}
+            >
               {type.label}
             </h3>
           </div>
@@ -220,7 +313,10 @@ const handleSubmit = async (e) => {
       <div className="max-w-4xl w-full animate-fade-in">
         {/* Header */}
         <div className="text-center py-20">
-          <Link to="/" className="inline-flex items-center justify-center w-20 h-20 rounded-2xl">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl"
+          >
             <img
               src="/images/logonaraf.png"
               alt="NARAF Immobilier"
@@ -230,9 +326,7 @@ const handleSubmit = async (e) => {
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
             Rejoignez NARAF
           </h1>
-          <p className="text-gray-600">
-            Créez votre compte selon votre profil
-          </p>
+          <p className="text-gray-600">Créez votre compte selon votre profil</p>
         </div>
 
         {/* User Type Selection */}
@@ -243,7 +337,7 @@ const handleSubmit = async (e) => {
           <p className="text-gray-600 mb-6">
             Choisissez le type de compte qui correspond à vos besoins
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {userTypes.map((type) => (
               <UserTypeCard key={type.value} type={type} />
@@ -272,11 +366,13 @@ const handleSubmit = async (e) => {
                       type="text"
                       placeholder="Votre prénom"
                       value={formData.firstName}
-                      onChange={(e) => handleChange('firstName', e.target.value)}
+                      onChange={(e) =>
+                        handleChange("firstName", e.target.value)
+                      }
                       className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.firstName 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                        errors.firstName
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
                       autoFocus
                     />
@@ -302,11 +398,11 @@ const handleSubmit = async (e) => {
                       type="text"
                       placeholder="Votre nom"
                       value={formData.lastName}
-                      onChange={(e) => handleChange('lastName', e.target.value)}
+                      onChange={(e) => handleChange("lastName", e.target.value)}
                       className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.lastName 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                        errors.lastName
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
                     />
                     {errors.lastName && (
@@ -338,11 +434,11 @@ const handleSubmit = async (e) => {
                     type="email"
                     placeholder="votre@email.com"
                     value={formData.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
+                    onChange={(e) => handleChange("email", e.target.value)}
                     className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                      errors.email 
-                        ? 'border-red-500 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                      errors.email
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                     }`}
                   />
                   {errors.email && (
@@ -352,9 +448,7 @@ const handleSubmit = async (e) => {
                   )}
                 </div>
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {errors.email}
-                  </p>
+                  <p className="mt-2 text-sm text-red-600">{errors.email}</p>
                 )}
               </div>
 
@@ -370,11 +464,11 @@ const handleSubmit = async (e) => {
                     type="tel"
                     placeholder="+225 01 23 45 67 89"
                     value={formData.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
+                    onChange={(e) => handleChange("phone", e.target.value)}
                     className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                      errors.phone 
-                        ? 'border-red-500 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                      errors.phone
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                     }`}
                   />
                   {errors.phone && (
@@ -384,15 +478,13 @@ const handleSubmit = async (e) => {
                   )}
                 </div>
                 {errors.phone && (
-                  <p className="mt-2 text-sm text-red-600">
-                    {errors.phone}
-                  </p>
+                  <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
                 )}
               </div>
             </div>
 
             {/* Champs spécifiques Agent */}
-            {userType === 'agent' && (
+            {userType === "agent" && (
               <div className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center">
@@ -403,11 +495,12 @@ const handleSubmit = async (e) => {
                       Informations professionnelles
                     </h3>
                     <p className="text-sm text-purple-700">
-                      Ces informations sont nécessaires pour vérifier votre statut d'agent
+                      Ces informations sont nécessaires pour vérifier votre
+                      statut d'agent
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-purple-900 mb-2">
@@ -417,11 +510,13 @@ const handleSubmit = async (e) => {
                       type="text"
                       placeholder="CP-XXXX-XXXX"
                       value={formData.licenseNumber}
-                      onChange={(e) => handleChange('licenseNumber', e.target.value)}
+                      onChange={(e) =>
+                        handleChange("licenseNumber", e.target.value)
+                      }
                       className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-purple-200 outline-none transition-all ${
-                        errors.licenseNumber 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-purple-300 focus:border-purple-500 hover:border-purple-400'
+                        errors.licenseNumber
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
                       }`}
                     />
                     {errors.licenseNumber && (
@@ -430,7 +525,7 @@ const handleSubmit = async (e) => {
                       </p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-purple-900 mb-2">
                       Agence
@@ -439,11 +534,11 @@ const handleSubmit = async (e) => {
                       type="text"
                       placeholder="Nom de votre agence"
                       value={formData.agency}
-                      onChange={(e) => handleChange('agency', e.target.value)}
+                      onChange={(e) => handleChange("agency", e.target.value)}
                       className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-purple-200 outline-none transition-all ${
-                        errors.agency 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-purple-300 focus:border-purple-500 hover:border-purple-400'
+                        errors.agency
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
                       }`}
                     />
                     {errors.agency && (
@@ -474,11 +569,11 @@ const handleSubmit = async (e) => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Minimum 8 caractères"
                       value={formData.password}
-                      onChange={(e) => handleChange('password', e.target.value)}
+                      onChange={(e) => handleChange("password", e.target.value)}
                       className={`w-full pl-12 pr-12 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.password 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                        errors.password
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
                     />
                     <button
@@ -513,17 +608,21 @@ const handleSubmit = async (e) => {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirmez votre mot de passe"
                       value={formData.confirmPassword}
-                      onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                      onChange={(e) =>
+                        handleChange("confirmPassword", e.target.value)
+                      }
                       className={`w-full pl-12 pr-12 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.confirmPassword 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                        errors.confirmPassword
+                          ? "border-red-500 focus:border-red-500"
+                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
                     />
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-gray-600 transition-colors"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -548,35 +647,41 @@ const handleSubmit = async (e) => {
                   <input
                     type="checkbox"
                     checked={formData.terms}
-                    onChange={(e) => handleChange('terms', e.target.checked)}
+                    onChange={(e) => handleChange("terms", e.target.checked)}
                     className="sr-only"
                   />
-                  <div className={`w-5 h-5 border-2 rounded transition-all flex items-center justify-center ${
-                    formData.terms 
-                      ? 'bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700' 
-                      : 'border-gray-300 group-hover:border-gray-400'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 border-2 rounded transition-all flex items-center justify-center ${
+                      formData.terms
+                        ? "bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700"
+                        : "border-gray-300 group-hover:border-gray-400"
+                    }`}
+                  >
                     {formData.terms && (
                       <CheckCircle className="w-4 h-4 text-white" />
                     )}
                   </div>
                 </div>
                 <span className="ml-3 text-sm text-gray-700">
-                  J'accepte les{' '}
-                  <Link to="/terms" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                  J'accepte les{" "}
+                  <Link
+                    to="/terms"
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  >
                     Conditions Générales
-                  </Link>{' '}
-                  et la{' '}
-                  <Link to="/privacy" className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                  </Link>{" "}
+                  et la{" "}
+                  <Link
+                    to="/privacy"
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  >
                     Politique de Confidentialité
                   </Link>
                 </span>
               </label>
             </div>
             {errors.terms && (
-              <p className="mt-2 text-sm text-red-600">
-                {errors.terms}
-              </p>
+              <p className="mt-2 text-sm text-red-600">{errors.terms}</p>
             )}
 
             {/* Submit Button */}
@@ -593,9 +698,9 @@ const handleSubmit = async (e) => {
               ) : (
                 <>
                   <Shield size={20} />
-                  Créer mon compte {userType === 'visitor' && 'Visiteur'}
-                  {userType === 'owner' && 'Propriétaire'}
-                  {userType === 'agent' && 'Agent'}
+                  Créer mon compte {userType === "visitor" && "Visiteur"}
+                  {userType === "owner" && "Propriétaire"}
+                  {userType === "agent" && "Agent"}
                 </>
               )}
             </button>
@@ -614,11 +719,11 @@ const handleSubmit = async (e) => {
               </div>
             </div>
           </div>
-{message && <p className ='text-green-500'>{message}</p>}
+          {message && <p className="text-green-500">{message}</p>}
           {/* Login Link */}
           <div className="text-center">
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className="inline-block w-full py-3.5 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 rounded-xl font-semibold transition-all"
             >
               Se connecter à NARAF

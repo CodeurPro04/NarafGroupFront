@@ -1,39 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   Search,
-  User,
   Menu,
   X,
-  Building2,
   Briefcase,
   Hammer,
+  LogOut,
+  UserCircle,
+  ChevronDown,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
-import Button from "../ui/Button";
+import { logout } from "../../api/axios";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    const userData = localStorage.getItem("user");
+
+    if (token && userData) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(userData));
+    } else {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+
+    setIsMenuOpen(false);
+    setIsProfileMenuOpen(false);
+  }, [location.pathname]);
+
+  const handleLogout = useCallback(async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Erreur déconnexion :", error);
+    } finally {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user");
+
+      setIsAuthenticated(false);
+      setUser(null);
+      setIsLoggingOut(false);
+
+      navigate("/login");
+    }
+  }, [isLoggingOut, navigate]);
+
+  const initials =
+    `${user?.first_name?.charAt(0) || ""}${user?.last_name?.charAt(0) || ""}`.toUpperCase();
+
   const navLinks = [
     { path: "/", label: "Accueil", icon: <Home size={20} /> },
-    {
-      path: "/properties",
-      label: "Biens immobiliers",
-      icon: <Search size={20} />,
-    },
-    {
-      path: "/construction",
-      label: "Construction",
-      icon: <Hammer size={20} />,
-    },
-    {
-      path: "/investment",
-      label: "Investissement",
-      icon: <Briefcase size={20} />,
-    },
+    { path: "/properties", label: "Biens immobiliers", icon: <Search size={20} /> },
+    { path: "/construction", label: "Construction", icon: <Hammer size={20} /> },
+    { path: "/investment", label: "Investissement", icon: <Briefcase size={20} /> },
   ];
 
   return (
@@ -55,7 +91,7 @@ const Header = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
+                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition ${
                   location.pathname === link.path
                     ? "text-blue-600 bg-blue-50"
                     : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
@@ -69,72 +105,162 @@ const Header = () => {
 
           {/* Actions Desktop */}
           <div className="hidden lg:flex items-center space-x-3">
-            <button
-              onClick={() => navigate("/login")}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200"
-            >
-              Connexion
-            </button>
-            <button
-              onClick={() => navigate("/register")}
-              className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200 shadow-sm"
-            >
-              S'inscrire
-            </button>
+            {!isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:text-blue-600"
+                >
+                  <LogIn size={18} />
+                  Connexion
+                </button>
+                <button
+                  onClick={() => navigate("/register")}
+                  className="flex items-center gap-2 px-5 py-2.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                >
+                  <UserPlus size={18} />
+                  S'inscrire
+                </button>
+              </>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileMenuOpen((v) => !v)}
+                  className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+                >
+                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                    {initials}
+                  </div>
+                  <span>{user?.first_name} {user?.last_name}</span>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform ${isProfileMenuOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {/* Dropdown */}
+                {isProfileMenuOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border py-2 z-50"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="px-4 py-3 border-b">
+                      <p className="text-sm font-semibold">
+                        {user?.first_name} {user?.last_name}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <span className="inline-block mt-2 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded">
+                        {user?.role_name || user?.role}
+                      </span>
+                    </div>
+
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                      className="flex items-center px-4 py-2 text-sm hover:bg-gray-50"
+                    >
+                      <UserCircle size={18} className="mr-2" />
+                      Mon profil
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    >
+                      <LogOut size={18} className="mr-2" />
+                      {isLoggingOut ? "Déconnexion..." : "Déconnexion"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Menu Mobile Toggle */}
+          {/* Mobile Toggle */}
           <button
-            className="lg:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="lg:hidden p-2"
+            onClick={() => setIsMenuOpen((v) => !v)}
+            aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </div>
 
-        {/* Menu Mobile */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-100">
-            <div className="py-4 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`flex items-center space-x-3 px-4 py-3 text-sm font-medium transition-colors ${
-                    location.pathname === link.path
-                      ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600"
-                      : "text-gray-700 hover:bg-gray-50 border-l-4 border-transparent"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              ))}
-              <div className="pt-4 px-4 space-y-2 border-t border-gray-100 mt-4">
+      {/* Overlay pour fermer dropdown profil */}
+      {isProfileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsProfileMenuOpen(false)}
+        />
+      )}
+
+      {/* MOBILE MENU */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-white border-t shadow-md">
+          <nav className="flex flex-col p-4 gap-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50"
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            ))}
+
+            <hr />
+
+            {!isAuthenticated ? (
+              <>
                 <button
                   onClick={() => {
                     navigate("/login");
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-blue-600 border border-gray-300 rounded-md hover:border-blue-600 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
                 >
+                  <LogIn size={18} />
                   Connexion
                 </button>
+
                 <button
                   onClick={() => {
                     navigate("/register");
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors shadow-sm"
+                  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
                 >
-                  S'inscrire
+                  <UserPlus size={18} />
+                  Inscription
                 </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2"
+                >
+                  <UserCircle size={18} />
+                  Profil
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-3 py-2 text-red-600"
+                >
+                  <LogOut size={18} />
+                  Déconnexion
+                </button>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

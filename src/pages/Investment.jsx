@@ -195,13 +195,7 @@ const Investment = () => {
       trend: "Stable",
       color: "purple",
     },
-    {
-      label: "Ticket minimum",
-      value: "25k€",
-      icon: <DollarSign size={28} />,
-      trend: "Accessible",
-      color: "amber",
-    },
+    
     {
       label: "Projets financés",
       value: "45+",
@@ -209,13 +203,7 @@ const Investment = () => {
       trend: "En croissance",
       color: "indigo",
     },
-    {
-      label: "Investisseurs actifs",
-      value: "1,200+",
-      icon: <Users size={28} />,
-      trend: "+15%",
-      color: "rose",
-    },
+
   ];
 
   const benefits = [
@@ -390,7 +378,7 @@ const Investment = () => {
 
         <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {investmentStats.map((stat, index) => (
                 <div
                   key={index}
