@@ -22,7 +22,7 @@ const PropertyDetails = () => {
           </p>
           <Button onClick={() => window.history.back()}>
             Retour aux biens
-          </Button>
+          </ Button>
         </div>
       </div>
     );

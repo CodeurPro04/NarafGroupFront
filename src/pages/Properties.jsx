@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import {Link} from 'react-router-dom'
 import { 
   MapPin, Bed, Bath, Maximize, Heart, Search, 
   Phone, Mail, Building2, Home, Star, Eye, Check,
@@ -603,7 +604,7 @@ const Properties = () => {
           {/* Properties Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {properties.map((property) => (
-              <div key={property.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div key={property.id} className="group bg-white  shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
                 <div className="relative h-64 overflow-hidden">
                   <img
                     src={property.images[0]}
@@ -684,9 +685,9 @@ const Properties = () => {
                         {formatPrice(property.price)}
                       </div>
                     </div>
-                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                    <Link to={`/property/${property.id}`} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
                       Voir détails
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
