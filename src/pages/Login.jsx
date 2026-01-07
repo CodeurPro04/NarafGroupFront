@@ -95,6 +95,7 @@ const Login = () => {
               <input
                 type="email"
                 value={formData.email}
+                placeholder="votre@email.com"
                 onChange={(e) => handleChange("email", e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border rounded-xl"
               />
@@ -114,6 +115,7 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
+                placeholder="Mot de passe"
                 onChange={(e) => handleChange("password", e.target.value)}
                 className="w-full pl-10 pr-10 py-3 border rounded-xl"
               />

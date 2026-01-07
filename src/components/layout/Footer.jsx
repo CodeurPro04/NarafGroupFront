@@ -129,7 +129,7 @@ const Footer = () => {
                 <Phone size={20} className="text-blue-400 mt-1" />
                 <div>
                   <p className="font-medium">Téléphone</p>
-                  <p className="text-gray-400">+225 01 23 45 67 89</p>
+                  <p className="text-gray-400">+225 XX XX XX XX XX</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -144,7 +144,7 @@ const Footer = () => {
                 <div>
                   <p className="font-medium">Adresse</p>
                   <p className="text-gray-400">
-                    Marcory
+                    Grand-Bassam
                     <br />
                     Abidjan, Côte d'Ivoire
                   </p>

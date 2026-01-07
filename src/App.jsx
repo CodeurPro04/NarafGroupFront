@@ -9,6 +9,7 @@ import Construction from './pages/Construction';
 import Investment from './pages/Investment';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 import './index.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/investment" element={<Investment />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
         <Footer />
