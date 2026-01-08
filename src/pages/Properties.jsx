@@ -12,23 +12,18 @@ import {
   Building2,
   Home,
   Star,
-  Eye,
-  Check,
-  ChevronRight,
-  Calendar,
-  Award,
-  TrendingUp,
   Shield,
   CheckCircle,
   Clock,
+  Award,
+  TrendingUp,
   X,
   SlidersHorizontal,
-  Filter,
   ArrowUpDown,
   Grid,
   List,
-  DollarSign,
 } from "lucide-react";
+import api from "../api/axios";
 
 const Properties = () => {
   const [activeTab, setActiveTab] = useState("tous");
@@ -36,7 +31,11 @@ const Properties = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState("recommended");
   const [favorites, setFavorites] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const [properties, setProperties] = useState([]);
+  const [propertyTypes, setPropertyTypes] = useState([]);
+  const [propertyFeatures, setPropertyFeatures] = useState([]);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -50,168 +49,10 @@ const Properties = () => {
     features: [],
   });
 
-  const allProperties = [
-    {
-      id: 1,
-      images: [
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-      ],
-      price: 450000,
-      pricePerSqm: 1800,
-      title: "Villa Moderne avec Piscine",
-      location: "Cocody, Abidjan",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 250,
-      type: "villa",
-      tag: "Nouveauté",
-      rating: 4.8,
-      views: 1245,
-      features: [
-        "Piscine",
-        "Jardin",
-        "Garage",
-        "Domotique",
-        "Climatisation",
-        "Sécurité",
-      ],
-      status: "available",
-      year: 2024,
-    },
-    {
-      id: 2,
-      images: [
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
-      ],
-      price: 180000,
-      pricePerSqm: 1500,
-      title: "Appartement Standing Vue Mer",
-      location: "Plateau, Abidjan",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 120,
-      type: "appartement",
-      tag: "Coup de cœur",
-      rating: 4.6,
-      views: 892,
-      features: [
-        "Vue mer",
-        "Terrasse",
-        "Ascenseur",
-        "Piscine commune",
-        "Gym",
-        "Parking",
-      ],
-      status: "available",
-      year: 2023,
-    },
-    {
-      id: 3,
-      images: [
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
-      ],
-      price: 320000,
-      pricePerSqm: 1067,
-      title: "Maison Contemporaine",
-      location: "Riviera, Abidjan",
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 300,
-      type: "maison",
-      tag: "Exclusif",
-      rating: 4.9,
-      views: 1567,
-      features: [
-        "Neuf",
-        "Jardin",
-        "Cuisine équipée",
-        "Buanderie",
-        "Alarme",
-        "Terrasse",
-      ],
-      status: "available",
-      year: 2024,
-    },
-    {
-      id: 4,
-      images: [
-        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
-      ],
-      price: 280000,
-      pricePerSqm: 1400,
-      title: "Duplex Lumineux",
-      location: "Marcory, Abidjan",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 200,
-      type: "appartement",
-      rating: 4.5,
-      views: 734,
-      features: ["Terrasse", "Cave", "Parking", "Balcon", "Ascenseur"],
-      status: "available",
-      year: 2022,
-    },
-    {
-      id: 5,
-      images: [
-        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80",
-      ],
-      price: 550000,
-      pricePerSqm: 1375,
-      title: "Villa de Luxe",
-      location: "Cocody, Abidjan",
-      bedrooms: 6,
-      bathrooms: 5,
-      area: 400,
-      type: "villa",
-      tag: "Premium",
-      rating: 5.0,
-      views: 2103,
-      features: [
-        "Domaine privé",
-        "Piscine",
-        "Tennis",
-        "Spa",
-        "Domotique",
-        "Jardin",
-      ],
-      status: "available",
-      year: 2024,
-    },
-    {
-      id: 6,
-      images: [
-        "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&q=80",
-      ],
-      price: 150000,
-      pricePerSqm: 3333,
-      title: "Studio Moderne Centre-Ville",
-      location: "Plateau, Abidjan",
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 45,
-      type: "appartement",
-      tag: "Bon plan",
-      rating: 4.3,
-      views: 456,
-      features: [
-        "Meublé",
-        "Climatisation",
-        "Internet",
-        "Centre-ville",
-        "Parking",
-      ],
-      status: "available",
-      year: 2023,
-    },
-  ];
-
-  const [properties, setProperties] = useState(allProperties);
-
   const stats = [
     {
       icon: <Building2 size={40} />,
-      value: "2,500+",
+      value: `${totalProperties}+`,
       label: "Biens disponibles",
     },
     { icon: <Home size={40} />, value: "98%", label: "Clients satisfaits" },
@@ -258,79 +99,244 @@ const Properties = () => {
     },
   ];
 
-  const propertyFeatures = [
-    "Piscine",
-    "Jardin",
-    "Garage",
-    "Terrasse",
-    "Balcon",
-    "Climatisation",
-    "Ascenseur",
-    "Sécurité",
-    "Domotique",
-    "Meublé",
-    "Vue mer",
-    "Neuf",
-  ];
-
-  useEffect(() => {
-    let filtered = [...allProperties];
-
-    if (activeTab !== "tous") {
-      filtered = filtered.filter((p) => p.type === activeTab);
+  // Fonction pour récupérer les types de propriétés avec fallback
+  const fetchPropertyTypes = async () => {
+    try {
+      const response = await api.get("/property-types");
+      if (response.data.success) {
+        setPropertyTypes(response.data.data);
+      } else {
+        // Si l'API ne fonctionne pas, créer des types à partir de la table properties
+        fetchPropertyTypesFromProperties();
+      }
+    } catch (error) {
+      console.error("Erreur types:", error);
+      fetchPropertyTypesFromProperties();
     }
+  };
 
-    if (filters.search) {
-      const search = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(search) ||
-          p.location.toLowerCase().includes(search)
-      );
+  // Fallback: Récupérer les types depuis les propriétés existantes
+  const fetchPropertyTypesFromProperties = async () => {
+    try {
+      const response = await api.get("/properties");
+      if (response.data.success) {
+        const propertiesData =
+          response.data.data.data || response.data.data || [];
+        const typesSet = new Set();
+
+        propertiesData.forEach((property) => {
+          if (property.property_type) {
+            typesSet.add(
+              JSON.stringify({
+                id: property.property_type.id,
+                name: property.property_type.name,
+                slug: property.property_type.slug,
+              })
+            );
+          }
+        });
+
+        const types = Array.from(typesSet).map((str) => JSON.parse(str));
+        setPropertyTypes(types);
+      }
+    } catch (error) {
+      console.error("Impossible de récupérer les types:", error);
     }
+  };
 
-    if (filters.type)
-      filtered = filtered.filter((p) => p.type === filters.type);
-    if (filters.priceMin)
-      filtered = filtered.filter((p) => p.price >= parseInt(filters.priceMin));
-    if (filters.priceMax)
-      filtered = filtered.filter((p) => p.price <= parseInt(filters.priceMax));
-    if (filters.bedrooms)
-      filtered = filtered.filter(
-        (p) => p.bedrooms >= parseInt(filters.bedrooms)
-      );
-    if (filters.bathrooms)
-      filtered = filtered.filter(
-        (p) => p.bathrooms >= parseInt(filters.bathrooms)
-      );
-    if (filters.areaMin)
-      filtered = filtered.filter((p) => p.area >= parseInt(filters.areaMin));
-    if (filters.areaMax)
-      filtered = filtered.filter((p) => p.area <= parseInt(filters.areaMax));
-    if (filters.features.length > 0) {
-      filtered = filtered.filter((p) =>
-        filters.features.every((feature) => p.features.includes(feature))
-      );
+  // Fonction pour récupérer les caractéristiques avec fallback
+  const fetchPropertyFeatures = async () => {
+    try {
+      const response = await api.get("/property-features");
+      if (response.data.success) {
+        setPropertyFeatures(response.data.data.map((f) => f.name));
+      } else {
+        fetchPropertyFeaturesFromProperties();
+      }
+    } catch (error) {
+      console.error("Erreur caractéristiques:", error);
+      fetchPropertyFeaturesFromProperties();
     }
+  };
 
-    // Tri
+  // Fallback: Récupérer les caractéristiques depuis les propriétés
+  const fetchPropertyFeaturesFromProperties = async () => {
+    try {
+      const response = await api.get("/properties");
+      if (response.data.success) {
+        const propertiesData =
+          response.data.data.data || response.data.data || [];
+        const featuresSet = new Set();
+
+        propertiesData.forEach((property) => {
+          if (property.features && Array.isArray(property.features)) {
+            property.features.forEach((feature) => {
+              if (feature.name) featuresSet.add(feature.name);
+            });
+          }
+        });
+
+        setPropertyFeatures(Array.from(featuresSet));
+      }
+    } catch (error) {
+      console.error("Impossible de récupérer les caractéristiques:", error);
+    }
+  };
+
+  // Fonction pour récupérer les propriétés
+  const fetchProperties = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        search: filters.search || undefined,
+        property_type_id: filters.type || undefined,
+        min_price: filters.priceMin || undefined,
+        max_price: filters.priceMax || undefined,
+        bedrooms: filters.bedrooms || undefined,
+        min_surface: filters.areaMin || undefined,
+        sort_by: getSortField(),
+        sort_order: getSortOrder(),
+      };
+
+      Object.keys(params).forEach(
+        (key) => params[key] === undefined && delete params[key]
+      );
+
+      const response = await api.get("/properties", { params });
+
+      if (response.data.success) {
+        const propertiesData =
+          response.data.data.data || response.data.data || [];
+        const formattedProperties = propertiesData.map((property) => ({
+          id: property.uuid,
+          uuid: property.uuid,
+          images: getPropertyImages(property),
+          price: parseFloat(property.price) || 0,
+          pricePerSqm: calculatePricePerSqm(property),
+          title: property.title || "Sans titre",
+          location: getPropertyLocation(property),
+          bedrooms: property.bedrooms || 0,
+          bathrooms: property.bathrooms || 0,
+          area: property.surface_area || 0,
+          type: getPropertyType(property),
+          tag: getPropertyTag(property),
+          rating: 4.5,
+          views: property.views_count || 0,
+          features: getPropertyFeatures(property),
+          status: property.status || "pending",
+          year: property.year_built || new Date().getFullYear(),
+          transaction_type: property.transaction_type || "vente",
+          property_type_id: property.property_type_id,
+        }));
+
+        setProperties(formattedProperties);
+        setTotalProperties(formattedProperties.length);
+      }
+    } catch (error) {
+      console.error("Erreur propriétés:", error);
+      setProperties([]);
+      setTotalProperties(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fonctions utilitaires
+  const getPropertyImages = (property) => {
+    if (property.primary_image?.file_path) {
+      return [
+        `http://localhost:8000/storage/${property.primary_image.file_path}`,
+      ];
+    }
+    if (property.media?.[0]?.file_path) {
+      return [`http://localhost:8000/storage/${property.media[0].file_path}`];
+    }
+    return [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+    ];
+  };
+
+  const calculatePricePerSqm = (property) => {
+    if (property.price && property.surface_area) {
+      return Math.round(property.price / property.surface_area);
+    }
+    return 0;
+  };
+
+  const getPropertyLocation = (property) => {
+    const parts = [property.city, property.quartier, property.commune].filter(
+      Boolean
+    );
+    return parts.join(", ") || "Localisation non spécifiée";
+  };
+
+  const getPropertyType = (property) => {
+    if (property.property_type?.slug) return property.property_type.slug;
+    if (property.property_type?.name)
+      return property.property_type.name.toLowerCase();
+    return "appartement";
+  };
+
+  const getPropertyTag = (property) => {
+    if (property.status === "approved") {
+      return property.featured ? "En vedette" : "Disponible";
+    }
+    if (property.status === "pending") return "En attente";
+    return "";
+  };
+
+  const getPropertyFeatures = (property) => {
+    if (property.features && Array.isArray(property.features)) {
+      return property.features.map((f) => f.name);
+    }
+    return [];
+  };
+
+  const getSortField = () => {
     switch (sortBy) {
       case "price_asc":
-        filtered.sort((a, b) => a.price - b.price);
-        break;
       case "price_desc":
-        filtered.sort((a, b) => b.price - a.price);
-        break;
+        return "price";
       case "area_desc":
-        filtered.sort((a, b) => b.area - a.area);
-        break;
-      case "popular":
-        filtered.sort((a, b) => b.views - a.views);
-        break;
+        return "surface_area";
+      default:
+        return "created_at";
     }
+  };
 
-    setProperties(filtered);
-  }, [activeTab, filters, sortBy]);
+  const getSortOrder = () => {
+    switch (sortBy) {
+      case "price_asc":
+        return "asc";
+      case "price_desc":
+      case "area_desc":
+        return "desc";
+      default:
+        return "desc";
+    }
+  };
+
+  // Charger les données
+  useEffect(() => {
+    fetchPropertyTypes();
+    fetchPropertyFeatures();
+    fetchProperties();
+  }, []);
+
+  useEffect(() => {
+    fetchProperties();
+  }, [filters, sortBy]);
+
+  useEffect(() => {
+    if (activeTab === "tous") {
+      setFilters((prev) => ({ ...prev, type: "" }));
+    } else {
+      const propertyType = propertyTypes.find((t) => t.slug === activeTab);
+      if (propertyType) {
+        setFilters((prev) => ({ ...prev, type: propertyType.id }));
+      }
+    }
+  }, [activeTab, propertyTypes]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -368,11 +374,27 @@ const Properties = () => {
   };
 
   const formatPrice = (price) => {
+    if (!price || price === 0) return "Prix non spécifié";
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
-      currency: "xof",
+      currency: "XOF",
       maximumFractionDigits: 0,
     }).format(price);
+  };
+
+  const filteredProperties = properties.filter((property) => {
+    if (filters.features.length > 0 && property.features) {
+      return filters.features.every((feature) =>
+        property.features.includes(feature)
+      );
+    }
+    return true;
+  });
+
+  const getTabs = () => {
+    const baseTabs = ["tous"];
+    const typeTabs = propertyTypes.map((type) => type.slug);
+    return [...baseTabs, ...typeTabs];
   };
 
   return (
@@ -401,12 +423,19 @@ const Properties = () => {
             </h1>
 
             <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-              Découvrez notre sélection exclusive de {allProperties.length}{" "}
+              Découvrez notre sélection exclusive de {totalProperties}{" "}
               propriétés premium avec accompagnement personnalisé.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg">
+              <button
+                onClick={() => {
+                  const searchBar =
+                    document.querySelector('input[type="text"]');
+                  if (searchBar) searchBar.focus();
+                }}
+                className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+              >
                 <Search size={20} />
                 <span>Rechercher un bien</span>
               </button>
@@ -491,7 +520,6 @@ const Properties = () => {
                 <option value="price_asc">Prix croissant</option>
                 <option value="price_desc">Prix décroissant</option>
                 <option value="area_desc">Surface</option>
-                <option value="popular">Plus populaire</option>
               </select>
               <ArrowUpDown
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -551,16 +579,18 @@ const Properties = () => {
                     className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                   >
                     <option value="">Tous les types</option>
-                    <option value="appartement">Appartement</option>
-                    <option value="maison">Maison</option>
-                    <option value="villa">Villa</option>
+                    {propertyTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 {/* Prix Min */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Prix minimum (€)
+                    Prix minimum (XOF)
                   </label>
                   <input
                     type="number"
@@ -576,7 +606,7 @@ const Properties = () => {
                 {/* Prix Max */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Prix maximum (€)
+                    Prix maximum (XOF)
                   </label>
                   <input
                     type="number"
@@ -624,34 +654,6 @@ const Properties = () => {
                       className={`px-4 py-2.5 rounded-lg font-medium transition-all ${
                         filters.bedrooms ===
                         (num === "5+" ? "5" : num.toString())
-                          ? "bg-blue-600 text-white shadow-lg"
-                          : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Salles de bain */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Salles de bain
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[1, 2, 3, "4+"].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() =>
-                        handleFilterChange(
-                          "bathrooms",
-                          num === "4+" ? "4" : num.toString()
-                        )
-                      }
-                      className={`px-4 py-2.5 rounded-lg font-medium transition-all ${
-                        filters.bathrooms ===
-                        (num === "4+" ? "4" : num.toString())
                           ? "bg-blue-600 text-white shadow-lg"
                           : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
                       }`}
@@ -712,176 +714,336 @@ const Properties = () => {
               Nos Biens Immobiliers
             </h2>
             <p className="text-xl text-gray-600">
-              {properties.length}{" "}
-              {properties.length === 1
-                ? "bien disponible"
-                : "biens disponibles"}
+              {loading
+                ? "Chargement..."
+                : `${filteredProperties.length} ${
+                    filteredProperties.length === 1
+                      ? "bien disponible"
+                      : "biens disponibles"
+                  }`}
             </p>
           </div>
 
           {/* Tabs */}
-          <div className="flex justify-center space-x-2 mb-12">
-            {["tous", "villa", "appartement", "maison"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  activeTab === tab
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                }`}
-              >
-                {tab === "tous"
-                  ? "Tous les biens"
-                  : tab.charAt(0).toUpperCase() + tab.slice(1) + "s"}
-              </button>
-            ))}
+          <div className="flex justify-center space-x-2 mb-12 overflow-x-auto pb-2">
+            {getTabs().map((tab) => {
+              const propertyType = propertyTypes.find((t) => t.slug === tab);
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                    activeTab === tab
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
+                  }`}
+                >
+                  {tab === "tous"
+                    ? "Tous les biens"
+                    : propertyType?.name ||
+                      tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              );
+            })}
           </div>
 
           {/* Properties Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property) => (
-              <div
-                key={property.id}
-                className="group bg-white  shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={property.images[0]}
-                    alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                  {property.tag && (
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                        {property.tag}
-                      </span>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => toggleFavorite(property.id)}
-                    className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-sm transition-all ${
-                      favorites.includes(property.id)
-                        ? "bg-rose-500 text-white"
-                        : "bg-white/90 text-gray-700 hover:bg-white"
-                    }`}
-                  >
-                    <Heart
-                      size={18}
-                      fill={
-                        favorites.includes(property.id)
-                          ? "currentColor"
-                          : "none"
-                      }
-                    />
-                  </button>
-
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-2xl font-bold text-white mb-1">
-                      {property.title}
-                    </h3>
-                    <div className="flex items-center text-white/90 text-sm">
-                      <MapPin size={14} className="mr-1" />
-                      {property.location}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-1">
-                      <Star
-                        size={16}
-                        className="fill-amber-400 text-amber-400"
-                      />
-                      <span className="font-semibold text-gray-900">
-                        {property.rating}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200">
-                    <div className="text-center">
-                      <Bed className="text-blue-600 mx-auto mb-2" size={20} />
-                      <div className="text-xs text-gray-500 mb-1">Chambres</div>
-                      <div className="text-sm font-semibold text-gray-900">
-                        {property.bedrooms}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <Bath className="text-blue-600 mx-auto mb-2" size={20} />
-                      <div className="text-xs text-gray-500 mb-1">Bains</div>
-                      <div className="text-sm font-semibold text-gray-900">
-                        {property.bathrooms}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <Maximize
-                        className="text-blue-600 mx-auto mb-2"
-                        size={20}
-                      />
-                      <div className="text-xs text-gray-500 mb-1">Surface</div>
-                      <div className="text-sm font-semibold text-gray-900">
-                        {property.area} m²
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 mb-6">
-                    <div className="flex flex-wrap gap-2">
-                      {property.features.slice(0, 3).map((feature, idx) => (
-                        <span
-                          key={idx}
-                          className="flex items-center text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full"
-                        >
-                          <CheckCircle size={12} className="mr-1" />
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-gray-500 mb-1">Prix</div>
-                      <div className="text-2xl font-bold text-blue-600">
-                        {formatPrice(property.price)}
-                      </div>
-                    </div>
-                    <Link
-                      to={`/property/${property.id}`}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                    >
-                      Voir détails
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {properties.length === 0 && (
+          {loading ? (
             <div className="text-center py-20">
-              <div className="text-6xl mb-4">🏠</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Aucun bien trouvé
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Essayez de modifier vos critères de recherche
-              </p>
-              <button
-                onClick={() => {
-                  setActiveTab("tous");
-                  setSearchTerm("");
-                }}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-              >
-                Réinitialiser les filtres
-              </button>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Chargement des propriétés...</p>
             </div>
+          ) : (
+            <>
+              {viewMode === "grid" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredProperties.map((property) => (
+                    <div
+                      key={property.id}
+                      className="group bg-white shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
+                    >
+                      <div className="relative h-64 overflow-hidden">
+                        <img
+                          src={property.images[0]}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+                        {property.tag && (
+                          <div className="absolute top-4 left-4">
+                            <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                              {property.tag}
+                            </span>
+                          </div>
+                        )}
+
+                        <button
+                          onClick={() => toggleFavorite(property.id)}
+                          className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-sm transition-all ${
+                            favorites.includes(property.id)
+                              ? "bg-rose-500 text-white"
+                              : "bg-white/90 text-gray-700 hover:bg-white"
+                          }`}
+                        >
+                          <Heart
+                            size={18}
+                            fill={
+                              favorites.includes(property.id)
+                                ? "currentColor"
+                                : "none"
+                            }
+                          />
+                        </button>
+
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <h3 className="text-2xl font-bold text-white mb-1 line-clamp-1">
+                            {property.title}
+                          </h3>
+                          <div className="flex items-center text-white/90 text-sm">
+                            <MapPin size={14} className="mr-1 flex-shrink-0" />
+                            <span className="truncate">
+                              {property.location}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center space-x-1">
+                            <Star
+                              size={16}
+                              className="fill-amber-400 text-amber-400"
+                            />
+                            <span className="font-semibold text-gray-900">
+                              {property.rating}
+                            </span>
+                          </div>
+                          <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700 rounded">
+                            {property.transaction_type === "vente"
+                              ? "À vendre"
+                              : "À louer"}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200">
+                          <div className="text-center">
+                            <Bed
+                              className="text-blue-600 mx-auto mb-2"
+                              size={20}
+                            />
+                            <div className="text-xs text-gray-500 mb-1">
+                              Chambres
+                            </div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {property.bedrooms}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <Bath
+                              className="text-blue-600 mx-auto mb-2"
+                              size={20}
+                            />
+                            <div className="text-xs text-gray-500 mb-1">
+                              Bains
+                            </div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {property.bathrooms}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <Maximize
+                              className="text-blue-600 mx-auto mb-2"
+                              size={20}
+                            />
+                            <div className="text-xs text-gray-500 mb-1">
+                              Surface
+                            </div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {property.area} m²
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 mb-6">
+                          <div className="flex flex-wrap gap-2">
+                            {property.features
+                              ?.slice(0, 3)
+                              .map((feature, idx) => (
+                                <span
+                                  key={idx}
+                                  className="flex items-center text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full"
+                                >
+                                  <CheckCircle size={12} className="mr-1" />
+                                  {feature}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-xs text-gray-500 mb-1">
+                              Prix
+                            </div>
+                            <div className="text-2xl font-bold text-blue-600">
+                              {formatPrice(property.price)}
+                            </div>
+                          </div>
+                          <Link
+                            to={`/property/${property.id}`}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                          >
+                            Voir détails
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // Vue liste
+                <div className="space-y-6">
+                  {filteredProperties.map((property) => (
+                    <div
+                      key={property.id}
+                      className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 rounded-lg"
+                    >
+                      <div className="flex flex-col md:flex-row">
+                        <div className="md:w-1/3 relative h-64 md:h-auto">
+                          <img
+                            src={property.images[0]}
+                            alt={property.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src =
+                                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
+                            }}
+                          />
+                        </div>
+                        <div className="md:w-2/3 p-6">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                {property.title}
+                              </h3>
+                              <div className="flex items-center text-gray-600 mb-3">
+                                <MapPin size={16} className="mr-2" />
+                                {property.location}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-blue-600 mb-2">
+                                {formatPrice(property.price)}
+                              </div>
+                              <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700 rounded">
+                                {property.transaction_type === "vente"
+                                  ? "À vendre"
+                                  : "À louer"}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div className="flex items-center">
+                              <Bed className="text-blue-600 mr-2" size={18} />
+                              <span className="text-gray-700">
+                                {property.bedrooms} chambres
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <Bath className="text-blue-600 mr-2" size={18} />
+                              <span className="text-gray-700">
+                                {property.bathrooms} bains
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <Maximize
+                                className="text-blue-600 mr-2"
+                                size={18}
+                              />
+                              <span className="text-gray-700">
+                                {property.area} m²
+                              </span>
+                            </div>
+                            <div className="flex items-center">
+                              <Star className="text-amber-400 mr-2" size={18} />
+                              <span className="text-gray-700">
+                                {property.rating}/5
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {property.features
+                              ?.slice(0, 5)
+                              .map((feature, idx) => (
+                                <span
+                                  key={idx}
+                                  className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded"
+                                >
+                                  {feature}
+                                </span>
+                              ))}
+                          </div>
+
+                          <div className="flex justify-between items-center">
+                            <Link
+                              to={`/property/${property.id}`}
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                            >
+                              Voir détails
+                            </Link>
+                            <button
+                              onClick={() => toggleFavorite(property.id)}
+                              className={`p-2 rounded-full ${
+                                favorites.includes(property.id)
+                                  ? "text-rose-500"
+                                  : "text-gray-400 hover:text-rose-500"
+                              }`}
+                            >
+                              <Heart
+                                size={20}
+                                fill={
+                                  favorites.includes(property.id)
+                                    ? "currentColor"
+                                    : "none"
+                                }
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {filteredProperties.length === 0 && !loading && (
+                <div className="text-center py-20">
+                  <div className="text-6xl mb-4">🏠</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Aucun bien trouvé
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {properties.length === 0
+                      ? "Aucune propriété n'est actuellement disponible."
+                      : "Essayez de modifier vos critères de recherche"}
+                  </p>
+                  <button
+                    onClick={resetFilters}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    Réinitialiser les filtres
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -964,24 +1126,6 @@ const Properties = () => {
                 <span>Prendre rendez-vous</span>
               </button>
             </div>
-            {/* Advantages Grid 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <CheckCircle className="text-blue-300 mb-3 mx-auto" size={32} />
-                <h3 className="text-lg font-bold mb-2">Visite Gratuite</h3>
-                <p className="text-blue-100 text-sm">Organisez votre visite en ligne</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <CheckCircle className="text-blue-300 mb-3 mx-auto" size={32} />
-                <h3 className="text-lg font-bold mb-2">Conseil Expert</h3>
-                <p className="text-blue-100 text-sm">Accompagnement personnalisé</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <CheckCircle className="text-blue-300 mb-3 mx-auto" size={32} />
-                <h3 className="text-lg font-bold mb-2">Financement</h3>
-                <p className="text-blue-100 text-sm">Solutions adaptées à votre budget</p>
-              </div>
-            </div> */}
           </div>
         </div>
       </section>

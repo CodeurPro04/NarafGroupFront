@@ -13,13 +13,14 @@ import {
   AlertCircle,
   Shield,
 } from "lucide-react";
-import axios from "../api/axios";
+import { register } from "../api/axios";
+
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userType, setUserType] = useState("visitor");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -57,31 +58,39 @@ const Register = () => {
       color: "purple",
     },
   ];
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-    setMessage("");
 
-    // Validation de base
+  const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.firstName.trim())
+    // Validation prénom
+    if (!formData.firstName.trim()) {
       newErrors.firstName = "Le prénom est requis";
-    if (!formData.lastName.trim()) newErrors.lastName = "Le nom est requis";
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = "Le prénom doit contenir au moins 2 caractères";
+    }
 
+    // Validation nom
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Le nom est requis";
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = "Le nom doit contenir au moins 2 caractères";
+    }
+
+    // Validation email
     if (!formData.email.trim()) {
       newErrors.email = "L'email est requis";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Format d'email invalide";
     }
 
+    // Validation téléphone
     if (!formData.phone.trim()) {
       newErrors.phone = "Le téléphone est requis";
-    } else if (!/^[\+]?[0-9\s\-\(\)]+$/.test(formData.phone)) {
+    } else if (!/^[\+]?[0-9\s\-\(\)]{8,}$/.test(formData.phone)) {
       newErrors.phone = "Format de téléphone invalide";
     }
 
+    // Validation mot de passe
     if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
     } else if (formData.password.length < 8) {
@@ -94,6 +103,7 @@ const Register = () => {
       newErrors.password = "Le mot de passe doit contenir des chiffres";
     }
 
+    // Validation confirmation mot de passe
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Confirmez votre mot de passe";
     } else if (formData.password !== formData.confirmPassword) {
@@ -110,13 +120,29 @@ const Register = () => {
       }
     }
 
+    // Validation conditions générales
     if (!formData.terms) {
       newErrors.terms = "Vous devez accepter les conditions";
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrors({});
+    setMessage({ type: "", text: "" });
+
+    // Validation du formulaire
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       setIsLoading(false);
+      setMessage({
+        type: "error",
+        text: "Veuillez corriger les erreurs du formulaire",
+      });
       return;
     }
 
@@ -130,74 +156,91 @@ const Register = () => {
 
       // Préparer les données pour l'API Laravel
       const registrationData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        email: formData.email.trim().toLowerCase(),
+        phone: formData.phone.trim(),
         password: formData.password,
         password_confirmation: formData.confirmPassword,
         role: roleMapping[userType],
       };
 
-      // Appel API avec axios (sans CSRF pour tester)
-      const response = await axios.post("/auth/register", registrationData, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      // Ajouter les champs spécifiques agent si nécessaire
+      if (userType === "agent") {
+        registrationData.license_number = formData.licenseNumber.trim();
+        registrationData.agency = formData.agency.trim();
+      }
+
+      // Appel API avec la fonction register qui gère CSRF
+      const response = await register(registrationData);
 
       // Vérifier le succès
-      if (response.data.success) {
-        // Sauvegarder le token et les données utilisateur
-        localStorage.setItem("auth_token", response.data.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.data.user));
-
-        // Message de succès
-        setMessage("Inscription réussie ! Redirection...");
+      if (response.success) {
+        setMessage({
+          type: "success",
+          text: "✅ Inscription réussie ! Redirection...",
+        });
 
         // Redirection vers la page d'accueil après 1.5s
         setTimeout(() => {
-          navigate("/");
+          navigate("/", { replace: true });
         }, 1500);
+      } else {
+        setMessage({
+          type: "error",
+          text: response.message || "Une erreur s'est produite",
+        });
+        setIsLoading(false);
       }
     } catch (error) {
       setIsLoading(false);
 
-      // Gestion des erreurs de validation Laravel
+      // Gestion des erreurs de validation Laravel (422)
       if (error.response?.status === 422 && error.response?.data?.errors) {
         const serverErrors = {};
         const laravelErrors = error.response.data.errors;
 
         // Mapper les erreurs Laravel vers les champs du formulaire
-        if (laravelErrors.first_name) {
-          serverErrors.firstName = laravelErrors.first_name[0];
-        }
-        if (laravelErrors.last_name) {
-          serverErrors.lastName = laravelErrors.last_name[0];
-        }
-        if (laravelErrors.email) {
-          serverErrors.email = laravelErrors.email[0];
-        }
-        if (laravelErrors.phone) {
-          serverErrors.phone = laravelErrors.phone[0];
-        }
-        if (laravelErrors.password) {
-          serverErrors.password = laravelErrors.password[0];
-        }
-        if (laravelErrors.role) {
-          setMessage(laravelErrors.role[0]);
-        }
+        const errorMapping = {
+          first_name: "firstName",
+          last_name: "lastName",
+          email: "email",
+          phone: "phone",
+          password: "password",
+          license_number: "licenseNumber",
+          agency: "agency",
+          role: "role",
+        };
+
+        Object.keys(laravelErrors).forEach((key) => {
+          const frontendKey = errorMapping[key] || key;
+          serverErrors[frontendKey] = laravelErrors[key][0];
+        });
 
         setErrors(serverErrors);
+        setMessage({
+          type: "error",
+          text: "Veuillez corriger les erreurs signalées",
+        });
       }
       // Erreur générale
       else if (error.response?.data?.message) {
-        setMessage(error.response.data.message);
+        setMessage({
+          type: "error",
+          text: error.response.data.message,
+        });
       }
       // Erreur réseau ou autre
-      else {
-        setMessage("Erreur lors de l'inscription. Veuillez réessayer.");
+      else if (error.message) {
+        setMessage({
+          type: "error",
+          text: "Erreur de connexion. Vérifiez votre connexion internet.",
+        });
+      } else {
+        setMessage({
+          type: "error",
+          text: "Erreur lors de l'inscription. Veuillez réessayer.",
+        });
       }
 
       console.error("Erreur inscription:", error);
@@ -206,8 +249,19 @@ const Register = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    
+    // Effacer l'erreur du champ modifié
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+    
+    // Effacer le message d'erreur général
+    if (message.type === "error") {
+      setMessage({ type: "", text: "" });
     }
   };
 
@@ -302,6 +356,7 @@ const Register = () => {
             >
               {type.label}
             </h3>
+            <p className="text-sm text-gray-600 mt-1">{type.description}</p>
           </div>
         </div>
       </button>
@@ -347,6 +402,30 @@ const Register = () => {
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+          {/* Message de succès/erreur */}
+          {message.text && (
+            <div
+              className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
+                message.type === "success"
+                  ? "bg-green-50 border border-green-200"
+                  : "bg-red-50 border border-red-200"
+              }`}
+            >
+              {message.type === "success" ? (
+                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+              )}
+              <p
+                className={`text-sm font-medium ${
+                  message.type === "success" ? "text-green-800" : "text-red-800"
+                }`}
+              >
+                {message.text}
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Informations de base */}
             <div>
@@ -374,6 +453,7 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
+                      disabled={isLoading}
                       autoFocus
                     />
                     {errors.firstName && (
@@ -404,6 +484,7 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
+                      disabled={isLoading}
                     />
                     {errors.lastName && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -440,6 +521,7 @@ const Register = () => {
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                     }`}
+                    disabled={isLoading}
                   />
                   {errors.email && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -470,6 +552,7 @@ const Register = () => {
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                     }`}
+                    disabled={isLoading}
                   />
                   {errors.phone && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -518,6 +601,7 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
                       }`}
+                      disabled={isLoading}
                     />
                     {errors.licenseNumber && (
                       <p className="mt-2 text-sm text-red-600">
@@ -540,6 +624,7 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
                       }`}
+                      disabled={isLoading}
                     />
                     {errors.agency && (
                       <p className="mt-2 text-sm text-red-600">
@@ -575,11 +660,13 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-gray-600 transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -616,6 +703,7 @@ const Register = () => {
                           ? "border-red-500 focus:border-red-500"
                           : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
                       }`}
+                      disabled={isLoading}
                     />
                     <button
                       type="button"
@@ -623,6 +711,7 @@ const Register = () => {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
+                      disabled={isLoading}
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -649,6 +738,7 @@ const Register = () => {
                     checked={formData.terms}
                     onChange={(e) => handleChange("terms", e.target.checked)}
                     className="sr-only"
+                    disabled={isLoading}
                   />
                   <div
                     className={`w-5 h-5 border-2 rounded transition-all flex items-center justify-center ${
@@ -719,7 +809,7 @@ const Register = () => {
               </div>
             </div>
           </div>
-          {message && <p className="text-green-500">{message}</p>}
+
           {/* Login Link */}
           <div className="text-center">
             <Link
