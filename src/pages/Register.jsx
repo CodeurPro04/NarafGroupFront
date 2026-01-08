@@ -178,7 +178,7 @@ const Register = () => {
       if (response.success) {
         setMessage({
           type: "success",
-          text: "✅ Inscription réussie ! Redirection...",
+          text: "Inscription réussie ! Redirection...",
         });
 
         // Redirection vers la page d'accueil après 1.5s

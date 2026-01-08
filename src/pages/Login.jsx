@@ -54,7 +54,7 @@ const Login = () => {
     try {
       await loginApi(formData.email, formData.password);
 
-      // ✅ succès → redirection
+      // succès, redirection
       navigate("/");
     } catch (error) {
       if (error.response?.status === 401) {
