@@ -912,7 +912,7 @@ const Properties = () => {
                   {filteredProperties.map((property) => (
                     <div
                       key={property.id}
-                      className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 rounded-lg"
+                      className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex flex-col md:flex-row">
                         <div className="md:w-1/3 relative h-64 md:h-auto">
