@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Link} from 'react-router-dom'
 import Hero from '../components/layout/Hero';
+import { getApprovedPartners } from '../api/axios';
 import {
   Building2,
   Shield,
@@ -20,6 +21,9 @@ import {
 } from "lucide-react";
 
 const Home = () => {
+  const [partners, setPartners] = useState([]);
+  const [partnersLoading, setPartnersLoading] = useState(true);
+
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -134,6 +138,34 @@ const Home = () => {
     },
   ];
 
+
+  useEffect(() => {
+    const loadPartners = async () => {
+      try {
+        setPartnersLoading(true);
+        const response = await getApprovedPartners();
+        const payload = response?.data?.data ?? response?.data ?? [];
+        const list = payload.data || payload;
+        setPartners(Array.isArray(list) ? list : []);
+      } catch (error) {
+        console.error('Erreur chargement partenaires:', error);
+      } finally {
+        setPartnersLoading(false);
+      }
+    };
+
+    loadPartners();
+  }, []);
+
+  const apiBase = 'http://localhost:8000/api';
+  const storageBase = apiBase.replace(/\/api\/?$/, '');
+  const getLogoUrl = (path) => {
+    if (!path) return '';
+    if (/^https?:\/\//i.test(path)) return path;
+    const cleaned = path.replace(/^public\//, '');
+    return `${storageBase}/storage/${cleaned}`;
+  };
+
   const handleInputChange = (e) => {
     setContactForm({
       ...contactForm,
@@ -223,7 +255,7 @@ const Home = () => {
                 key={property.id}
                 className="group bg-white  overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
               >
-              <Link to={`/property/${property.id}`}>
+              <Link to={`/property/${property.uuid}`}>
                 <div className="relative h-64 overflow-hidden">
                   <img
                     src={property.image}
@@ -326,6 +358,45 @@ const Home = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Nos partenaires</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Des entreprises de confiance qui travaillent avec Naraf Group.
+            </p>
+          </div>
+
+          {partnersLoading ? (
+            <p className="text-center text-sm text-gray-500">Chargement des partenaires...</p>
+          ) : partners.length === 0 ? (
+            <p className="text-center text-sm text-gray-500">Aucun partenaire publie pour le moment.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {partners.map((partner) => (
+                <div key={partner.uuid} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition">
+                  <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden">
+                    {partner.logo_path ? (
+                      <img
+                        src={getLogoUrl(partner.logo_path)}
+                        alt={partner.company_name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm font-semibold text-slate-500">Logo</span>
+                    )}
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900">{partner.company_name}</h3>
+                  <p className="text-sm text-gray-500">{partner.company_type || 'Entreprise'}</p>
+                  <p className="text-xs text-gray-400 mt-2">{partner.city || 'Localisation a definir'}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

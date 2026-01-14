@@ -1,447 +1,888 @@
-import React, { useState, useEffect } from "react";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Edit2, 
-  Save, 
-  X, 
-  Home, 
-  Briefcase, 
-  Shield,
-  Building,
-  TrendingUp
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Phone,
+  MessageSquare,
+  Search,
+  Hammer,
+  Key,
+  Send,
+  Loader2,
+  AlertCircle,
+  MapPin,
+  CheckCircle,
 } from "lucide-react";
+import { visitorService } from "../services/visitorService";
+
+const emptyList = [];
+
+const parseNumber = (value) => {
+  if (value === "" || value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? null : parsed;
+};
 
 const ProfilePage = () => {
-  // Simuler récupération user depuis localStorage
-  const [user, setUser] = useState(null);
-
-  // États pour formulaire
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("profil");
+  const [profile, setProfile] = useState(null);
+  const [profileForm, setProfileForm] = useState({
+    first_name: "",
+    last_name: "",
     phone: "",
-    bio: "",
-    address: "",
-    company: ""
   });
+  const [passwordForm, setPasswordForm] = useState({
+    current_password: "",
+    new_password: "",
+    new_password_confirmation: "",
+  });
+  const [messages, setMessages] = useState(emptyList);
+  const [searchRequests, setSearchRequests] = useState(emptyList);
+  const [constructionRequests, setConstructionRequests] = useState(emptyList);
+  const [propertyTypes, setPropertyTypes] = useState(emptyList);
+  const [searchForm, setSearchForm] = useState({
+    transaction_type: "vente",
+    property_type_id: "",
+    budget_min: "",
+    budget_max: "",
+    location_preferences: "",
+    bedrooms_min: "",
+    surface_min: "",
+    additional_requirements: "",
+  });
+  const [constructionForm, setConstructionForm] = useState({
+    title: "",
+    description: "",
+    budget_min: "",
+    budget_max: "",
+    surface_area: "",
+    location: "",
+    city: "",
+  });
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [loading, setLoading] = useState({
+    profile: true,
+    messages: false,
+    search: false,
+    construction: false,
+    action: false,
+  });
+  const [notice, setNotice] = useState({ type: "", message: "" });
 
-  const [editMode, setEditMode] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
+  const isAuthenticated = useMemo(() => {
+    const token = localStorage.getItem("auth_token");
+    return Boolean(token);
+  }, []);
 
-  // Icônes selon le rôle
-  const roleIcons = {
-    "Client": <User className="w-5 h-5" />,
-    "Propriétaire": <Home className="w-5 h-5" />,
-    "Agent immobilier": <Briefcase className="w-5 h-5" />,
-    "Investisseur": <TrendingUp className="w-5 h-5" />,
-    "Entreprise de partenariat": <Building className="w-5 h-5" />,
-    "Administrateur": <Shield className="w-5 h-5" />,
-    "Gestionnaire": <Briefcase className="w-5 h-5" />
+  const tabs = [
+    { id: "profil", label: "Profil", icon: <User size={18} /> },
+    { id: "messages", label: "Messages", icon: <MessageSquare size={18} /> },
+    { id: "recherche", label: "Demandes", icon: <Search size={18} /> },
+    { id: "construction", label: "Construction", icon: <Hammer size={18} /> },
+    { id: "securite", label: "Securite", icon: <Key size={18} /> },
+  ];
+
+  const showNotice = (type, message) => {
+    setNotice({ type, message });
+    setTimeout(() => setNotice({ type: "", message: "" }), 4000);
+  };
+
+  const loadProfile = async () => {
+    setLoading((prev) => ({ ...prev, profile: true }));
+    try {
+      const response = await visitorService.getProfile();
+      const user = response?.data?.data?.user;
+      setProfile(user || null);
+      if (user) {
+        setProfileForm({
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
+          phone: user.phone || "",
+        });
+      }
+    } catch (error) {
+      showNotice("error", "Impossible de charger le profil.");
+    } finally {
+      setLoading((prev) => ({ ...prev, profile: false }));
+    }
+  };
+
+  const loadMessages = async () => {
+    setLoading((prev) => ({ ...prev, messages: true }));
+    try {
+      const response = await visitorService.getMessages();
+      setMessages(visitorService.extractList(response));
+    } catch (error) {
+      showNotice("error", "Impossible de charger les messages.");
+    } finally {
+      setLoading((prev) => ({ ...prev, messages: false }));
+    }
+  };
+
+  const loadSearchRequests = async () => {
+    setLoading((prev) => ({ ...prev, search: true }));
+    try {
+      const response = await visitorService.getSearchRequests();
+      setSearchRequests(visitorService.extractList(response));
+    } catch (error) {
+      showNotice("error", "Impossible de charger les demandes.");
+    } finally {
+      setLoading((prev) => ({ ...prev, search: false }));
+    }
+  };
+
+  const loadConstructionRequests = async () => {
+    setLoading((prev) => ({ ...prev, construction: true }));
+    try {
+      const response = await visitorService.getConstructionRequests();
+      setConstructionRequests(visitorService.extractList(response));
+    } catch (error) {
+      showNotice("error", "Impossible de charger les projets.");
+    } finally {
+      setLoading((prev) => ({ ...prev, construction: false }));
+    }
+  };
+
+  const loadPropertyTypes = async () => {
+    try {
+      const response = await visitorService.getPropertyTypes();
+      const list = response?.data?.data || response?.data || [];
+      setPropertyTypes(Array.isArray(list) ? list : emptyList);
+    } catch (error) {
+      setPropertyTypes(emptyList);
+    }
   };
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user")) || {
-      id: 1,
-      first_name: "Jean",
-      last_name: "Dupont",
-      email: "jean.dupont@email.com",
-      phone: "+33 6 12 34 56 78",
-      bio: "Propriétaire investisseur dans l'immobilier résidentiel depuis 10 ans.",
-      role: "Propriétaire",
-      role_name: "Propriétaire",
-      address: "123 Avenue des Champs-Élysées, 75008 Paris",
-      company: "Immobilière Dupont & Cie",
-      member_since: "2023-01-15",
-      stats: {
-        properties_listed: 12,
-        active_listings: 3,
-        total_messages: 47
+    if (!isAuthenticated) return;
+    loadProfile();
+    loadPropertyTypes();
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (activeTab === "messages" && messages.length === 0) {
+      loadMessages();
+    }
+    if (activeTab === "recherche" && searchRequests.length === 0) {
+      loadSearchRequests();
+    }
+    if (activeTab === "construction" && constructionRequests.length === 0) {
+      loadConstructionRequests();
+    }
+  }, [activeTab, isAuthenticated]);
+
+  const handleProfileChange = (event) => {
+    const { name, value } = event.target;
+    setProfileForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePasswordChange = (event) => {
+    const { name, value } = event.target;
+    setPasswordForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearchFormChange = (event) => {
+    const { name, value } = event.target;
+    setSearchForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleConstructionFormChange = (event) => {
+    const { name, value } = event.target;
+    setConstructionForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const updateProfile = async (event) => {
+    event.preventDefault();
+    setLoading((prev) => ({ ...prev, action: true }));
+    try {
+      const response = await visitorService.updateProfile(profileForm);
+      const user = response?.data?.data?.user;
+      if (user) {
+        setProfile((prev) => ({ ...prev, ...user }));
+        localStorage.setItem("user", JSON.stringify({ ...(profile || {}), ...user }));
       }
-    };
-
-    setUser(storedUser);
-    setFormData({
-      firstName: storedUser.first_name || "",
-      lastName: storedUser.last_name || "",
-      email: storedUser.email || "",
-      phone: storedUser.phone || "",
-      bio: storedUser.bio || "",
-      address: storedUser.address || "",
-      company: storedUser.company || ""
-    });
-  }, []);
-
-  const handleSave = (e) => {
-    e.preventDefault();
-
-    const updatedUser = {
-      ...user,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      bio: formData.bio,
-      address: formData.address,
-      company: formData.company
-    };
-
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    setEditMode(false);
-    
-    setSuccessMsg("Modifications enregistrées avec succès");
-    setTimeout(() => setSuccessMsg(""), 3000);
+      showNotice("success", "Profil mis a jour.");
+    } catch (error) {
+      showNotice("error", "Mise a jour impossible.");
+    } finally {
+      setLoading((prev) => ({ ...prev, action: false }));
+    }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const updatePassword = async (event) => {
+    event.preventDefault();
+    setLoading((prev) => ({ ...prev, action: true }));
+    try {
+      await visitorService.changePassword(passwordForm);
+      showNotice("success", "Mot de passe modifie.");
+      setPasswordForm({
+        current_password: "",
+        new_password: "",
+        new_password_confirmation: "",
+      });
+    } catch (error) {
+      showNotice("error", "Erreur lors du changement de mot de passe.");
+    } finally {
+      setLoading((prev) => ({ ...prev, action: false }));
+    }
   };
 
-  if (!user) {
+  const submitSearchRequest = async (event) => {
+    event.preventDefault();
+    setLoading((prev) => ({ ...prev, action: true }));
+    const payload = {
+      transaction_type: searchForm.transaction_type,
+      property_type_id: searchForm.property_type_id
+        ? Number(searchForm.property_type_id)
+        : null,
+      budget_min: parseNumber(searchForm.budget_min),
+      budget_max: parseNumber(searchForm.budget_max),
+      location_preferences: searchForm.location_preferences
+        ? searchForm.location_preferences
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : [],
+      bedrooms_min: parseNumber(searchForm.bedrooms_min),
+      surface_min: parseNumber(searchForm.surface_min),
+      additional_requirements: searchForm.additional_requirements || null,
+    };
+
+    try {
+      await visitorService.createSearchRequest(payload);
+      showNotice("success", "Demande envoyee.");
+      setSearchForm({
+        transaction_type: "vente",
+        property_type_id: "",
+        budget_min: "",
+        budget_max: "",
+        location_preferences: "",
+        bedrooms_min: "",
+        surface_min: "",
+        additional_requirements: "",
+      });
+      loadSearchRequests();
+    } catch (error) {
+      showNotice("error", "Erreur lors de la demande.");
+    } finally {
+      setLoading((prev) => ({ ...prev, action: false }));
+    }
+  };
+
+  const submitConstructionRequest = async (event) => {
+    event.preventDefault();
+    setLoading((prev) => ({ ...prev, action: true }));
+    const payload = {
+      title: constructionForm.title || null,
+      description: constructionForm.description,
+      budget_min: parseNumber(constructionForm.budget_min),
+      budget_max: parseNumber(constructionForm.budget_max),
+      surface_area: parseNumber(constructionForm.surface_area),
+      location: constructionForm.location || null,
+      city: constructionForm.city || null,
+    };
+
+    try {
+      await visitorService.createConstructionRequest(payload);
+      showNotice("success", "Demande envoyee.");
+      setConstructionForm({
+        title: "",
+        description: "",
+        budget_min: "",
+        budget_max: "",
+        surface_area: "",
+        location: "",
+        city: "",
+      });
+      loadConstructionRequests();
+    } catch (error) {
+      showNotice("error", "Erreur lors de la demande.");
+    } finally {
+      setLoading((prev) => ({ ...prev, action: false }));
+    }
+  };
+
+  const submitReply = async (messageUuid) => {
+    const replyText = replyDrafts[messageUuid];
+    if (!replyText) return;
+
+    setLoading((prev) => ({ ...prev, action: true }));
+    try {
+      await visitorService.replyMessage(messageUuid, { message: replyText });
+      setReplyDrafts((prev) => ({ ...prev, [messageUuid]: "" }));
+      showNotice("success", "Reponse envoyee.");
+      loadMessages();
+    } catch (error) {
+      showNotice("error", "Erreur lors de la reponse.");
+    } finally {
+      setLoading((prev) => ({ ...prev, action: false }));
+    }
+  };
+
+  if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-gray-50 py-20 px-4">
+        <div className="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-4">
+            <User />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Espace visiteur</h1>
+          <p className="text-gray-600 mb-6">
+            Connecte-toi pour voir tes messages et gerer tes demandes.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+          >
+            Se connecter
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-16 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Mon Profil</h1>
-          <p className="text-gray-600 mt-2">Gérez vos informations personnelles et vos préférences</p>
+        <div className="mb-8 flex flex-col gap-3">
+          <h1 className="text-3xl font-bold text-gray-900">Mon espace visiteur</h1>
+          <p className="text-gray-600">
+            Suis tes demandes, consulte tes messages et mets a jour ton profil.
+          </p>
         </div>
 
-        {/* Success Message */}
-        {successMsg && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-green-800">{successMsg}</p>
-            </div>
+        {notice.message && (
+          <div
+            className={`mb-6 rounded-lg border px-4 py-3 flex items-center gap-3 ${
+              notice.type === "error"
+                ? "border-red-200 bg-red-50 text-red-700"
+                : "border-green-200 bg-green-50 text-green-700"
+            }`}
+          >
+            {notice.type === "error" ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
+            <span className="text-sm font-medium">{notice.message}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - User Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-              {/* Profile Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold border-4 border-white/30">
-                      {`${user.first_name?.charAt(0) || ""}${user.last_name?.charAt(0) || ""}`.toUpperCase()}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1 space-y-4">
+            <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+              {loading.profile ? (
+                <div className="flex items-center justify-center h-24">
+                  <Loader2 className="animate-spin text-blue-600" />
+                </div>
+              ) : (
+                <>
+                  <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold mb-4">
+                    {(profile?.first_name?.charAt(0) || "V") +
+                      (profile?.last_name?.charAt(0) || "")}
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    {profile?.first_name} {profile?.last_name}
+                  </h2>
+                  <p className="text-sm text-gray-500">{profile?.role_name || "Visiteur"}</p>
+                  <div className="mt-4 space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <Mail size={16} className="text-blue-500" />
+                      <span className="truncate">{profile?.email}</span>
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-white">{`${user.first_name} ${user.last_name}`}</h2>
-                      <div className="flex items-center mt-1">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white">
-                          {roleIcons[user.role_name || user.role]}
-                          <span className="ml-2">{user.role_name || user.role}</span>
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Phone size={16} className="text-blue-500" />
+                      <span>{profile?.phone || "Non renseigne"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin size={16} className="text-blue-500" />
+                      <span>Profil en ligne</span>
                     </div>
                   </div>
+                </>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-100">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg bg-blue-50 p-3">
+                  <div className="text-gray-500">Messages</div>
+                  <div className="text-xl font-semibold text-blue-600">{messages.length}</div>
+                </div>
+                <div className="rounded-lg bg-amber-50 p-3">
+                  <div className="text-gray-500">Demandes</div>
+                  <div className="text-xl font-semibold text-amber-600">{searchRequests.length}</div>
+                </div>
+                <div className="rounded-lg bg-emerald-50 p-3">
+                  <div className="text-gray-500">Construction</div>
+                  <div className="text-xl font-semibold text-emerald-600">
+                    {constructionRequests.length}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <div className="text-gray-500">Statut</div>
+                  <div className="text-sm font-semibold text-slate-700">Actif</div>
                 </div>
               </div>
+            </div>
 
-              {/* User Info */}
-              <div className="p-6">
-                <div className="space-y-4">
-                  <div className="flex items-center text-gray-600">
-                    <Mail className="w-5 h-5 mr-3 text-blue-500" />
-                    <span className="truncate">{user.email}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Phone className="w-5 h-5 mr-3 text-blue-500" />
-                    <span>{user.phone}</span>
-                  </div>
-                  {user.company && (
-                    <div className="flex items-center text-gray-600">
-                      <Building className="w-5 h-5 mr-3 text-blue-500" />
-                      <span>{user.company}</span>
-                    </div>
-                  )}
-                  {user.address && (
-                    <div className="flex items-start text-gray-600">
-                      <Home className="w-5 h-5 mr-3 text-blue-500 mt-0.5" />
-                      <span className="text-sm">{user.address}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Bio */}
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">
-                    À propos
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {user.bio || "Aucune description fournie."}
-                  </p>
-                </div>
-
-                {/* Stats */}
-                {(user.role === "Propriétaire" || user.role === "Agent immobilier") && user.stats && (
-                  <div className="mt-8 pt-6 border-t border-gray-100">
-                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-                      Activité
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{user.stats.properties_listed || 0}</div>
-                        <div className="text-xs text-gray-500 mt-1">Biens publiés</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{user.stats.active_listings || 0}</div>
-                        <div className="text-xs text-gray-500 mt-1">Annonces actives</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{user.stats.total_messages || 0}</div>
-                        <div className="text-xs text-gray-500 mt-1">Messages</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Member Since */}
-                <div className="mt-8 pt-6 border-t border-gray-100">
-                  <div className="text-sm text-gray-500">
-                    Membre depuis le {user.member_since ? new Date(user.member_since).toLocaleDateString('fr-FR') : '---'}
-                  </div>
-                </div>
+            <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-100">
+              <div className="space-y-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
+                      activeTab === tab.id
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Right Column - Edit Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Informations personnelles
-                  </h3>
-                  {!editMode ? (
+          <div className="lg:col-span-3 space-y-6">
+            {activeTab === "profil" && (
+              <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <User className="text-blue-600" />
+                  <h3 className="text-xl font-semibold text-gray-900">Informations personnelles</h3>
+                </div>
+                <form onSubmit={updateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Prenom</label>
+                    <input
+                      name="first_name"
+                      value={profileForm.first_name}
+                      onChange={handleProfileChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Nom</label>
+                    <input
+                      name="last_name"
+                      value={profileForm.last_name}
+                      onChange={handleProfileChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Email</label>
+                    <input
+                      value={profile?.email || ""}
+                      disabled
+                      className="mt-2 w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Telephone</label>
+                    <input
+                      name="phone"
+                      value={profileForm.phone}
+                      onChange={handleProfileChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="md:col-span-2 flex justify-end">
                     <button
-                      onClick={() => setEditMode(true)}
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                      type="submit"
+                      disabled={loading.action}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
                     >
-                      <Edit2 className="w-4 h-4 mr-2" />
-                      Modifier
+                      {loading.action ? "Mise a jour..." : "Enregistrer"}
                     </button>
-                  ) : (
-                    <div className="flex items-center space-x-3">
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {activeTab === "messages" && (
+              <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <MessageSquare className="text-blue-600" />
+                  <h3 className="text-xl font-semibold text-gray-900">Messages</h3>
+                </div>
+                {loading.messages ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="animate-spin text-blue-600" />
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    Aucun message pour le moment.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div
+                        key={message.uuid}
+                        className="border border-gray-200 rounded-xl p-4 space-y-3"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {message.subject || "Sans objet"}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {message.sender?.full_name || "Service NARAF"}
+                            </p>
+                          </div>
+                          <span className="text-xs text-gray-400">
+                            {message.created_at
+                              ? new Date(message.created_at).toLocaleDateString()
+                              : ""}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 whitespace-pre-line">
+                          {message.message}
+                        </p>
+                        <div className="flex flex-col md:flex-row md:items-center gap-2">
+                          <input
+                            value={replyDrafts[message.uuid] || ""}
+                            onChange={(event) =>
+                              setReplyDrafts((prev) => ({
+                                ...prev,
+                                [message.uuid]: event.target.value,
+                              }))
+                            }
+                            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                            placeholder="Ecrire une reponse..."
+                          />
+                          <button
+                            onClick={() => submitReply(message.uuid)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+                          >
+                            <Send size={16} />
+                            Repondre
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === "recherche" && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Search className="text-blue-600" />
+                    <h3 className="text-xl font-semibold text-gray-900">Nouvelle demande</h3>
+                  </div>
+                  <form onSubmit={submitSearchRequest} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Type de transaction</label>
+                      <select
+                        name="transaction_type"
+                        value={searchForm.transaction_type}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      >
+                        <option value="vente">Vente</option>
+                        <option value="location">Location</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Type de bien</label>
+                      <select
+                        name="property_type_id"
+                        value={searchForm.property_type_id}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      >
+                        <option value="">Tous</option>
+                        {propertyTypes.map((type) => (
+                          <option key={type.id} value={type.id}>
+                            {type.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Budget min</label>
+                      <input
+                        name="budget_min"
+                        value={searchForm.budget_min}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Budget max</label>
+                      <input
+                        name="budget_max"
+                        value={searchForm.budget_max}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Chambres min</label>
+                      <input
+                        name="bedrooms_min"
+                        value={searchForm.bedrooms_min}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Surface min</label>
+                      <input
+                        name="surface_min"
+                        value={searchForm.surface_min}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Villes souhaitees (separees par des virgules)
+                      </label>
+                      <input
+                        name="location_preferences"
+                        value={searchForm.location_preferences}
+                        onChange={handleSearchFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                        placeholder="Abidjan, Cocody, Plateau"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Besoins supplementaires
+                      </label>
+                      <textarea
+                        name="additional_requirements"
+                        value={searchForm.additional_requirements}
+                        onChange={handleSearchFormChange}
+                        rows={3}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div className="md:col-span-2 flex justify-end">
                       <button
                         type="submit"
-                        form="profile-form"
-                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition"
+                        disabled={loading.action}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
                       >
-                        <Save className="w-4 h-4 mr-2" />
-                        Enregistrer
+                        Envoyer la demande
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditMode(false);
-                          setFormData({
-                            firstName: user.first_name || "",
-                            lastName: user.last_name || "",
-                            email: user.email || "",
-                            phone: user.phone || "",
-                            bio: user.bio || "",
-                            address: user.address || "",
-                            company: user.company || ""
-                          });
-                        }}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition"
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        Annuler
-                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Historique des demandes</h3>
+                  {loading.search ? (
+                    <div className="flex items-center justify-center py-10">
+                      <Loader2 className="animate-spin text-blue-600" />
+                    </div>
+                  ) : searchRequests.length === 0 ? (
+                    <div className="text-center py-10 text-gray-500">Aucune demande.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {searchRequests.map((request) => (
+                        <div
+                          key={request.uuid || request.id}
+                          className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                        >
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {request.transaction_type || "Demande"}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {request.property_type?.name || "Tous types"}
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Statut: {request.status || "pending"}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
               </div>
+            )}
 
-              <form id="profile-form" onSubmit={handleSave} className="p-6">
-                <div className="space-y-6">
-                  {/* Nom et Prénom */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Prénom
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        disabled={!editMode}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                          editMode 
-                            ? "border-gray-300 bg-white" 
-                            : "border-gray-200 bg-gray-50 text-gray-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nom
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        disabled={!editMode}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                          editMode 
-                            ? "border-gray-300 bg-white" 
-                            : "border-gray-200 bg-gray-50 text-gray-500"
-                        }`}
-                        required
-                      />
-                    </div>
+            {activeTab === "construction" && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Hammer className="text-blue-600" />
+                    <h3 className="text-xl font-semibold text-gray-900">Demande de construction</h3>
                   </div>
-
-                  {/* Email et Téléphone */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                      </label>
+                  <form
+                    onSubmit={submitConstructionRequest}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">Titre</label>
                       <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        disabled={!editMode}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                          editMode 
-                            ? "border-gray-300 bg-white" 
-                            : "border-gray-200 bg-gray-50 text-gray-500"
-                        }`}
+                        name="title"
+                        value={constructionForm.title}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">Description</label>
+                      <textarea
+                        name="description"
+                        value={constructionForm.description}
+                        onChange={handleConstructionFormChange}
+                        rows={4}
                         required
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Téléphone
-                      </label>
+                      <label className="text-sm font-medium text-gray-700">Budget min</label>
                       <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        disabled={!editMode}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                          editMode 
-                            ? "border-gray-300 bg-white" 
-                            : "border-gray-200 bg-gray-50 text-gray-500"
-                        }`}
+                        name="budget_min"
+                        value={constructionForm.budget_min}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
                       />
                     </div>
-                  </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Budget max</label>
+                      <input
+                        name="budget_max"
+                        value={constructionForm.budget_max}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Surface</label>
+                      <input
+                        name="surface_area"
+                        value={constructionForm.surface_area}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Ville</label>
+                      <input
+                        name="city"
+                        value={constructionForm.city}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">Localisation</label>
+                      <input
+                        name="location"
+                        value={constructionForm.location}
+                        onChange={handleConstructionFormChange}
+                        className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      />
+                    </div>
+                    <div className="md:col-span-2 flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={loading.action}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+                      >
+                        Envoyer la demande
+                      </button>
+                    </div>
+                  </form>
+                </div>
 
-                  {/* Entreprise */}
-                  {(user.role === "Agent immobilier" || user.role === "Entreprise de partenariat") && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Société / Agence
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        value={formData.company}
-                        disabled={!editMode}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                          editMode 
-                            ? "border-gray-300 bg-white" 
-                            : "border-gray-200 bg-gray-50 text-gray-500"
-                        }`}
-                      />
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Mes projets</h3>
+                  {loading.construction ? (
+                    <div className="flex items-center justify-center py-10">
+                      <Loader2 className="animate-spin text-blue-600" />
+                    </div>
+                  ) : constructionRequests.length === 0 ? (
+                    <div className="text-center py-10 text-gray-500">Aucun projet.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {constructionRequests.map((project) => (
+                        <div
+                          key={project.uuid || project.id}
+                          className="border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                        >
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {project.title || "Demande de construction"}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {project.city || "Ville non renseignee"}
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Statut: {project.status || "submitted"}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
+                </div>
+              </div>
+            )}
 
-                  {/* Adresse */}
+            {activeTab === "securite" && (
+              <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <Key className="text-blue-600" />
+                  <h3 className="text-xl font-semibold text-gray-900">Changer le mot de passe</h3>
+                </div>
+                <form onSubmit={updatePassword} className="space-y-4 max-w-lg">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Adresse
+                    <label className="text-sm font-medium text-gray-700">Mot de passe actuel</label>
+                    <input
+                      type="password"
+                      name="current_password"
+                      value={passwordForm.current_password}
+                      onChange={handlePasswordChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                    <input
+                      type="password"
+                      name="new_password"
+                      value={passwordForm.new_password}
+                      onChange={handlePasswordChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Confirmer le nouveau mot de passe
                     </label>
                     <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      disabled={!editMode}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
-                        editMode 
-                          ? "border-gray-300 bg-white" 
-                          : "border-gray-200 bg-gray-50 text-gray-500"
-                      }`}
+                      type="password"
+                      name="new_password_confirmation"
+                      value={passwordForm.new_password_confirmation}
+                      onChange={handlePasswordChange}
+                      className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3"
+                      required
                     />
                   </div>
-
-                  {/* Bio */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description personnelle / Biographie
-                    </label>
-                    <textarea
-                      name="bio"
-                      value={formData.bio}
-                      disabled={!editMode}
-                      onChange={handleChange}
-                      rows={4}
-                      className={`w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none ${
-                        editMode 
-                          ? "border-gray-300 bg-white" 
-                          : "border-gray-200 bg-gray-50 text-gray-500"
-                      }`}
-                      placeholder="Décrivez-vous, vos expériences, spécialités immobilières..."
-                    />
-                  </div>
-                </div>
-              </form>
-            </div>
-
-            {/* Additional Info for Professionals */}
-            {(user.role === "Agent immobilier" || user.role === "Propriétaire") && (
-              <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Pour les professionnels
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <button className="p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition text-left">
-                    <div className="text-blue-600 font-semibold mb-1">Mes Annonces</div>
-                    <div className="text-sm text-gray-600">Consulter et gérer vos publications</div>
+                  <button
+                    type="submit"
+                    disabled={loading.action}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+                  >
+                    Mettre a jour
                   </button>
-                  <button className="p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition text-left">
-                    <div className="text-blue-600 font-semibold mb-1">Messages</div>
-                    <div className="text-sm text-gray-600">Voir vos conversations</div>
-                  </button>
-                  <button className="p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition text-left">
-                    <div className="text-blue-600 font-semibold mb-1">Statistiques</div>
-                    <div className="text-sm text-gray-600">Analyser votre activité</div>
-                  </button>
-                </div>
+                </form>
               </div>
             )}
           </div>

@@ -12,6 +12,7 @@ import {
   CheckCircle,
   AlertCircle,
   Shield,
+  Handshake,
 } from "lucide-react";
 import { register } from "../api/axios";
 
@@ -56,6 +57,13 @@ const Register = () => {
       icon: <Briefcase size={24} />,
       description: "Professionnel de l'immobilier",
       color: "purple",
+    },
+    {
+      value: "company",
+      label: "Entreprise",
+      icon: <Handshake size={24} />,
+      description: "Soumettre une demande de partenariat",
+      color: "amber",
     },
   ];
 
@@ -152,6 +160,7 @@ const Register = () => {
         visitor: "visiteur",
         owner: "proprietaire",
         agent: "agent",
+        company: "entreprise",
       };
 
       // Préparer les données pour l'API Laravel
@@ -176,12 +185,24 @@ const Register = () => {
 
       // Vérifier le succès
       if (response.success) {
+        const requiresActivation =
+          response.data?.requires_activation ||
+          response.data?.user?.is_active === false;
+        if (requiresActivation) {
+          setMessage({
+            type: "success",
+            text: "Compte cree. Votre demande est en attente d'activation par un administrateur.",
+          });
+          setIsLoading(false);
+          return;
+        }
+
         setMessage({
           type: "success",
-          text: "Inscription réussie ! Redirection...",
+          text: "Inscription reussie ! Redirection...",
         });
 
-        // Redirection vers la page d'accueil après 1.5s
+        // Redirection vers la page d'accueil apres 1.5s
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 1500);
@@ -249,7 +270,7 @@ const Register = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    
+
     // Effacer l'erreur du champ modifié
     if (errors[field]) {
       setErrors((prev) => {
@@ -258,7 +279,7 @@ const Register = () => {
         return newErrors;
       });
     }
-    
+
     // Effacer le message d'erreur général
     if (message.type === "error") {
       setMessage({ type: "", text: "" });
@@ -339,13 +360,6 @@ const Register = () => {
             >
               {type.icon}
             </div>
-            {isSelected && (
-              <div
-                className={`w-6 h-6 rounded-full bg-${type.color}-600 flex items-center justify-center`}
-              >
-                <CheckCircle className="w-4 h-4 text-white" />
-              </div>
-            )}
           </div>
 
           <div>
@@ -566,76 +580,6 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Champs spécifiques Agent */}
-            {userType === "agent" && (
-              <div className="p-6 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-purple-900">
-                      Informations professionnelles
-                    </h3>
-                    <p className="text-sm text-purple-700">
-                      Ces informations sont nécessaires pour vérifier votre
-                      statut d'agent
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
-                      Numéro de carte professionnelle
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="CP-XXXX-XXXX"
-                      value={formData.licenseNumber}
-                      onChange={(e) =>
-                        handleChange("licenseNumber", e.target.value)
-                      }
-                      className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-purple-200 outline-none transition-all ${
-                        errors.licenseNumber
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
-                      }`}
-                      disabled={isLoading}
-                    />
-                    {errors.licenseNumber && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {errors.licenseNumber}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-purple-900 mb-2">
-                      Agence
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Nom de votre agence"
-                      value={formData.agency}
-                      onChange={(e) => handleChange("agency", e.target.value)}
-                      className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-purple-200 outline-none transition-all ${
-                        errors.agency
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-purple-300 focus:border-purple-500 hover:border-purple-400"
-                      }`}
-                      disabled={isLoading}
-                    />
-                    {errors.agency && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {errors.agency}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Mot de passe */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -746,11 +690,7 @@ const Register = () => {
                         ? "bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700"
                         : "border-gray-300 group-hover:border-gray-400"
                     }`}
-                  >
-                    {formData.terms && (
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    )}
-                  </div>
+                  ></div>
                 </div>
                 <span className="ml-3 text-sm text-gray-700">
                   J'accepte les{" "}

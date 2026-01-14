@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 // URL de base de ton API Laravel
 const BASE_URL = 'http://localhost:8000';
@@ -13,7 +13,7 @@ const api = axios.create({
   withCredentials: true, // Important pour les cookies CSRF
 });
 
-// Intercepteur pour ajouter le token et le CSRF aux requêtes
+// Intercepteur pour ajouter le token et le CSRF aux requÃªtes
 api.interceptors.request.use(
   (config) => {
     // Ajouter le token d'authentification
@@ -35,16 +35,16 @@ api.interceptors.request.use(
   }
 );
 
-// Intercepteur pour gérer les réponses et erreurs
+// Intercepteur pour gÃ©rer les rÃ©ponses et erreurs
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Si token expiré ou invalide (401)
+    // Si token expirÃ© ou invalide (401)
     if (error.response?.status === 401) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
       
-      // Éviter les redirections infinies
+      // Ã‰viter les redirections infinies
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
@@ -52,8 +52,8 @@ api.interceptors.response.use(
     
     // Si erreur CSRF (419)
     if (error.response?.status === 419) {
-      console.error('Token CSRF expiré, tentative de récupération...');
-      // On pourrait automatiquement retenter après avoir récupéré le CSRF
+      console.error('Token CSRF expirÃ©, tentative de rÃ©cupÃ©ration...');
+      // On pourrait automatiquement retenter aprÃ¨s avoir rÃ©cupÃ©rÃ© le CSRF
     }
     
     return Promise.reject(error);
@@ -80,9 +80,9 @@ export const getCsrfCookie = async () => {
     await axios.get(`${BASE_URL}/sanctum/csrf-cookie`, {
       withCredentials: true
     });
-    console.log('Cookie CSRF récupéré avec succès');
+    console.log('Cookie CSRF rÃ©cupÃ©rÃ© avec succÃ¨s');
   } catch (error) {
-    console.error('Erreur lors de la récupération du cookie CSRF:', error);
+    console.error('Erreur lors de la rÃ©cupÃ©ration du cookie CSRF:', error);
     throw error;
   }
 };
@@ -90,13 +90,13 @@ export const getCsrfCookie = async () => {
 // Fonction d'inscription
 export const register = async (userData) => {
   try {
-    // Récupérer le cookie CSRF avant l'inscription
+    // RÃ©cupÃ©rer le cookie CSRF avant l'inscription
     await getCsrfCookie();
     
     // Effectuer l'inscription
     const response = await api.post('/auth/register', userData);
     
-    // Sauvegarder les données d'authentification
+    // Sauvegarder les donnÃ©es d'authentification
     if (response.data.success && response.data.data.token) {
       localStorage.setItem('auth_token', response.data.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.data.user));
@@ -112,13 +112,13 @@ export const register = async (userData) => {
 // Fonction de connexion
 export const login = async (email, password) => {
   try {
-    // Récupérer le cookie CSRF avant la connexion
+    // RÃ©cupÃ©rer le cookie CSRF avant la connexion
     await getCsrfCookie();
     
     // Effectuer la connexion
     const response = await api.post('/auth/login', { email, password });
     
-    // Sauvegarder les données d'authentification
+    // Sauvegarder les donnÃ©es d'authentification
     if (response.data.success && response.data.data.token) {
       localStorage.setItem('auth_token', response.data.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.data.user));
@@ -131,14 +131,14 @@ export const login = async (email, password) => {
   }
 };
 
-// Fonction de déconnexion
+// Fonction de dÃ©connexion
 export const logout = async () => {
   try {
     await api.post('/auth/logout');
   } catch (error) {
-    console.error('Erreur de déconnexion:', error);
+    console.error('Erreur de dÃ©connexion:', error);
   } finally {
-    // Nettoyer toujours le localStorage même en cas d'erreur
+    // Nettoyer toujours le localStorage mÃªme en cas d'erreur
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user');
   }
@@ -150,12 +150,12 @@ export const getProfile = async () => {
     const response = await api.get('/auth/profile');
     return response.data;
   } catch (error) {
-    console.error('Erreur récupération profil:', error);
+    console.error('Erreur rÃ©cupÃ©ration profil:', error);
     throw error;
   }
 };
 
-// Fonction pour vérifier si l'utilisateur est authentifié
+// Fonction pour vÃ©rifier si l'utilisateur est authentifiÃ©
 export const isAuthenticated = () => {
   const token = localStorage.getItem('auth_token');
   const user = localStorage.getItem('user');
@@ -168,9 +168,25 @@ export const getCurrentUser = () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   } catch (error) {
-    console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+    console.error('Erreur lors de la rÃ©cupÃ©ration de l\'utilisateur:', error);
     return null;
   }
 };
+
+// Demandes de partenariat
+export const applyPartnership = (data) => api.post('/partnership/apply', data, data instanceof FormData
+  ? { headers: { 'Content-Type': 'multipart/form-data' } }
+  : undefined);
+
+export const updatePartnership = (data) => api.put('/partnership/update', data, data instanceof FormData
+  ? { headers: { 'Content-Type': 'multipart/form-data' } }
+  : undefined);
+
+
+
+
+export const getMyPartnership = () => api.get('/partnership/my-application');
+
+export const getApprovedPartners = () => api.get('/partnerships/approved');
 
 export default api;

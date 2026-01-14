@@ -1,85 +1,99 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar, Building, Users, MapPin, CheckCircle, TrendingUp, Shield, Clock, Home, Ruler, Hammer, Phone, Mail, Award, ArrowRight, Play } from 'lucide-react';
 
 import {Link} from 'react-router-dom'
+import api from '../api/axios';
 const Construction = () => {
   const [activeTab, setActiveTab] = useState('en-cours');
+  const [constructionProjects, setConstructionProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const defaultImage =
+    'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80';
 
-  const constructionProjects = [
-    {
-      id: 1,
-      image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
-      title: 'Résidence Les Jardins',
-      location: 'Cocody, Abidjan',
-      type: 'Résidentiel',
-      units: 45,
-      completion: 'Q4 2024',
-      progress: 75,
-      priceFrom: 180000,
-      features: ['Piscine', 'Parking', 'Sécurité 24/7', 'Espace vert'],
-      status: 'en-cours'
-    },
-    {
-      id: 2,
-      image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80',
-      title: 'Tour Horizon',
-      location: 'Plateau, Abidjan',
-      type: 'Mixte',
-      units: 120,
-      completion: 'Q2 2025',
-      progress: 45,
-      priceFrom: 220000,
-      features: ['Centre commercial', 'Bureaux', 'Résidentiel', 'Fitness'],
-      status: 'en-cours'
-    },
-    {
-      id: 3,
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
-      title: 'Villas Prestige',
-      location: 'Riviera, Abidjan',
-      type: 'Villa',
-      units: 15,
-      completion: 'Q1 2025',
-      progress: 60,
-      priceFrom: 450000,
-      features: ['Piscine privée', 'Jardin', 'Garage double', 'Domotique'],
-      status: 'en-cours'
-    },
-    {
-      id: 4,
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
-      title: 'Eden Towers',
-      location: 'Marcory, Abidjan',
-      type: 'Résidentiel',
-      units: 80,
-      completion: 'Livré',
-      progress: 100,
-      priceFrom: 165000,
-      features: ['Vue panoramique', 'Ascenseur', 'Terrasse', 'Parking'],
-      status: 'termine'
+  const normalizeStatus = (status) => {
+    if (!status) return 'en-cours';
+    const value = status.toLowerCase();
+    if (['termine', 'completed', 'done', 'livre', 'archived'].includes(value)) {
+      return 'termine';
     }
-  ];
+    return 'en-cours';
+  };
+
+  const normalizeProject = (project) => {
+    const location = project.location || project.city || '';
+    const status = normalizeStatus(project.status);
+
+    return {
+      id: project.uuid || project.id,
+      image: project.cover_image || project.image_url || defaultImage,
+      title: project.title || 'Projet de construction',
+      location,
+      type: project.project_type || 'Construction',
+      units: project.units || null,
+      completion: project.completion_date || project.completion || 'En cours',
+      progress: project.progress_percent || null,
+      priceFrom: project.budget_min || null,
+      features: Array.isArray(project.features) ? project.features : [],
+      status,
+    };
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProjects = async () => {
+      setIsLoading(true);
+      setLoadError('');
+      try {
+        const response = await api.get('/construction-projects');
+        const list = response?.data?.data || response?.data || [];
+        const normalized = Array.isArray(list)
+          ? list.map(normalizeProject)
+          : [];
+        if (isMounted) {
+          setConstructionProjects(normalized);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLoadError('Impossible de charger les projets.');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const projectsSource = constructionProjects;
 
   const advantages = [
     {
       icon: <Shield size={32} />,
-      title: 'Garantie Décennale',
-      description: 'Protection complète pendant 10 ans'
+      title: 'Garantie Decennale',
+      description: 'Protection complete pendant 10 ans'
     },
     {
       icon: <TrendingUp size={32} />,
-      title: 'TVA Réduite',
-      description: 'Avantages fiscaux à l\'achat dans le neuf'
+      title: 'TVA Reduite',
+      description: 'Avantages fiscaux a l\'achat dans le neuf'
     },
     {
       icon: <CheckCircle size={32} />,
       title: 'Normes Modernes',
-      description: 'Construction aux dernières normes'
+      description: 'Construction aux dernieres normes'
     },
     {
       icon: <Clock size={32} />,
       title: 'Livraison Garantie',
-      description: 'Respect des délais contractuels'
+      description: 'Respect des delais contractuels'
     }
   ];
 
@@ -87,37 +101,40 @@ const Construction = () => {
     {
       number: '01',
       title: 'Consultation',
-      description: 'Échangez avec nos experts pour définir vos besoins'
+      description: 'Echangez avec nos experts pour definir vos besoins'
     },
     {
       number: '02',
       title: 'Conception',
-      description: 'Plans et devis personnalisés selon votre projet'
+      description: 'Plans et devis personnalises selon votre projet'
     },
     {
       number: '03',
       title: 'Construction',
-      description: 'Suivi en temps réel de l\'avancement des travaux'
+      description: 'Suivi en temps reel de l\'avancement des travaux'
     },
     {
       number: '04',
       title: 'Livraison',
-      description: 'Remise des clés et garanties constructeur'
+      description: 'Remise des cles et garanties constructeur'
     }
   ];
 
   const stats = [
-    { icon: <Building size={40} />, value: '150+', label: 'Projets réalisés' },
+    { icon: <Building size={40} />, value: '150+', label: 'Projets realises' },
     { icon: <Users size={40} />, value: '2,500+', label: 'Clients satisfaits' },
-    { icon: <Award size={40} />, value: '25 ans', label: 'D\'expérience' },
+    { icon: <Award size={40} />, value: '25 ans', label: 'D\'experience' },
     { icon: <Home size={40} />, value: '98%', label: 'Taux de satisfaction' }
   ];
 
   const filteredProjects = activeTab === 'tous' 
-    ? constructionProjects 
-    : constructionProjects.filter(p => p.status === activeTab);
+    ? projectsSource 
+    : projectsSource.filter(p => p.status === activeTab);
 
   const formatPrice = (price) => {
+    if (price === null || price === undefined || Number.isNaN(Number(price))) {
+      return "N/A";
+    }
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'XOF',
@@ -139,7 +156,7 @@ const Construction = () => {
           <div className="max-w-3xl">
             <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white mb-6">
               <Hammer size={20} />
-              <span className="font-semibold">Construction & Rénovation</span>
+              <span className="font-semibold">Construction & Renovation</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
@@ -147,7 +164,7 @@ const Construction = () => {
             </h1>
             
             <p className="text-xl text-green-100 mb-8 leading-relaxed">
-              Des projets immobiliers innovants conçus pour durer. Profitez de nos garanties constructeur et d'un accompagnement complet de A à Z.
+              Des projets immobiliers innovants concus pour durer. Profitez de nos garanties constructeur et d'un accompagnement complet de A a Z.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -157,7 +174,7 @@ const Construction = () => {
               </button>
               <button className="flex items-center justify-center space-x-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
                 <Play size={20} />
-                <span>Voir nos réalisations</span>
+                <span>Voir nos realisations</span>
               </button>
             </div>
           </div>
@@ -194,6 +211,12 @@ const Construction = () => {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Des avantages exclusifs pour votre projet de construction
             </p>
+            {isLoading && (
+              <p className="text-sm text-gray-500 mt-3">Chargement...</p>
+            )}
+            {loadError && (
+              <p className="text-sm text-red-600 mt-3">{loadError}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -218,8 +241,14 @@ const Construction = () => {
               Nos Projets de Construction
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Découvrez nos réalisations en cours et terminées
+              Decouvrez nos realisations en cours et terminees
             </p>
+            {isLoading && (
+              <p className="text-sm text-gray-500 mt-3">Chargement...</p>
+            )}
+            {loadError && (
+              <p className="text-sm text-red-600 mt-3">{loadError}</p>
+            )}
           </div>
 
           {/* Tabs */}
@@ -252,7 +281,7 @@ const Construction = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              Terminés
+              Termines
             </button>
           </div>
 
@@ -271,7 +300,7 @@ const Construction = () => {
                   
                   <div className="absolute top-4 left-4 flex items-center space-x-2">
                     <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {project.status === 'en-cours' ? 'En construction' : 'Livré'}
+                      {project.status === 'en-cours' ? 'En construction' : 'Livre'}
                     </span>
                   </div>
 
@@ -286,7 +315,7 @@ const Construction = () => {
 
                 <div className="p-6">
                   {/* Progress Bar */}
-                  {project.status === 'en-cours' && (
+                  {project.status === 'en-cours' && project.progress != null && (
                     <div className="mb-4">
                       <div className="flex justify-between text-sm mb-2">
                         <span className="text-gray-600">Avancement</span>
@@ -309,7 +338,7 @@ const Construction = () => {
                     </div>
                     <div className="text-center">
                       <Users className="text-green-600 mx-auto mb-2" size={20} />
-                      <div className="text-xs text-gray-500 mb-1">Unités</div>
+                      <div className="text-xs text-gray-500 mb-1">Unites</div>
                       <div className="text-sm font-semibold text-gray-900">{project.units}</div>
                     </div>
                     <div className="text-center">
@@ -332,7 +361,7 @@ const Construction = () => {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xs text-gray-500 mb-1">À partir de</div>
+                      <div className="text-xs text-gray-500 mb-1">A partir de</div>
                       <div className="text-2xl font-bold text-green-600">
                         {formatPrice(project.priceFrom)}
                       </div>
@@ -345,6 +374,11 @@ const Construction = () => {
               </div>
             ))}
           </div>
+          {filteredProjects.length === 0 && !isLoading && (
+            <div className="text-center py-12 text-gray-600">
+              Aucun projet de construction disponible pour le moment.
+            </div>
+          )}
         </div>
       </section>
 
@@ -356,8 +390,14 @@ const Construction = () => {
               Notre Processus de Construction
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Un accompagnement sur-mesure du début à la fin de votre projet
+              Un accompagnement sur-mesure du debut a la fin de votre projet
             </p>
+            {isLoading && (
+              <p className="text-sm text-gray-500 mt-3">Chargement...</p>
+            )}
+            {loadError && (
+              <p className="text-sm text-red-600 mt-3">{loadError}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -391,10 +431,10 @@ const Construction = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Prêt à Lancer Votre Projet ?
+              Pret a Lancer Votre Projet ?
             </h2>
             <p className="text-xl text-green-100 mb-10 leading-relaxed">
-              Nos experts vous accompagnent gratuitement dans l'élaboration de votre projet de construction. Demandez votre devis personnalisé dès aujourd'hui.
+              Nos experts vous accompagnent gratuitement dans l'elaboration de votre projet de construction. Demandez votre devis personnalise des aujourd'hui.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -412,17 +452,17 @@ const Construction = () => {
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <CheckCircle className="text-green-300 mb-3" size={32} />
                 <h3 className="text-lg font-bold mb-2">Devis</h3>
-                <p className="text-green-100 text-sm">Estimation détaillée sans engagement</p>
+                <p className="text-green-100 text-sm">Estimation detaillee sans engagement</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <CheckCircle className="text-green-300 mb-3" size={32} />
                 <h3 className="text-lg font-bold mb-2">Conseil Expert</h3>
-                <p className="text-green-100 text-sm">Accompagnement personnalisé 7j/7</p>
+                <p className="text-green-100 text-sm">Accompagnement personnalise 7j/7</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <CheckCircle className="text-green-300 mb-3" size={32} />
                 <h3 className="text-lg font-bold mb-2">Garanties Incluses</h3>
-                <p className="text-green-100 text-sm">Protection décennale et conformité</p>
+                <p className="text-green-100 text-sm">Protection decennale et conformite</p>
               </div>
             </div>
           </div>
@@ -433,3 +473,4 @@ const Construction = () => {
 };
 
 export default Construction;
+

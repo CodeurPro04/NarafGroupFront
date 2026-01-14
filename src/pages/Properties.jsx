@@ -713,6 +713,7 @@ const Properties = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Nos Biens Immobiliers
             </h2>
+            {/* nombre de propriete 
             <p className="text-xl text-gray-600">
               {loading
                 ? "Chargement..."
@@ -721,7 +722,7 @@ const Properties = () => {
                       ? "bien disponible"
                       : "biens disponibles"
                   }`}
-            </p>
+            </p> */}
           </div>
 
           {/* Tabs */}
@@ -1026,7 +1027,7 @@ const Properties = () => {
 
               {filteredProperties.length === 0 && !loading && (
                 <div className="text-center py-20">
-                  <div className="text-6xl mb-4">🏠</div>
+                  {/*<div className="text-6xl mb-4">🏠</div>*/}
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     Aucun bien trouvé
                   </h3>

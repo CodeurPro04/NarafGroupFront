@@ -7,6 +7,7 @@ import {
   X,
   Briefcase,
   Hammer,
+  Handshake,
   LogOut,
   UserCircle,
   ChevronDown,
@@ -103,8 +104,15 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Actions Desktop */}
+                    {/* Actions Desktop */}
           <div className="hidden lg:flex items-center space-x-3">
+            <Link
+              to="/partnership"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-blue-600 border border-blue-100 bg-blue-50 hover:bg-blue-100 rounded-md"
+            >
+              <Handshake size={18} />
+              Devenir partenaire
+            </Link>
             {!isAuthenticated ? (
               <>
                 <button
@@ -169,7 +177,7 @@ const Header = () => {
                       className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                     >
                       <LogOut size={18} className="mr-2" />
-                      {isLoggingOut ? "Déconnexion..." : "Déconnexion"}
+                      {isLoggingOut ? "Deconnexion..." : "Deconnexion"}
                     </button>
                   </div>
                 )}
@@ -177,7 +185,7 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Toggle */}
+{/* Mobile Toggle */}
           <button
             className="lg:hidden p-2"
             onClick={() => setIsMenuOpen((v) => !v)}
@@ -211,6 +219,15 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
+
+            <Link
+              to="/partnership"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded bg-blue-50 text-blue-600"
+            >
+              <Handshake size={18} />
+              Devenir partenaire
+            </Link>
 
             <hr />
 

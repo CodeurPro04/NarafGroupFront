@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TrendingUp,
   Shield,
@@ -25,204 +25,146 @@ import {
   PieChart,
   TrendingUpIcon,
 } from "lucide-react";
+import api from "../api/axios";
 
 const Investment = () => {
   const [activeFilter, setActiveFilter] = useState("tous");
   const [sortBy, setSortBy] = useState("roi_desc");
   const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [investmentProjects, setInvestmentProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const defaultImage =
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
 
-  const investmentProjects = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=1200&q=80",
-      title: "Résidence Premium Cocody",
-      location: "Cocody, Abidjan",
-      type: "Immobilier locatif",
-      roi: "8.5%",
-      minInvestment: 50000,
-      duration: "5 ans",
-      risk: "AAA",
-      totalValue: 2500000,
-      funded: 75,
-      investors: 42,
-      features: [
-        "Garanti locatif",
-        "Gestion incluse",
-        "TVA réduite",
-        "Clé en main",
-      ],
-      popularity: "Très élevée",
-      status: "En cours",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&q=80",
-      title: "Tour d'Affaires Plateau",
-      location: "Plateau, Abidjan",
-      type: "Bureaux",
-      roi: "7.2%",
-      minInvestment: 75000,
-      duration: "7 ans",
-      risk: "AA",
-      totalValue: 4500000,
-      funded: 60,
-      investors: 38,
-      features: [
-        "Bail longue durée",
-        "Prime location",
-        "Indexation loyer",
-        "Services premium",
-      ],
-      popularity: "Élevée",
-      status: "En cours",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
-      title: "Complexe Résidentiel Riviera",
-      location: "Riviera, Abidjan",
-      type: "Résidentiel",
-      roi: "6.8%",
-      minInvestment: 35000,
-      duration: "4 ans",
-      risk: "AAA",
-      totalValue: 1800000,
-      funded: 92,
-      investors: 65,
-      features: [
-        "Rendement garanti",
-        "Promoteur certifié",
-        "Livraison 2025",
-        "Épargne défiscalisée",
-      ],
-      popularity: "Très élevée",
-      status: "Bientôt complet",
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
-      title: "Centre Commercial Zone 4",
-      location: "Marcory, Abidjan",
-      type: "Commercial",
-      roi: "9.1%",
-      minInvestment: 100000,
-      duration: "10 ans",
-      risk: "A",
-      totalValue: 8000000,
-      funded: 45,
-      investors: 28,
-      features: [
-        "Anchors confirmés",
-        "Revenus stables",
-        "Gestion professionnelle",
-        "Prime risque",
-      ],
-      popularity: "Moyenne",
-      status: "Nouveau",
-    },
-    {
-      id: 5,
-      image:
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
-      title: "Villas de Prestige II-Plateaux",
-      location: "2 Plateaux, Abidjan",
-      type: "Luxe",
-      roi: "5.9%",
-      minInvestment: 150000,
-      duration: "6 ans",
-      risk: "AAA",
-      totalValue: 3200000,
-      funded: 88,
-      investors: 24,
-      features: [
-        "Segment premium",
-        "Clientèle internationale",
-        "Services conciergerie",
-        "Plus-value élevée",
-      ],
-      popularity: "Élevée",
-      status: "En cours",
-    },
-    {
-      id: 6,
-      image:
-        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=1200&q=80",
-      title: "Student Housing Université",
-      location: "Cocody, Abidjan",
-      type: "Étudiant",
-      roi: "7.8%",
-      minInvestment: 25000,
-      duration: "8 ans",
-      risk: "AA",
-      totalValue: 1200000,
-      funded: 70,
-      investors: 55,
-      features: [
-        "Demande garantie",
-        "Gestion simplifiée",
-        "Résilience crise",
-        "Croissance forte",
-      ],
-      popularity: "Très élevée",
-      status: "Nouveau",
-    },
-  ];
+  const formatDuration = (months) => {
+    if (!months) return "N/A";
+    if (months < 12) return `${months} mois`;
+    const years = (months / 12).toFixed(1);
+    return `${years} ans`;
+  };
+
+  const normalizeProject = (project) => {
+    const durationMonths = Number(project.duration_months || 0);
+    const expectedReturn = Number(project.expected_return || 0);
+    const minInvestment = Number(project.min_investment || 0);
+    const location = project.location || project.city || "";
+
+    return {
+      id: project.uuid || project.id,
+      image: project.cover_image || project.image_url || defaultImage,
+      title: project.title || "Projet d'investissement",
+      location,
+      type: project.project_type || "immobilier",
+      roi: `${expectedReturn || 0}%`,
+      minInvestment,
+      duration: formatDuration(durationMonths),
+      durationMonths,
+      risk: project.risk_level || "A",
+      totalValue: project.total_investment || 0,
+      funded: project.funded_percentage ?? project.funded ?? null,
+      investors: project.investors_count ?? null,
+      features: Array.isArray(project.features) ? project.features : [],
+      popularity: project.popularity || "",
+      status: project.status || "open",
+    };
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProjects = async () => {
+      setIsLoading(true);
+      setLoadError("");
+      try {
+        const response = await api.get("/investments");
+        const list = response?.data?.data?.data || response?.data?.data || [];
+        const normalized = Array.isArray(list)
+          ? list.map(normalizeProject)
+          : [];
+        if (isMounted) {
+          setInvestmentProjects(normalized);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setLoadError("Impossible de charger les projets.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const projectsSource = investmentProjects;
 
   const investmentStats = [
     {
       label: "Rendement moyen",
-      value: "7.2%",
+      value: `${(
+        projectsSource.reduce(
+          (sum, project) => sum + (parseFloat(project.roi) || 0),
+          0
+        ) / (projectsSource.length || 1)
+      ).toFixed(1)}%`,
       icon: <TrendingUp size={28} />,
-      trend: "+0.4%",
+      trend: projectsSource.length ? "Actif" : "N/A",
       color: "emerald",
     },
     {
-      label: "Investissements sécurisés",
+      label: "Investissements securises",
       value: "100%",
       icon: <Shield size={28} />,
       trend: "Garanti",
       color: "blue",
     },
     {
-      label: "Durée moyenne",
-      value: "6.2 ans",
+      label: "Duree moyenne",
+      value: `${(
+        projectsSource.reduce(
+          (sum, project) => sum + (project.durationMonths || 0),
+          0
+        ) / (projectsSource.length || 1) /
+        12
+      ).toFixed(1)} ans`,
       icon: <Clock size={28} />,
       trend: "Stable",
       color: "purple",
     },
-    
     {
-      label: "Projets financés",
-      value: "45+",
+      label: "Projets en ligne",
+      value: `${projectsSource.length}`,
       icon: <Building2 size={28} />,
-      trend: "En croissance",
+      trend: "En cours",
       color: "indigo",
     },
-
   ];
 
   const benefits = [
     {
       icon: <Shield size={32} />,
-      title: "Sécurité maximale",
+      title: "Securite maximale",
       description: "Audit rigoureux et garanties contractuelles",
       features: [
-        "Due diligence complète",
+        "Due diligence complete",
         "Garanties bancaires",
         "Assurances projet",
       ],
     },
     {
       icon: <BarChart3 size={32} />,
-      title: "Rendement optimisé",
-      description: "Performance supérieure grâce à notre expertise",
+      title: "Rendement optimise",
+      description: "Performance superieure grace a notre expertise",
       features: [
-        "Étude de marché approfondie",
+        "Etude de marche approfondie",
         "Optimisation fiscale",
         "Gestion active",
       ],
@@ -230,17 +172,17 @@ const Investment = () => {
     {
       icon: <Target size={32} />,
       title: "Accompagnement",
-      description: "Suivi personnalisé de votre investissement",
-      features: ["Conseiller dédié", "Reporting trimestriel", "Support 7j/7"],
+      description: "Suivi personnalise de votre investissement",
+      features: ["Conseiller dedie", "Reporting trimestriel", "Support 7j/7"],
     },
     {
       icon: <Zap size={32} />,
-      title: "Process simplifié",
-      description: "Investissez en toute simplicité",
+      title: "Process simplifie",
+      description: "Investissez en toute simplicite",
       features: [
         "Plateforme digitale",
         "Documentation claire",
-        "Paiement sécurisé",
+        "Paiement securise",
       ],
     },
   ];
@@ -248,21 +190,21 @@ const Investment = () => {
   const successStories = [
     {
       name: "Pierre D.",
-      investment: "75,000€",
+      investment: "75,000 XOF",
       duration: "3 ans",
       roi: "42%",
-      project: "Résidence Les Harmonies",
+      project: "Residence Les Harmonies",
     },
     {
       name: "Sophie M.",
-      investment: "120,000€",
+      investment: "120,000 XOF",
       duration: "5 ans",
       roi: "68%",
       project: "Tour des Affaires",
     },
     {
       name: "Thomas R.",
-      investment: "50,000€",
+      investment: "50,000 XOF",
       duration: "2 ans",
       roi: "31%",
       project: "Student Residence",
@@ -270,6 +212,9 @@ const Investment = () => {
   ];
 
   const formatPrice = (price) => {
+    if (price === null || price === undefined || Number.isNaN(Number(price))) {
+      return "N/A";
+    }
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "xof",
@@ -277,7 +222,7 @@ const Investment = () => {
     }).format(price);
   };
 
-  const filteredProjects = investmentProjects
+  const filteredProjects = projectsSource
     .filter((project) => {
       if (
         activeFilter !== "tous" &&
@@ -319,8 +264,18 @@ const Investment = () => {
   };
 
   const calculateAnnualReturn = (investment, roi) => {
-    return formatPrice(investment * (parseFloat(roi) / 100));
+    const investmentValue = Number(investment || 0);
+    const roiValue = parseFloat(roi) || 0;
+    return formatPrice(investmentValue * (roiValue / 100));
   };
+
+  const filterOptions = ["tous", ...Array.from(new Set(investmentProjects
+          .map((project) => project.type)
+          .filter(Boolean)
+          .map((type) => type.toLowerCase())
+      )
+    ),
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -353,14 +308,14 @@ const Investment = () => {
             </h1>
 
             <p className="text-xl text-purple-100 mb-8 leading-relaxed">
-              Investissez dans l'immobilier avec des rendements supérieurs et
-              une sécurité maximale. Nos projets sont sélectionnés et audités
-              pour votre réussite.
+              Investissez dans l'immobilier avec des rendements superieurs et
+              une securite maximale. Nos projets sont selectionnes et audites
+              pour votre reussite.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="inline-flex items-center justify-center gap-3 bg-white text-purple-900 px-8 py-4 rounded-xl font-bold hover:bg-purple-50 transition-all shadow-2xl group">
-                <span>Découvrir les opportunités</span>
+                <span>Decouvrir les opportunites</span>
                 <ChevronRight
                   className="group-hover:translate-x-1 transition-transform"
                   size={20}
@@ -368,7 +323,7 @@ const Investment = () => {
               </button>
               <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all">
                 <Phone size={20} />
-                <span>Parler à un expert</span>
+                <span>Parler a un expert</span>
               </button>
             </div>
           </div>
@@ -426,8 +381,8 @@ const Investment = () => {
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Une approche unique combinant expertise immobilière et
-              optimisation financière
+              Une approche unique combinant expertise immobiliere et
+              optimisation financiere
             </p>
           </div>
 
@@ -470,13 +425,19 @@ const Investment = () => {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-12">
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Opportunités d'Investissement
+                Opportunites d'Investissement
               </h2>
               <p className="text-gray-600">
                 {filteredProjects.length} projet
                 {filteredProjects.length !== 1 ? "s" : ""} disponible
                 {filteredProjects.length !== 1 ? "s" : ""}
               </p>
+              {isLoading && (
+                <p className="text-sm text-gray-500 mt-2">Chargement...</p>
+              )}
+              {loadError && (
+                <p className="text-sm text-red-600 mt-2">{loadError}</p>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
@@ -500,10 +461,10 @@ const Investment = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="appearance-none bg-white border-2 border-gray-200 rounded-xl pl-4 pr-10 py-3 focus:border-purple-500 focus:ring-3 focus:ring-purple-200 outline-none font-medium"
                 >
-                  <option value="roi_desc">Rendement décroissant</option>
+                  <option value="roi_desc">Rendement decroissant</option>
                   <option value="roi_asc">Rendement croissant</option>
                   <option value="min_invest">Investissement minimum</option>
-                  <option value="popularity">Popularité</option>
+                  <option value="popularity">Popularite</option>
                 </select>
                 <Filter
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -515,14 +476,7 @@ const Investment = () => {
 
           {/* Filters */}
           <div className="flex overflow-x-auto gap-2 mb-8 pb-4">
-            {[
-              "tous",
-              "locatif",
-              "bureaux",
-              "commercial",
-              "luxe",
-              "étudiant",
-            ].map((filter) => (
+            {filterOptions.map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
@@ -562,7 +516,7 @@ const Investment = () => {
                     <div className="absolute top-4 left-4 flex gap-2">
                       <span
                         className={`px-3 py-1.5 rounded-full text-sm font-bold text-white ${
-                          project.status === "Bientôt complet"
+                          project.status === "Bientot complet"
                             ? "bg-gradient-to-r from-amber-500 to-amber-600"
                             : project.status === "Nouveau"
                             ? "bg-gradient-to-r from-blue-500 to-blue-600"
@@ -637,7 +591,7 @@ const Investment = () => {
                         <div className="text-2xl font-bold text-gray-900 mb-1">
                           {project.duration}
                         </div>
-                        <div className="text-xs text-gray-600">Durée</div>
+                        <div className="text-xs text-gray-600">Duree</div>
                       </div>
                     </div>
 
@@ -658,7 +612,7 @@ const Investment = () => {
                     <div className="space-y-4">
                       <div className="text-center p-3 bg-gray-50">
                         <div className="text-sm text-gray-600 mb-1">
-                          Retour annuel estimé
+                          Retour annuel estime
                         </div>
                         <div className="text-lg font-bold text-gray-900">
                           {annualReturn}
@@ -670,7 +624,7 @@ const Investment = () => {
                           Investir
                         </button>
                         <button className="px-4 py-3 bg-white border-2 border-gray-200 hover:border-purple-300 text-gray-700 rounded-xl font-semibold transition-all">
-                          Détails
+                          Details
                         </button>
                       </div>
                     </div>
@@ -683,14 +637,14 @@ const Investment = () => {
           {filteredProjects.length === 0 && (
             <div className="text-center py-20">
               <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-purple-100 to-purple-50 rounded-full mb-8">
-                <div className="text-5xl">📈</div>
+                <div className="text-5xl">:-)</div>
               </div>
               <h3 className="text-3xl font-bold text-gray-900 mb-4">
-                Aucun projet ne correspond à votre recherche
+                Aucun projet ne correspond a votre recherche
               </h3>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Essayez de modifier vos critères ou contactez-nous pour des
-                opportunités personnalisées
+                Essayez de modifier vos criteres ou contactez-nous pour des
+                opportunites personnalisees
               </p>
               <button
                 onClick={() => {
@@ -706,80 +660,15 @@ const Investment = () => {
         </div>
       </section>
 
-      {/* Success Stories */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Ils nous font confiance
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Découvrez les succès de nos investisseurs
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {successStories.map((story, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg border border-gray-100"
-              >
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {story.name.charAt(0)}
-                  </div>
-                  <div className="ml-4">
-                    <h4 className="font-bold text-gray-900">{story.name}</h4>
-                    <p className="text-sm text-gray-600">
-                      Investisseur depuis 3 ans
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between items-center p-3 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl">
-                    <span className="text-sm text-gray-600">ROI Total</span>
-                    <span className="text-lg font-bold text-emerald-700">
-                      {story.roi}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gray-50 rounded-xl p-3">
-                      <div className="text-xs text-gray-600 mb-1">
-                        Investissement
-                      </div>
-                      <div className="font-bold text-gray-900">
-                        {story.investment}
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 rounded-xl p-3">
-                      <div className="text-xs text-gray-600 mb-1">Durée</div>
-                      <div className="font-bold text-gray-900">
-                        {story.duration}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-gray-200">
-                  <p className="text-sm text-gray-600 mb-2">Projet :</p>
-                  <p className="font-medium text-gray-900">{story.project}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Final */}
       <section className="py-20 bg-gradient-to-r from-purple-900 via-purple-800 to-indigo-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Prêt à transformer votre épargne ?
+              Pret a transformer votre epargne ?
             </h2>
             <p className="text-xl text-purple-100 mb-10 leading-relaxed">
-              Rejoignez plus de 1,200 investisseurs satisfaits et bénéficiez de
+              Rejoignez plus de 1,200 investisseurs satisfaits et beneficiez de
               notre expertise
             </p>
 
@@ -790,36 +679,8 @@ const Investment = () => {
               </button>
               <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-10 py-4 rounded-xl font-bold hover:bg-white/10 transition-all">
                 <Download size={22} />
-                <span>Brochure complète</span>
+                <span>Brochure complete</span>
               </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left">
-                <CheckCircle className="text-emerald-300 mb-3" size={28} />
-                <h3 className="text-lg font-bold text-white mb-2">
-                  Audit gratuit
-                </h3>
-                <p className="text-purple-100 text-sm">
-                  Analyse complète de votre profil
-                </p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left">
-                <Shield className="text-blue-300 mb-3" size={28} />
-                <h3 className="text-lg font-bold text-white mb-2">Sécurité</h3>
-                <p className="text-purple-100 text-sm">
-                  Garanties et assurances incluses
-                </p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-left">
-                <TrendingUpIcon className="text-amber-300 mb-3" size={28} />
-                <h3 className="text-lg font-bold text-white mb-2">
-                  Performance
-                </h3>
-                <p className="text-purple-100 text-sm">
-                  Rendements supérieurs garantis
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -829,3 +690,10 @@ const Investment = () => {
 };
 
 export default Investment;
+
+
+
+
+
+
+

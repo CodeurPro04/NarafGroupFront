@@ -7,6 +7,7 @@ import Properties from './pages/Properties';
 import PropertyDetails from './pages/PropertyDetails';
 import Construction from './pages/Construction';
 import Investment from './pages/Investment';
+import Partnership from './pages/Partnership';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -24,6 +25,7 @@ function App() {
             <Route path="/property/:uuid" element={<PropertyDetails />} />
             <Route path="/construction" element={<Construction />} />
             <Route path="/investment" element={<Investment />} />
+            <Route path="/partnership" element={<Partnership />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
