@@ -387,8 +387,8 @@ const Investment = () => {
         </div>
 
         {/* Stats Cards */}
-
-        <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 ">
+</div>
+        <div className="relative sm:mb-7  lg:-mt-[64px] md:-mt-[64px]  z-20 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
               {investmentStats.map((stat, index) => (
@@ -422,7 +422,7 @@ const Investment = () => {
               ))}
             </div>
           </div>
-        </div>
+        
       </div>
 
       <div className="h-24 lg:h-32"></div>

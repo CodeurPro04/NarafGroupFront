@@ -271,7 +271,7 @@ const Properties = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className=" bg-gray-50">
       {/* Hero Section */}
       <div className="relative h-[600px]" style={{
         backgroundImage: "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80')",
@@ -307,11 +307,11 @@ const Properties = () => {
             </div>
           </div>
         </div>
-
+</div>
         {/* Floating Stats Cards */}
-        <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 z-10">
+        <div className="relative sm:mb-7  lg:-mt-[64px]  z-20 md:-mt-[64px]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 lg:grid grid-cols-2 md:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
                 <div key={index} className="bg-white rounded-xl shadow-2xl p-6 text-center hover:shadow-3xl transition-all hover:-translate-y-1 duration-300">
                   <div className="text-blue-600 mb-3 flex justify-center">
@@ -324,7 +324,7 @@ const Properties = () => {
             </div>
           </div>
         </div>
-      </div>
+      
 
       <div className="h-32"></div>
 

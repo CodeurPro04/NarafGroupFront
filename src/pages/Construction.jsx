@@ -126,16 +126,16 @@ const Construction = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Hero Section avec Video/Image Background */}
-      <div className="relative h-[600px]" style={{
+      <div className="relative h-[600px] " style={{
         backgroundImage: "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')",
         backgroundSize: 'cover',
         backgroundPosition: 'center'
        }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-green-900/95 to-green-800/90"></div>
+        <div className=" absolute inset-0 bg-gradient-to-r from-green-900/95 to-green-800/90"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center ">
           <div className="max-w-3xl">
             <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white mb-6">
               <Hammer size={20} />
@@ -150,7 +150,7 @@ const Construction = () => {
               Des projets immobiliers innovants conçus pour durer. Profitez de nos garanties constructeur et d'un accompagnement complet de A à Z.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 ">
               <button className="flex items-center justify-center space-x-2 bg-white text-green-900 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors shadow-lg">
                 <Phone size={20} />
                 <span>Demander un devis</span>
@@ -162,11 +162,11 @@ const Construction = () => {
             </div>
           </div>
         </div>
-
+ </div>
         {/* Floating Stats Cards */}
-        <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="  relative sm:mb-7  lg:-mt-[64px]  z-20 md:-mt-[64px] ">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
               {stats.map((stat, index) => (
                 <div key={index} className="bg-white rounded-xl shadow-2xl p-6 text-center">
                   <div className="text-green-600 mb-3 flex justify-center">
@@ -179,10 +179,10 @@ const Construction = () => {
             </div>
           </div>
         </div>
-      </div>
+     
 
       {/* Spacing after floating cards */}
-      <div className="h-32"></div>
+      <div className=" h-32"></div>
 
       {/* Advantages Section */}
       <section className="py-20 bg-white">
