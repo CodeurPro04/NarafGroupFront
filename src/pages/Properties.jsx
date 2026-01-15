@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   MapPin,
   Bed,
@@ -26,6 +26,7 @@ import {
 import api from "../api/axios";
 
 const Properties = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("tous");
   const [viewMode, setViewMode] = useState("grid");
   const [showFilters, setShowFilters] = useState(false);
@@ -36,10 +37,14 @@ const Properties = () => {
   const [properties, setProperties] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [propertyFeatures, setPropertyFeatures] = useState([]);
+  const [pendingTypeId, setPendingTypeId] = useState('');
+  const [hasSyncedFilters, setHasSyncedFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     search: "",
+    city: "",
     type: "",
+    transactionType: "",
     priceMin: "",
     priceMax: "",
     bedrooms: "",
@@ -189,7 +194,9 @@ const Properties = () => {
       setLoading(true);
       const params = {
         search: filters.search || undefined,
+        city: filters.city || undefined,
         property_type_id: filters.type || undefined,
+        transaction_type: filters.transactionType || undefined,
         min_price: filters.priceMin || undefined,
         max_price: filters.priceMax || undefined,
         bedrooms: filters.bedrooms || undefined,
@@ -316,19 +323,73 @@ const Properties = () => {
     }
   };
 
+  const syncFiltersFromQuery = () => {
+    if (!location.search) {
+      setHasSyncedFilters(true);
+    }
+    const params = new URLSearchParams(location.search);
+    const cityValue = params.get('city') || '';
+    const searchValue = params.get('search') || cityValue || '';
+    const typeId = params.get('property_type_id') || '';
+    const transactionType = params.get('transaction_type') || '';
+    const priceMin = params.get('min_price') || '';
+    const priceMax = params.get('max_price') || '';
+    const bedrooms = params.get('bedrooms') || '';
+    const areaMin = params.get('min_surface') || '';
+    const areaMax = params.get('max_surface') || '';
+
+    setFilters((prev) => ({
+      ...prev,
+      search: searchValue,
+      city: cityValue,
+      type: typeId,
+      transactionType,
+      priceMin,
+      priceMax,
+      bedrooms,
+      areaMin,
+      areaMax,
+    }));
+
+    if (typeId) {
+      setPendingTypeId(typeId);
+    } else {
+      setActiveTab('tous');
+    }
+
+    setHasSyncedFilters(true);
+  };
+
+  useEffect(() => {
+    syncFiltersFromQuery();
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!pendingTypeId || propertyTypes.length === 0) return;
+    const match = propertyTypes.find((t) => String(t.id) === String(pendingTypeId));
+    if (match?.slug) {
+      setActiveTab(match.slug);
+    } else {
+      setActiveTab('tous');
+    }
+    setPendingTypeId('');
+  }, [pendingTypeId, propertyTypes]);
+
   // Charger les données
   useEffect(() => {
     fetchPropertyTypes();
     fetchPropertyFeatures();
-    fetchProperties();
   }, []);
 
   useEffect(() => {
+    if (!hasSyncedFilters) return;
     fetchProperties();
-  }, [filters, sortBy]);
+  }, [filters, sortBy, hasSyncedFilters]);
 
   useEffect(() => {
     if (activeTab === "tous") {
+      if (pendingTypeId) return;
+      if (filters.type) return;
       setFilters((prev) => ({ ...prev, type: "" }));
     } else {
       const propertyType = propertyTypes.find((t) => t.slug === activeTab);
@@ -336,10 +397,14 @@ const Properties = () => {
         setFilters((prev) => ({ ...prev, type: propertyType.id }));
       }
     }
-  }, [activeTab, propertyTypes]);
+  }, [activeTab, propertyTypes, pendingTypeId, filters.type]);
 
   const handleFilterChange = (key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+      ...(key === 'search' ? { city: '' } : {}),
+    }));
   };
 
   const toggleFeature = (feature) => {
@@ -360,7 +425,9 @@ const Properties = () => {
   const resetFilters = () => {
     setFilters({
       search: "",
+      city: "",
       type: "",
+      transactionType: "",
       priceMin: "",
       priceMax: "",
       bedrooms: "",
@@ -584,6 +651,22 @@ const Properties = () => {
                         {type.name}
                       </option>
                     ))}
+                  </select>
+                </div>
+
+                {/* Transaction */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Transaction
+                  </label>
+                  <select
+                    value={filters.transactionType}
+                    onChange={(e) => handleFilterChange("transactionType", e.target.value)}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                  >
+                    <option value="">Toutes</option>
+                    <option value="vente">Vente</option>
+                    <option value="location">Location</option>
                   </select>
                 </div>
 

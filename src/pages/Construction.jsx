@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Calendar, Building, Users, MapPin, CheckCircle, TrendingUp, Shield, Clock, Home, Ruler, Hammer, Phone, Mail, Award, ArrowRight, Play } from 'lucide-react';
 
-import {Link} from 'react-router-dom'
 import api from '../api/axios';
 const Construction = () => {
   const [activeTab, setActiveTab] = useState('en-cours');
   const [constructionProjects, setConstructionProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const defaultImage =
@@ -300,7 +300,7 @@ const Construction = () => {
                   
                   <div className="absolute top-4 left-4 flex items-center space-x-2">
                     <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {project.status === 'en-cours' ? 'En construction' : 'Livre'}
+                      Approuvee
                     </span>
                   </div>
 
@@ -366,9 +366,12 @@ const Construction = () => {
                         {formatPrice(project.priceFrom)}
                       </div>
                     </div>
-                     <Link to="/property/:id"  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors">
-                      En savoir plus
-                    </Link>
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      Details
+                    </button>
                   </div>
                 </div>
               </div>
@@ -381,6 +384,58 @@ const Construction = () => {
           )}
         </div>
       </section>
+
+      {selectedProject && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden">
+            <div className="relative h-64">
+              <img
+                src={selectedProject.image}
+                alt={selectedProject.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-4 right-4 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-sm"
+              >
+                Fermer
+              </button>
+              <div className="absolute bottom-4 left-4">
+                <h3 className="text-2xl font-bold text-white">{selectedProject.title}</h3>
+                <p className="text-white/90 text-sm">{selectedProject.location}</p>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                <div><span className="text-gray-500">Type:</span> {selectedProject.type}</div>
+                <div><span className="text-gray-500">Statut:</span> Approuvee</div>
+                <div><span className="text-gray-500">Budget min:</span> {formatPrice(selectedProject.priceFrom)}</div>
+                <div><span className="text-gray-500">Budget max:</span> {formatPrice(selectedProject.budgetMax)}</div>
+                <div><span className="text-gray-500">Surface:</span> {selectedProject.surface ? `${selectedProject.surface} m2` : 'N/A'}</div>
+                <div><span className="text-gray-500">Date:</span> {selectedProject.createdAt ? new Date(selectedProject.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</div>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold mb-2">Description</h4>
+                <p className="text-gray-600">{selectedProject.description || 'Aucune description disponible.'}</p>
+              </div>
+              {selectedProject.features.length > 0 && (
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Points forts</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.features.map((feature, idx) => (
+                      <span key={idx} className="flex items-center text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full">
+                        <CheckCircle size={12} className="mr-1" />
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Process Section */}
       <section className="py-20 bg-white">

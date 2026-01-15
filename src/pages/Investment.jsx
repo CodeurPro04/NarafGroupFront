@@ -35,8 +35,22 @@ const Investment = () => {
   const [investmentProjects, setInvestmentProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showInvest, setShowInvest] = useState(false);
+  const [investData, setInvestData] = useState({ amount: "", message: "" });
+  const [investError, setInvestError] = useState("");
+  const [investSuccess, setInvestSuccess] = useState("");
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
+  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+  const storageBase = apiBase.replace(/\/api\/?$/, "");
+  const getStorageUrl = (path) => {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    const cleaned = path.replace(/^public\//, "");
+    return `${storageBase}/storage/${cleaned}`;
+  };
 
   const formatDuration = (months) => {
     if (!months) return "N/A";
@@ -46,14 +60,34 @@ const Investment = () => {
   };
 
   const normalizeProject = (project) => {
+    const images = Array.isArray(project.images_path) ? project.images_path : [];
     const durationMonths = Number(project.duration_months || 0);
     const expectedReturn = Number(project.expected_return || 0);
     const minInvestment = Number(project.min_investment || 0);
     const location = project.location || project.city || "";
+    const totalInvestment = Number(project.total_investment || 0);
+    const currentFunding = Number(project.current_funding || 0);
+    let fundedPercentage = null;
+    if (project.funded_percentage !== null && project.funded_percentage !== undefined) {
+      fundedPercentage = Number(project.funded_percentage);
+    } else if (project.funded !== null && project.funded !== undefined) {
+      fundedPercentage = Number(project.funded);
+    } else if (totalInvestment > 0) {
+      fundedPercentage = Math.round((currentFunding / totalInvestment) * 100);
+    }
+    const normalizedFunded =
+      typeof fundedPercentage === "number"
+        ? Math.max(0, Math.min(100, fundedPercentage))
+        : null;
 
     return {
       id: project.uuid || project.id,
-      image: project.cover_image || project.image_url || defaultImage,
+      image:
+        (images.length ? getStorageUrl(images[0]) : "") ||
+        project.cover_image ||
+        project.image_url ||
+        defaultImage,
+      gallery: images.map(getStorageUrl),
       title: project.title || "Projet d'investissement",
       location,
       type: project.project_type || "immobilier",
@@ -62,12 +96,17 @@ const Investment = () => {
       duration: formatDuration(durationMonths),
       durationMonths,
       risk: project.risk_level || "A",
-      totalValue: project.total_investment || 0,
-      funded: project.funded_percentage ?? project.funded ?? null,
+      totalValue: totalInvestment || 0,
+      funded: normalizedFunded,
+      totalInvestment,
+      currentFunding,
+      isFullyFunded: normalizedFunded !== null && normalizedFunded >= 100 || project.status === "closed" || project.status === "completed",
       investors: project.investors_count ?? null,
       features: Array.isArray(project.features) ? project.features : [],
       popularity: project.popularity || "",
       status: project.status || "open",
+      description: project.description || "",
+      raw: project,
     };
   };
 
@@ -132,7 +171,8 @@ const Investment = () => {
         projectsSource.reduce(
           (sum, project) => sum + (project.durationMonths || 0),
           0
-        ) / (projectsSource.length || 1) /
+        ) /
+        (projectsSource.length || 1) /
         12
       ).toFixed(1)} ans`,
       icon: <Clock size={28} />,
@@ -184,30 +224,6 @@ const Investment = () => {
         "Documentation claire",
         "Paiement securise",
       ],
-    },
-  ];
-
-  const successStories = [
-    {
-      name: "Pierre D.",
-      investment: "75,000 XOF",
-      duration: "3 ans",
-      roi: "42%",
-      project: "Residence Les Harmonies",
-    },
-    {
-      name: "Sophie M.",
-      investment: "120,000 XOF",
-      duration: "5 ans",
-      roi: "68%",
-      project: "Tour des Affaires",
-    },
-    {
-      name: "Thomas R.",
-      investment: "50,000 XOF",
-      duration: "2 ans",
-      roi: "31%",
-      project: "Student Residence",
     },
   ];
 
@@ -269,7 +285,44 @@ const Investment = () => {
     return formatPrice(investmentValue * (roiValue / 100));
   };
 
-  const filterOptions = ["tous", ...Array.from(new Set(investmentProjects
+  const openDetails = (project) => {
+    setSelectedProject(project);
+    setShowDetails(true);
+  };
+
+  const openInvest = (project) => {
+    setSelectedProject(project);
+    setInvestData({ amount: "", message: "" });
+    setInvestError("");
+    setInvestSuccess("");
+    setShowInvest(true);
+  };
+
+  const handleInvestSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedProject?.id) return;
+    setInvestError("");
+    setInvestSuccess("");
+    try {
+      await api.post(`/investisseur/investments/${selectedProject.id}/propose`, {
+        amount: Number(investData.amount),
+        message: investData.message || null,
+      });
+      setInvestSuccess("Votre proposition a ete envoyee.");
+      setInvestData({ amount: "", message: "" });
+    } catch (error) {
+      setInvestError(
+        error.response?.data?.message ||
+          "Impossible d'envoyer la proposition."
+      );
+    }
+  };
+
+  const filterOptions = [
+    "tous",
+    ...Array.from(
+      new Set(
+        investmentProjects
           .map((project) => project.type)
           .filter(Boolean)
           .map((type) => type.toLowerCase())
@@ -280,19 +333,17 @@ const Investment = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      
-        
-          <div
-            className="relative h-[600px]"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-          
-<div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900"></div>
+
+      <div
+        className="relative h-[600px]"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="max-w-3xl">
             <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-white mb-6">
@@ -513,7 +564,7 @@ const Investment = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                    <div className="absolute top-4 left-4 flex gap-2">
+                    <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
                       <span
                         className={`px-3 py-1.5 rounded-full text-sm font-bold text-white ${
                           project.status === "Bientot complet"
@@ -528,6 +579,11 @@ const Investment = () => {
                       <span className="px-3 py-1.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-purple-600">
                         {project.type}
                       </span>
+                      {project.isFullyFunded && (
+                        <span className="px-3 py-1.5 rounded-full text-sm font-bold text-white bg-gradient-to-r from-gray-600 to-gray-800">
+                          Collecte terminee
+                        </span>
+                      )}
                     </div>
 
                     <div className="absolute top-4 right-4 flex flex-col gap-2">
@@ -544,7 +600,10 @@ const Investment = () => {
                           fill={isFavorite ? "currentColor" : "none"}
                         />
                       </button>
-                      <button className="p-2.5 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors">
+                      <button
+                        onClick={() => openDetails(project)}
+                        className="p-2.5 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors"
+                      >
                         <Eye size={18} />
                       </button>
                     </div>
@@ -620,10 +679,21 @@ const Investment = () => {
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
-                        <button className="px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all hover:shadow-lg">
-                          Investir
+                        <button
+                          onClick={() => openInvest(project)}
+                          disabled={project.isFullyFunded}
+                          className={`px-4 py-3 rounded-xl font-semibold transition-all ${
+                            project.isFullyFunded
+                              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                              : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white hover:shadow-lg"
+                          }`}
+                        >
+                          {project.isFullyFunded ? "Complet" : "Investir"}
                         </button>
-                        <button className="px-4 py-3 bg-white border-2 border-gray-200 hover:border-purple-300 text-gray-700 rounded-xl font-semibold transition-all">
+                        <button
+                          onClick={() => openDetails(project)}
+                          className="px-4 py-3 bg-white border-2 border-gray-200 hover:border-purple-300 text-gray-700 rounded-xl font-semibold transition-all"
+                        >
                           Details
                         </button>
                       </div>
@@ -685,15 +755,175 @@ const Investment = () => {
           </div>
         </div>
       </section>
+
+      {showDetails && selectedProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Details du projet</p>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {selectedProject.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700"
+              >
+                Fermer
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-3">
+                  <div className="rounded-2xl overflow-hidden">
+                    <img
+                      src={selectedProject.image}
+                      alt={selectedProject.title}
+                      className="w-full h-72 object-cover"
+                    />
+                  </div>
+                  {selectedProject.gallery.length > 1 && (
+                    <div className="grid grid-cols-3 gap-3">
+                      {selectedProject.gallery.slice(0, 6).map((img) => (
+                        <img
+                          key={img}
+                          src={img}
+                          alt={selectedProject.title}
+                          className="h-24 w-full object-cover rounded-xl"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-gray-50 space-y-2">
+                    <p className="text-sm text-gray-500">Rendement</p>
+                    <p className="text-2xl font-bold text-emerald-600">
+                      {selectedProject.roi}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-gray-50 space-y-2">
+                    <p className="text-sm text-gray-500">Ticket minimum</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {formatPrice(selectedProject.minInvestment)}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-gray-50 space-y-2">
+                    <p className="text-sm text-gray-500">Duree</p>
+                    <p className="text-xl font-semibold text-gray-900">
+                      {selectedProject.duration}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowDetails(false);
+                      openInvest(selectedProject);
+                    }}
+                    disabled={selectedProject.isFullyFunded}
+                    className={`w-full px-4 py-3 rounded-xl font-semibold ${
+                      selectedProject.isFullyFunded
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                    }`}
+                  >
+                    {selectedProject.isFullyFunded
+                      ? "Collecte terminee"
+                      : "Investir sur ce projet"}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                  Description
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {selectedProject.description || "Aucune description."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showInvest && selectedProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl">
+            <form onSubmit={handleInvestSubmit} className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Investir</p>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {selectedProject.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowInvest(false)}
+                  className="px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700"
+                >
+                  Fermer
+                </button>
+              </div>
+              {investError && (
+                <div className="text-sm text-red-600">{investError}</div>
+              )}
+              {investSuccess && (
+                <div className="text-sm text-emerald-600">{investSuccess}</div>
+              )}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Montant a investir
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  value={investData.amount}
+                  onChange={(e) =>
+                    setInvestData((prev) => ({
+                      ...prev,
+                      amount: e.target.value,
+                    }))
+                  }
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Message (optionnel)
+                </label>
+                <textarea
+                  rows="3"
+                  value={investData.message}
+                  onChange={(e) =>
+                    setInvestData((prev) => ({
+                      ...prev,
+                      message: e.target.value,
+                    }))
+                  }
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={selectedProject.isFullyFunded}
+                className={`w-full px-4 py-3 rounded-xl font-semibold ${
+                  selectedProject.isFullyFunded
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                }`}
+              >
+                {selectedProject.isFullyFunded
+                  ? "Collecte terminee"
+                  : "Envoyer la proposition"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Investment;
-
-
-
-
-
-
-

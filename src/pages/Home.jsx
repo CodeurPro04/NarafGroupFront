@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Hero from '../components/layout/Hero';
 import { getApprovedPartners } from '../api/axios';
+import { propertyService } from '../services/propertyService';
 import {
   Building2,
   Shield,
@@ -23,6 +24,9 @@ import {
 const Home = () => {
   const [partners, setPartners] = useState([]);
   const [partnersLoading, setPartnersLoading] = useState(true);
+  const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
+  const [featuredError, setFeaturedError] = useState('');
 
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -31,44 +35,6 @@ const Home = () => {
     message: "",
   });
 
-  const featuredProperties = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
-      price: "450,000",
-      title: "Villa Moderne avec Piscine",
-      location: "Cocody, Abidjan",
-      beds: 4,
-      baths: 3,
-      area: 250,
-      tag: "Coup de cœur",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-      price: "180,000",
-      title: "Appartement Standing",
-      location: "Plateau, Abidjan",
-      beds: 3,
-      baths: 2,
-      area: 120,
-      tag: "Nouveauté",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
-      price: "320,000",
-      title: "Maison Contemporaine",
-      location: "Riviera, Abidjan",
-      beds: 5,
-      baths: 4,
-      area: 300,
-      tag: "Exclusif",
-    },
-  ];
 
   const services = [
     {
@@ -140,6 +106,45 @@ const Home = () => {
 
 
   useEffect(() => {
+    const loadFeaturedProperties = async () => {
+      try {
+        setFeaturedLoading(true);
+        setFeaturedError('');
+        const response = await propertyService.getAll({
+          sort_by: 'views_count',
+          sort_order: 'desc',
+          per_page: 3,
+        });
+        const payload = response?.data ?? response ?? {};
+        const list = payload?.data?.data || payload?.data || [];
+        const normalized = Array.isArray(list)
+          ? list.map((property) => ({
+              id: property.uuid || property.id,
+              uuid: property.uuid || property.id,
+              image: getPropertyImage(property),
+              price: property.price ? Number(property.price).toLocaleString('fr-FR') : 'N/A',
+              title: property.title || 'Sans titre',
+              location: getPropertyLocation(property),
+              beds: property.bedrooms || 0,
+              baths: property.bathrooms || 0,
+              area: property.surface_area || 0,
+              tag: property.featured ? 'En vedette' : (property.transaction_type === 'location' ? 'Location' : 'Vente'),
+              views: property.views_count || 0,
+            }))
+          : [];
+        setFeaturedProperties(normalized.slice(0, 3));
+      } catch (error) {
+        console.error('Erreur chargement biens exception:', error);
+        setFeaturedError('Impossible de charger les biens.');
+      } finally {
+        setFeaturedLoading(false);
+      }
+    };
+
+    loadFeaturedProperties();
+  }, []);
+
+  useEffect(() => {
     const loadPartners = async () => {
       try {
         setPartnersLoading(true);
@@ -164,6 +169,21 @@ const Home = () => {
     if (/^https?:\/\//i.test(path)) return path;
     const cleaned = path.replace(/^public\//, '');
     return `${storageBase}/storage/${cleaned}`;
+  };
+
+  const getPropertyLocation = (property) => {
+    const parts = [property.city, property.quartier, property.commune].filter(Boolean);
+    return parts.join(', ') || property.address || 'Localisation non definie';
+  };
+
+  const getPropertyImage = (property) => {
+    if (property.primary_image?.file_path) {
+      return `${storageBase}/storage/${property.primary_image.file_path}`;
+    }
+    if (property.media?.[0]?.file_path) {
+      return `${storageBase}/storage/${property.media[0].file_path}`;
+    }
+    return 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80';
   };
 
   const handleInputChange = (e) => {
@@ -242,14 +262,26 @@ const Home = () => {
                 Découvrez notre sélection de propriétés premium
               </p>
             </div>
-            <button className="hidden md:flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+            <Link
+              to="/properties"
+              className="hidden md:flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+            >
               <span>Voir tout</span>
               <ArrowRight size={20} />
-            </button>
+            </Link>
           </div>
            
+          {featuredLoading && (
+            <p className="text-sm text-gray-500 mb-6">Chargement des biens...</p>
+          )}
+          {featuredError && (
+            <p className="text-sm text-red-600 mb-6">{featuredError}</p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          
+            {featuredProperties.length === 0 && !featuredLoading && !featuredError && (
+              <p className="text-sm text-gray-500">Aucun bien a afficher pour le moment.</p>
+            )}
+
             {featuredProperties.map((property) => (
               <div
                 key={property.id}
@@ -313,10 +345,13 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12 md:hidden">
-            <button className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+            <Link
+              to="/properties"
+              className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+            >
               <span>Voir tous les biens</span>
               <ArrowRight size={20} />
-            </button>
+            </Link>
           </div>
         </div>
       </section>
