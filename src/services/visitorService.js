@@ -21,5 +21,7 @@ export const visitorService = {
   createSearchRequest: (payload) => api.post("/visiteur/search-requests", payload),
   getConstructionRequests: () => api.get("/visiteur/construction/my-requests"),
   createConstructionRequest: (payload) => api.post("/visiteur/construction/request", payload),
+  getPropertyRequests: () => api.get("/proprietaire/property-requests"),
+  createPropertyRequest: (payload) => api.post("/proprietaire/property-requests", payload),
   getPropertyTypes: () => api.get("/property-types"),
 };

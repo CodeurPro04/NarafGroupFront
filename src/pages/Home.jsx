@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from 'react-router-dom'
-import Hero from '../components/layout/Hero';
-import { getApprovedPartners } from '../api/axios';
-import { propertyService } from '../services/propertyService';
+import { Link } from "react-router-dom";
+import Hero from "../components/layout/Hero";
+import { getApprovedPartners } from "../api/axios";
+import { propertyService } from "../services/propertyService";
 import {
   Building2,
   Shield,
@@ -26,7 +26,7 @@ const Home = () => {
   const [partnersLoading, setPartnersLoading] = useState(true);
   const [featuredProperties, setFeaturedProperties] = useState([]);
   const [featuredLoading, setFeaturedLoading] = useState(true);
-  const [featuredError, setFeaturedError] = useState('');
+  const [featuredError, setFeaturedError] = useState("");
 
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -34,7 +34,6 @@ const Home = () => {
     phone: "",
     message: "",
   });
-
 
   const services = [
     {
@@ -104,15 +103,14 @@ const Home = () => {
     },
   ];
 
-
   useEffect(() => {
     const loadFeaturedProperties = async () => {
       try {
         setFeaturedLoading(true);
-        setFeaturedError('');
+        setFeaturedError("");
         const response = await propertyService.getAll({
-          sort_by: 'views_count',
-          sort_order: 'desc',
+          sort_by: "views_count",
+          sort_order: "desc",
           per_page: 3,
         });
         const payload = response?.data ?? response ?? {};
@@ -122,20 +120,26 @@ const Home = () => {
               id: property.uuid || property.id,
               uuid: property.uuid || property.id,
               image: getPropertyImage(property),
-              price: property.price ? Number(property.price).toLocaleString('fr-FR') : 'N/A',
-              title: property.title || 'Sans titre',
+              price: property.price
+                ? Number(property.price).toLocaleString("fr-FR")
+                : "N/A",
+              title: property.title || "Sans titre",
               location: getPropertyLocation(property),
               beds: property.bedrooms || 0,
               baths: property.bathrooms || 0,
               area: property.surface_area || 0,
-              tag: property.featured ? 'En vedette' : (property.transaction_type === 'location' ? 'Location' : 'Vente'),
+              tag: property.featured
+                ? "En vedette"
+                : property.transaction_type === "location"
+                  ? "Location"
+                  : "Vente",
               views: property.views_count || 0,
             }))
           : [];
         setFeaturedProperties(normalized.slice(0, 3));
       } catch (error) {
-        console.error('Erreur chargement biens exception:', error);
-        setFeaturedError('Impossible de charger les biens.');
+        console.error("Erreur chargement biens exception:", error);
+        setFeaturedError("Impossible de charger les biens.");
       } finally {
         setFeaturedLoading(false);
       }
@@ -153,7 +157,7 @@ const Home = () => {
         const list = payload.data || payload;
         setPartners(Array.isArray(list) ? list : []);
       } catch (error) {
-        console.error('Erreur chargement partenaires:', error);
+        console.error("Erreur chargement partenaires:", error);
       } finally {
         setPartnersLoading(false);
       }
@@ -162,18 +166,20 @@ const Home = () => {
     loadPartners();
   }, []);
 
-  const apiBase = 'http://localhost:8000/api';
-  const storageBase = apiBase.replace(/\/api\/?$/, '');
+  const apiBase = "http://localhost:8000/api";
+  const storageBase = apiBase.replace(/\/api\/?$/, "");
   const getLogoUrl = (path) => {
-    if (!path) return '';
+    if (!path) return "";
     if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, '');
+    const cleaned = path.replace(/^public\//, "");
     return `${storageBase}/storage/${cleaned}`;
   };
 
   const getPropertyLocation = (property) => {
-    const parts = [property.city, property.quartier, property.commune].filter(Boolean);
-    return parts.join(', ') || property.address || 'Localisation non definie';
+    const parts = [property.city, property.quartier, property.commune].filter(
+      Boolean,
+    );
+    return parts.join(", ") || property.address || "Localisation non definie";
   };
 
   const getPropertyImage = (property) => {
@@ -183,7 +189,7 @@ const Home = () => {
     if (property.media?.[0]?.file_path) {
       return `${storageBase}/storage/${property.media[0].file_path}`;
     }
-    return 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80';
+    return "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80";
   };
 
   const handleInputChange = (e) => {
@@ -196,7 +202,7 @@ const Home = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", contactForm);
-    // Logique d'envoi du formulaire QUE TU DEVRA FAIRE ICI 
+    // Logique d'envoi du formulaire QUE TU DEVRA FAIRE ICI
   };
 
   return (
@@ -219,7 +225,7 @@ const Home = () => {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="group bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-blue-500 hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                className="group bg-white p-8 hover:-500 hover:shadow-2xl transition-all duration-300 cursor-pointer"
               >
                 <div className="text-blue-600 mb-6 transform group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
@@ -270,78 +276,82 @@ const Home = () => {
               <ArrowRight size={20} />
             </Link>
           </div>
-           
+
           {featuredLoading && (
-            <p className="text-sm text-gray-500 mb-6">Chargement des biens...</p>
+            <p className="text-sm text-gray-500 mb-6">
+              Chargement des biens...
+            </p>
           )}
           {featuredError && (
             <p className="text-sm text-red-600 mb-6">{featuredError}</p>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProperties.length === 0 && !featuredLoading && !featuredError && (
-              <p className="text-sm text-gray-500">Aucun bien a afficher pour le moment.</p>
-            )}
+            {featuredProperties.length === 0 &&
+              !featuredLoading &&
+              !featuredError && (
+                <p className="text-sm text-gray-500">
+                  Aucun bien a afficher pour le moment.
+                </p>
+              )}
 
             {featuredProperties.map((property) => (
               <div
                 key={property.id}
-                className="group bg-white  overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                className="group bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
               >
-              <Link to={`/property/${property.uuid}`}>
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={property.image}
-                    alt={property.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
-                    {property.tag}
-                  </div>
-                  <button className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full hover:bg-white transition-colors">
-                    <Heart size={20} className="text-gray-700" />
-                  </button>
-                  <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg">
-                    <span className="text-2xl font-bold text-gray-900">
-                      {property.price} FCFA
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {property.title}
-                  </h3>
-                  <div className="flex items-center text-gray-600 mb-4">
-                    <MapPin size={16} className="mr-1 flex-shrink-0" />
-                    <span className="text-sm">{property.location}</span>
+                <Link to={`/property/${property.uuid}`}>
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={property.image}
+                      alt={property.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute top-4 left-4 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
+                      {property.tag}
+                    </div>
+                    <button className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full hover:bg-white transition-colors">
+                      <Heart size={20} className="text-gray-700" />
+                    </button>
+                    <div className="absolute bottom-4 left-4 bg-white px-4 py-2 rounded-lg">
+                      <span className="text-2xl font-bold text-gray-900">
+                        {property.price} FCFA
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center space-x-1 text-gray-700">
-                      <Bed size={18} />
-                      <span className="text-sm font-medium">
-                        {property.beds}
-                      </span>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                      {property.title}
+                    </h3>
+                    <div className="flex items-center text-gray-600 mb-4">
+                      <MapPin size={16} className="mr-1 flex-shrink-0" />
+                      <span className="text-sm">{property.location}</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-gray-700">
-                      <Bath size={18} />
-                      <span className="text-sm font-medium">
-                        {property.baths}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-gray-700">
-                      <Maximize size={18} />
-                      <span className="text-sm font-medium">
-                        {property.area} m²
-                      </span>
+
+                    <div className="flex items-center justify-between pt-4 -100">
+                      <div className="flex items-center space-x-1 text-gray-700">
+                        <Bed size={18} />
+                        <span className="text-sm font-medium">
+                          {property.beds}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-gray-700">
+                        <Bath size={18} />
+                        <span className="text-sm font-medium">
+                          {property.baths}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-gray-700">
+                        <Maximize size={18} />
+                        <span className="text-sm font-medium">
+                          {property.area} m²
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
                 </Link>
               </div>
-              
             ))}
-            
           </div>
 
           <div className="text-center mt-12 md:hidden">
@@ -383,7 +393,7 @@ const Home = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-12 text-white">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-gradient-to-r from-blue-600 to-blue-700 p-12 text-white">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold mb-2">
@@ -400,20 +410,29 @@ const Home = () => {
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Nos partenaires</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Nos partenaires
+            </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Des entreprises de confiance qui travaillent avec Naraf Group.
             </p>
           </div>
 
           {partnersLoading ? (
-            <p className="text-center text-sm text-gray-500">Chargement des partenaires...</p>
+            <p className="text-center text-sm text-gray-500">
+              Chargement des partenaires...
+            </p>
           ) : partners.length === 0 ? (
-            <p className="text-center text-sm text-gray-500">Aucun partenaire publie pour le moment.</p>
+            <p className="text-center text-sm text-gray-500">
+              Aucun partenaire publie pour le moment.
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {partners.map((partner) => (
-                <div key={partner.uuid} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition">
+                <div
+                  key={partner.uuid}
+                  className="bg-white rounded-2xl -200 p-6 shadow-sm hover:shadow-md transition"
+                >
                   <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden">
                     {partner.logo_path ? (
                       <img
@@ -422,12 +441,20 @@ const Home = () => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <span className="text-sm font-semibold text-slate-500">Logo</span>
+                      <span className="text-sm font-semibold text-slate-500">
+                        Logo
+                      </span>
                     )}
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-gray-900">{partner.company_name}</h3>
-                  <p className="text-sm text-gray-500">{partner.company_type || 'Entreprise'}</p>
-                  <p className="text-xs text-gray-400 mt-2">{partner.city || 'Localisation a definir'}</p>
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                    {partner.company_name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {partner.company_type || "Entreprise"}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    {partner.city || "Localisation a definir"}
+                  </p>
                 </div>
               ))}
             </div>
@@ -442,14 +469,15 @@ const Home = () => {
             Prêt à Concrétiser Votre Projet ?
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Notre équipe d'experts est à votre disposition pour vous accompagner dans toutes les étapes de votre projet immobilier.
+            Notre équipe d'experts est à votre disposition pour vous accompagner
+            dans toutes les étapes de votre projet immobilier.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-900 px-10 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
               <Phone size={20} />
               <span>+225 XX XX XX XX XX</span>
             </button>
-            <button className="bg-transparent border-2 border-white text-white px-10 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors flex items-center justify-center space-x-2">
+            <button className="bg-transparent text-white px-10 py-4 font-semibold hover:bg-white/10 transition-colors flex items-center justify-center space-x-2">
               <Mail size={20} />
               <span>contact@naraf.ci</span>
             </button>

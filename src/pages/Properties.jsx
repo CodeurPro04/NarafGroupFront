@@ -37,7 +37,7 @@ const Properties = () => {
   const [properties, setProperties] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [propertyFeatures, setPropertyFeatures] = useState([]);
-  const [pendingTypeId, setPendingTypeId] = useState('');
+  const [pendingTypeId, setPendingTypeId] = useState("");
   const [hasSyncedFilters, setHasSyncedFilters] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -136,7 +136,7 @@ const Properties = () => {
                 id: property.property_type.id,
                 name: property.property_type.name,
                 slug: property.property_type.slug,
-              })
+              }),
             );
           }
         });
@@ -206,7 +206,7 @@ const Properties = () => {
       };
 
       Object.keys(params).forEach(
-        (key) => params[key] === undefined && delete params[key]
+        (key) => params[key] === undefined && delete params[key],
       );
 
       const response = await api.get("/properties", { params });
@@ -272,7 +272,7 @@ const Properties = () => {
 
   const getPropertyLocation = (property) => {
     const parts = [property.city, property.quartier, property.commune].filter(
-      Boolean
+      Boolean,
     );
     return parts.join(", ") || "Localisation non spécifiée";
   };
@@ -328,15 +328,15 @@ const Properties = () => {
       setHasSyncedFilters(true);
     }
     const params = new URLSearchParams(location.search);
-    const cityValue = params.get('city') || '';
-    const searchValue = params.get('search') || cityValue || '';
-    const typeId = params.get('property_type_id') || '';
-    const transactionType = params.get('transaction_type') || '';
-    const priceMin = params.get('min_price') || '';
-    const priceMax = params.get('max_price') || '';
-    const bedrooms = params.get('bedrooms') || '';
-    const areaMin = params.get('min_surface') || '';
-    const areaMax = params.get('max_surface') || '';
+    const cityValue = params.get("city") || "";
+    const searchValue = params.get("search") || cityValue || "";
+    const typeId = params.get("property_type_id") || "";
+    const transactionType = params.get("transaction_type") || "";
+    const priceMin = params.get("min_price") || "";
+    const priceMax = params.get("max_price") || "";
+    const bedrooms = params.get("bedrooms") || "";
+    const areaMin = params.get("min_surface") || "";
+    const areaMax = params.get("max_surface") || "";
 
     setFilters((prev) => ({
       ...prev,
@@ -354,7 +354,7 @@ const Properties = () => {
     if (typeId) {
       setPendingTypeId(typeId);
     } else {
-      setActiveTab('tous');
+      setActiveTab("tous");
     }
 
     setHasSyncedFilters(true);
@@ -366,13 +366,15 @@ const Properties = () => {
 
   useEffect(() => {
     if (!pendingTypeId || propertyTypes.length === 0) return;
-    const match = propertyTypes.find((t) => String(t.id) === String(pendingTypeId));
+    const match = propertyTypes.find(
+      (t) => String(t.id) === String(pendingTypeId),
+    );
     if (match?.slug) {
       setActiveTab(match.slug);
     } else {
-      setActiveTab('tous');
+      setActiveTab("tous");
     }
-    setPendingTypeId('');
+    setPendingTypeId("");
   }, [pendingTypeId, propertyTypes]);
 
   // Charger les données
@@ -403,7 +405,7 @@ const Properties = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      ...(key === 'search' ? { city: '' } : {}),
+      ...(key === "search" ? { city: "" } : {}),
     }));
   };
 
@@ -418,7 +420,7 @@ const Properties = () => {
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id],
     );
   };
 
@@ -452,7 +454,7 @@ const Properties = () => {
   const filteredProperties = properties.filter((property) => {
     if (filters.features.length > 0 && property.features) {
       return filters.features.every((feature) =>
-        property.features.includes(feature)
+        property.features.includes(feature),
       );
     }
     return true;
@@ -468,7 +470,7 @@ const Properties = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <div
-        className="relative h-[600px]"
+        className="relative min-h-[560px] lg:min-h-[620px]"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80')",
@@ -476,351 +478,316 @@ const Properties = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 to-blue-800/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/90 via-blue-900/85 to-blue-900/80" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white mb-6">
+            <div className="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 text-white mb-6">
               <Building2 size={20} />
               <span className="font-semibold">Immobilier</span>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Trouvez Votre Bien Idéal
             </h1>
 
-            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 leading-relaxed">
               Découvrez notre sélection exclusive de {totalProperties}{" "}
               propriétés premium avec accompagnement personnalisé.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 onClick={() => {
                   const searchBar =
                     document.querySelector('input[type="text"]');
                   if (searchBar) searchBar.focus();
                 }}
-                className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-blue-50 transition-colors shadow-lg"
               >
                 <Search size={20} />
                 <span>Rechercher un bien</span>
               </button>
-              <button className="flex items-center justify-center space-x-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors">
                 <Phone size={20} />
                 <span>Nous contacter</span>
               </button>
             </div>
           </div>
         </div>
-
-        {/* Floating Stats Cards */}
-        <div className="absolute bottom-0 left-0 right-0 transform translate-y-1/2 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-2xl p-6 text-center hover:shadow-3xl transition-all hover:-translate-y-1 duration-300"
-                >
-                  <div className="text-blue-600 mb-3 flex justify-center">
-                    {stat.icon}
-                  </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-gray-600">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className="h-32"></div>
-
-      {/* Search & Filter Bar - Sticky */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search Input */}
-            <div className="flex-1 relative">
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Rechercher par ville, quartier ou type de bien..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange("search", e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-            </div>
-
-            {/* Filter Button */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-lg"
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-2xl p-5 sm:p-6 text-center border border-gray-100"
             >
-              <SlidersHorizontal size={20} />
-              <span>Filtres avancés</span>
-              {Object.values(filters).filter((v) =>
-                Array.isArray(v) ? v.length > 0 : v
-              ).length > 1 && (
-                <span className="bg-white text-blue-600 text-xs px-2 py-0.5 rounded-full font-bold">
-                  {Object.values(filters).filter((v) =>
-                    Array.isArray(v) ? v.length > 0 : v
-                  ).length - 1}
-                </span>
-              )}
-            </button>
-
-            {/* Sort */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white border-2 border-gray-200 rounded-lg pl-4 pr-10 py-3 focus:ring-2 focus:ring-blue-500 outline-none font-medium"
-              >
-                <option value="recommended">Recommandé</option>
-                <option value="price_asc">Prix croissant</option>
-                <option value="price_desc">Prix décroissant</option>
-                <option value="area_desc">Surface</option>
-              </select>
-              <ArrowUpDown
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                size={18}
-              />
+              <div className="text-blue-600 mb-3 flex justify-center">
+                {stat.icon}
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-600">{stat.label}</div>
             </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2.5 rounded-md transition-colors ${
-                  viewMode === "grid"
-                    ? "bg-white shadow-sm text-blue-600"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                <Grid size={20} />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2.5 rounded-md transition-colors ${
-                  viewMode === "list"
-                    ? "bg-white shadow-sm text-blue-600"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                <List size={20} />
-              </button>
-            </div>
-          </div>
-
-          {/* Filter Panel */}
-          {showFilters && (
-            <div className="mt-4 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">
-                  Filtres avancés
-                </h3>
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Type de bien
-                  </label>
-                  <select
-                    value={filters.type}
-                    onChange={(e) => handleFilterChange("type", e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                  >
-                    <option value="">Tous les types</option>
-                    {propertyTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Transaction */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction
-                  </label>
-                  <select
-                    value={filters.transactionType}
-                    onChange={(e) => handleFilterChange("transactionType", e.target.value)}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                  >
-                    <option value="">Toutes</option>
-                    <option value="vente">Vente</option>
-                    <option value="location">Location</option>
-                  </select>
-                </div>
-
-                {/* Prix Min */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Prix minimum (XOF)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="100 000"
-                    value={filters.priceMin}
-                    onChange={(e) =>
-                      handleFilterChange("priceMin", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-
-                {/* Prix Max */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Prix maximum (XOF)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="500 000"
-                    value={filters.priceMax}
-                    onChange={(e) =>
-                      handleFilterChange("priceMax", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-
-                {/* Surface Min */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Surface min (m²)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="50"
-                    value={filters.areaMin}
-                    onChange={(e) =>
-                      handleFilterChange("areaMin", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Chambres */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Chambres
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[1, 2, 3, 4, "5+"].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() =>
-                        handleFilterChange(
-                          "bedrooms",
-                          num === "5+" ? "5" : num.toString()
-                        )
-                      }
-                      className={`px-4 py-2.5 rounded-lg font-medium transition-all ${
-                        filters.bedrooms ===
-                        (num === "5+" ? "5" : num.toString())
-                          ? "bg-blue-600 text-white shadow-lg"
-                          : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"
-                      }`}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Caractéristiques */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Caractéristiques
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {propertyFeatures.map((feature) => (
-                    <button
-                      key={feature}
-                      onClick={() => toggleFeature(feature)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                        filters.features.includes(feature)
-                          ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
-                          : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                      }`}
-                    >
-                      {feature}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-300">
-                <button
-                  onClick={resetFilters}
-                  className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 rounded-lg font-medium transition-colors border-2 border-gray-200"
-                >
-                  Réinitialiser
-                </button>
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-lg"
-                >
-                  Appliquer les filtres
-                </button>
-              </div>
-            </div>
-          )}
+          ))}
         </div>
       </div>
 
       {/* Properties Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Nos Biens Immobiliers
-            </h2>
-            {/* nombre de propriete 
-            <p className="text-xl text-gray-600">
-              {loading
-                ? "Chargement..."
-                : `${filteredProperties.length} ${
-                    filteredProperties.length === 1
-                      ? "bien disponible"
-                      : "biens disponibles"
-                  }`}
-            </p> */}
+          <div className="text-center mb-10 sm:mb-12">
+            <div className="mt-8 sm:mt-10 bg-white border border-gray-200 shadow-md p-4 sm:p-6">
+              <div className="flex flex-col xl:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par ville, quartier ou type de bien..."
+                    value={filters.search}
+                    onChange={(e) =>
+                      handleFilterChange("search", e.target.value)
+                    }
+                    className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg"
+                  >
+                    <SlidersHorizontal size={20} />
+                    <span>Filtres avances</span>
+                    {Object.values(filters).filter((v) =>
+                      Array.isArray(v) ? v.length > 0 : v,
+                    ).length > 1 && (
+                      <span className="bg-white text-blue-600 text-xs px-2 py-0.5 font-bold">
+                        {Object.values(filters).filter((v) =>
+                          Array.isArray(v) ? v.length > 0 : v,
+                        ).length - 1}
+                      </span>
+                    )}
+                  </button>
+                  <div className="relative w-full sm:w-56">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:ring-2 focus:ring-blue-500 outline-none font-medium w-full"
+                    >
+                      <option value="recommended">Recommande</option>
+                      <option value="price_asc">Prix croissant</option>
+                      <option value="price_desc">Prix decroissant</option>
+                      <option value="area_desc">Surface</option>
+                    </select>
+                    <ArrowUpDown
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                      size={18}
+                    />
+                  </div>
+                  <div className="flex items-center bg-gray-100 p-1 w-full sm:w-auto">
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`p-2.5 transition-colors ${viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}
+                    >
+                      <Grid size={20} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`p-2.5 transition-colors ${viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}
+                    >
+                      <List size={20} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {showFilters && (
+                <div className="mt-5 p-5 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+                  <div className="flex justify-between items-center mb-5">
+                    <h3 className="text-lg font-bold text-gray-900">
+                      Filtres avances
+                    </h3>
+                    <button
+                      onClick={() => setShowFilters(false)}
+                      className="p-2 hover:bg-gray-200 transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Type de bien
+                      </label>
+                      <select
+                        value={filters.type}
+                        onChange={(e) =>
+                          handleFilterChange("type", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                      >
+                        <option value="">Tous les types</option>
+                        {propertyTypes.map((type) => (
+                          <option key={type.id} value={type.id}>
+                            {type.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Transaction
+                      </label>
+                      <select
+                        value={filters.transactionType}
+                        onChange={(e) =>
+                          handleFilterChange("transactionType", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                      >
+                        <option value="">Toutes</option>
+                        <option value="vente">Vente</option>
+                        <option value="location">Location</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Prix minimum (XOF)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="100 000"
+                        value={filters.priceMin}
+                        onChange={(e) =>
+                          handleFilterChange("priceMin", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Prix maximum (XOF)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="500 000"
+                        value={filters.priceMax}
+                        onChange={(e) =>
+                          handleFilterChange("priceMax", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Surface min (m2)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="50"
+                        value={filters.areaMin}
+                        onChange={(e) =>
+                          handleFilterChange("areaMin", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Chambres
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[1, 2, 3, 4, "5+"].map((num) => (
+                        <button
+                          key={num}
+                          onClick={() =>
+                            handleFilterChange(
+                              "bedrooms",
+                              num === "5+" ? "5" : num.toString(),
+                            )
+                          }
+                          className={`px-4 py-2.5 font-medium transition-all ${filters.bedrooms === (num === "5+" ? "5" : num.toString()) ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"}`}
+                        >
+                          {num}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Caracteristiques
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {propertyFeatures.map((feature) => (
+                        <button
+                          key={feature}
+                          onClick={() => toggleFeature(feature)}
+                          className={`px-3 py-1.5 text-sm font-medium transition-all ${filters.features.includes(feature) ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}
+                        >
+                          {feature}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap justify-end gap-3 mt-8 pt-6 border-t border-gray-300">
+                    <button
+                      onClick={resetFilters}
+                      className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 font-medium transition-colors border-2 border-gray-200"
+                    >
+                      Reinitialiser
+                    </button>
+                    <button
+                      onClick={() => setShowFilters(false)}
+                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg"
+                    >
+                      Appliquer les filtres
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-10 sm:mt-12 text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Nos Biens Immobiliers
+              </h2>
+              {/* nombre de propriete 
+              <p className="text-xl text-gray-600">
+                {loading
+                  ? "Chargement..."
+                  : `${filteredProperties.length} ${
+                      filteredProperties.length === 1
+                        ? "bien disponible"
+                        : "biens disponibles"
+                    }`}
+              </p> */}
+            </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex justify-center space-x-2 mb-12 overflow-x-auto pb-2">
+          <div className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12 overflow-x-auto pb-2">
             {getTabs().map((tab) => {
               const propertyType = propertyTypes.find((t) => t.slug === tab);
               return (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
-                    activeTab === tab
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                  }`}
+                  className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === tab ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}
                 >
                   {tab === "tous"
                     ? "Tous les biens"
@@ -834,13 +801,13 @@ const Properties = () => {
           {/* Properties Grid */}
           {loading ? (
             <div className="text-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
               <p className="mt-4 text-gray-600">Chargement des propriétés...</p>
             </div>
           ) : (
             <>
               {viewMode === "grid" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {filteredProperties.map((property) => (
                     <div
                       key={property.id}
@@ -860,7 +827,7 @@ const Properties = () => {
 
                         {property.tag && (
                           <div className="absolute top-4 left-4">
-                            <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            <span className="bg-blue-500 text-white px-3 py-1 text-sm font-semibold">
                               {property.tag}
                             </span>
                           </div>
@@ -868,11 +835,7 @@ const Properties = () => {
 
                         <button
                           onClick={() => toggleFavorite(property.id)}
-                          className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-sm transition-all ${
-                            favorites.includes(property.id)
-                              ? "bg-rose-500 text-white"
-                              : "bg-white/90 text-gray-700 hover:bg-white"
-                          }`}
+                          className={`absolute top-4 right-4 p-2.5 backdrop-blur-sm transition-all ${favorites.includes(property.id) ? "bg-rose-500 text-white" : "bg-white/90 text-gray-700 hover:bg-white"}`}
                         >
                           <Heart
                             size={18}
@@ -908,7 +871,7 @@ const Properties = () => {
                               {property.rating}
                             </span>
                           </div>
-                          <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700 rounded">
+                          <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700">
                             {property.transaction_type === "vente"
                               ? "À vendre"
                               : "À louer"}
@@ -961,7 +924,7 @@ const Properties = () => {
                               .map((feature, idx) => (
                                 <span
                                   key={idx}
-                                  className="flex items-center text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full"
+                                  className="flex items-center text-xs bg-blue-50 text-blue-700 px-2 py-1"
                                 >
                                   <CheckCircle size={12} className="mr-1" />
                                   {feature}
@@ -981,7 +944,7 @@ const Properties = () => {
                           </div>
                           <Link
                             to={`/property/${property.id}`}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
                           >
                             Voir détails
                           </Link>
@@ -1025,7 +988,7 @@ const Properties = () => {
                               <div className="text-2xl font-bold text-blue-600 mb-2">
                                 {formatPrice(property.price)}
                               </div>
-                              <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700 rounded">
+                              <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700">
                                 {property.transaction_type === "vente"
                                   ? "À vendre"
                                   : "À louer"}
@@ -1069,7 +1032,7 @@ const Properties = () => {
                               .map((feature, idx) => (
                                 <span
                                   key={idx}
-                                  className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded"
+                                  className="text-xs bg-blue-50 text-blue-700 px-2 py-1"
                                 >
                                   {feature}
                                 </span>
@@ -1079,17 +1042,13 @@ const Properties = () => {
                           <div className="flex justify-between items-center">
                             <Link
                               to={`/property/${property.id}`}
-                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
                             >
                               Voir détails
                             </Link>
                             <button
                               onClick={() => toggleFavorite(property.id)}
-                              className={`p-2 rounded-full ${
-                                favorites.includes(property.id)
-                                  ? "text-rose-500"
-                                  : "text-gray-400 hover:text-rose-500"
-                              }`}
+                              className={`p-2 ${favorites.includes(property.id) ? "text-rose-500" : "text-gray-400 hover:text-rose-500"}`}
                             >
                               <Heart
                                 size={20}
@@ -1121,7 +1080,7 @@ const Properties = () => {
                   </p>
                   <button
                     onClick={resetFilters}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
                   >
                     Réinitialiser les filtres
                   </button>
@@ -1133,24 +1092,24 @@ const Properties = () => {
       </section>
 
       {/* Advantages Section */}
-      <section className="py-20 bg-white">
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Pourquoi Choisir NARAF ?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
               Une expérience immobilière complète et sécurisée
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {advantages.map((adv, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                className="group bg-white p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 mb-6 group-hover:scale-110 transition-transform">
                   <div className="text-blue-600">{adv.icon}</div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -1178,7 +1137,7 @@ const Properties = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white relative overflow-hidden">
+      <section className="py-16 sm:py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -1192,20 +1151,20 @@ const Properties = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
               Prêt à Trouver Votre Futur Chez Vous ?
             </h2>
-            <p className="text-xl text-blue-100 mb-10 leading-relaxed">
+            <p className="text-base sm:text-xl text-blue-100 mb-10 leading-relaxed">
               Notre équipe d'experts vous accompagne dans toutes les étapes de
               votre projet immobilier.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-10 py-4 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10 sm:mb-12">
+              <button className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors shadow-lg">
                 <Phone size={20} />
                 <span>+225 XX XX XX XX XX</span>
               </button>
-              <button className="flex items-center justify-center space-x-2 bg-transparent border-2 border-white text-white px-10 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+              <button className="flex items-center justify-center space-x-2 bg-transparent border-2 border-white text-white px-10 py-4 font-semibold hover:bg-white/10 transition-colors">
                 <Mail size={20} />
                 <span>Prendre rendez-vous</span>
               </button>

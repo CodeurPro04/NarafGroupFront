@@ -1,31 +1,25 @@
 ﻿import axios from 'axios';
 
 // URL de base de ton API Laravel
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.kovatech.digital';
 
 // Instance axios pour l'API
 const api = axios.create({
-  baseURL: `${BASE_URL}/api/v1`, 
+  baseURL: `${BASE_URL}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true, // Important pour les cookies CSRF
+  withCredentials: false, // Bearer token uniquement
 });
 
-// Intercepteur pour ajouter le token et le CSRF aux requÃªtes
+// Intercepteur pour ajouter le token Bearer aux requetes
 api.interceptors.request.use(
   (config) => {
     // Ajouter le token d'authentification
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Ajouter le token CSRF depuis les cookies
-    const csrfToken = getCsrfTokenFromCookie();
-    if (csrfToken) {
-      config.headers['X-XSRF-TOKEN'] = csrfToken;
     }
 
     return config;
@@ -50,49 +44,13 @@ api.interceptors.response.use(
       }
     }
     
-    // Si erreur CSRF (419)
-    if (error.response?.status === 419) {
-      console.error('Token CSRF expirÃ©, tentative de rÃ©cupÃ©ration...');
-      // On pourrait automatiquement retenter aprÃ¨s avoir rÃ©cupÃ©rÃ© le CSRF
-    }
-    
     return Promise.reject(error);
   }
 );
 
-// Fonction pour extraire le token CSRF depuis les cookies
-const getCsrfTokenFromCookie = () => {
-  const name = 'XSRF-TOKEN';
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  
-  if (parts.length === 2) {
-    const token = parts.pop().split(';').shift();
-    return decodeURIComponent(token);
-  }
-  
-  return null;
-};
-
-// Fonction pour obtenir le cookie CSRF
-export const getCsrfCookie = async () => {
-  try {
-    await axios.get(`${BASE_URL}/sanctum/csrf-cookie`, {
-      withCredentials: true
-    });
-    console.log('Cookie CSRF rÃ©cupÃ©rÃ© avec succÃ¨s');
-  } catch (error) {
-    console.error('Erreur lors de la rÃ©cupÃ©ration du cookie CSRF:', error);
-    throw error;
-  }
-};
-
 // Fonction d'inscription
 export const register = async (userData) => {
   try {
-    // RÃ©cupÃ©rer le cookie CSRF avant l'inscription
-    await getCsrfCookie();
-    
     // Effectuer l'inscription
     const response = await api.post('/auth/register', userData);
     
@@ -112,9 +70,6 @@ export const register = async (userData) => {
 // Fonction de connexion
 export const login = async (email, password) => {
   try {
-    // RÃ©cupÃ©rer le cookie CSRF avant la connexion
-    await getCsrfCookie();
-    
     // Effectuer la connexion
     const response = await api.post('/auth/login', { email, password });
     

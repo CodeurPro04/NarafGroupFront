@@ -320,7 +320,7 @@ const Register = () => {
             {strength.level}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 h-2">
           <div
             className={`h-2 rounded-full transition-all duration-500 ${
               strength.color === "red"
@@ -384,7 +384,7 @@ const Register = () => {
         <div className="text-center py-20">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl"
+            className="inline-flex items-center justify-center w-20 h-20"
           >
             <img
               src="/images/logonaraf.png"
@@ -399,7 +399,7 @@ const Register = () => {
         </div>
 
         {/* User Type Selection */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-200">
+        <div className="bg-white shadow-lg p-6 mb-8 border border-gray-200">
           <h2 className="text-xl font-bold text-gray-900 mb-4">
             Sélectionnez votre profil
           </h2>
@@ -415,7 +415,7 @@ const Register = () => {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+        <div className="bg-white shadow-2xl p-8 border border-gray-200">
           {/* Message de succès/erreur */}
           {message.text && (
             <div
@@ -718,11 +718,11 @@ const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
             >
               {isLoading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin" />
                   Création du compte...
                 </>
               ) : (
@@ -754,7 +754,7 @@ const Register = () => {
           <div className="text-center">
             <Link
               to="/login"
-              className="inline-block w-full py-3.5 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 rounded-xl font-semibold transition-all"
+              className="inline-block w-full py-3.5 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
             >
               Se connecter à NARAF
             </Link>
