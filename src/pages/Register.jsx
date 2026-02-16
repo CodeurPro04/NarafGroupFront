@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
@@ -18,6 +18,7 @@ import { register } from "../api/axios";
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userType, setUserType] = useState("visitor");
@@ -35,6 +36,14 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const role = params.get("role");
+    if (role === "proprietaire") {
+      setUserType("owner");
+    }
+  }, [location.search]);
 
   const userTypes = [
     {
@@ -118,16 +127,6 @@ const Register = () => {
       newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     }
 
-    // Validation spécifique agent
-    if (userType === "agent") {
-      if (!formData.licenseNumber.trim()) {
-        newErrors.licenseNumber = "Le numéro de carte est requis";
-      }
-      if (!formData.agency.trim()) {
-        newErrors.agency = "Le nom de l'agence est requis";
-      }
-    }
-
     // Validation conditions générales
     if (!formData.terms) {
       newErrors.terms = "Vous devez accepter les conditions";
@@ -173,12 +172,6 @@ const Register = () => {
         password_confirmation: formData.confirmPassword,
         role: roleMapping[userType],
       };
-
-      // Ajouter les champs spécifiques agent si nécessaire
-      if (userType === "agent") {
-        registrationData.license_number = formData.licenseNumber.trim();
-        registrationData.agency = formData.agency.trim();
-      }
 
       // Appel API avec la fonction register qui gère CSRF
       const response = await register(registrationData);

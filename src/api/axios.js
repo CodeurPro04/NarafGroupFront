@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 
 // URL de base de ton API Laravel
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.kovatech.digital';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // Instance axios pour l'API
 const api = axios.create({
@@ -91,9 +91,9 @@ export const logout = async () => {
   try {
     await api.post('/auth/logout');
   } catch (error) {
-    console.error('Erreur de dÃ©connexion:', error);
+    console.error('Erreur de déconnexion:', error);
   } finally {
-    // Nettoyer toujours le localStorage mÃªme en cas d'erreur
+    // Nettoyer toujours le localStorage même en cas d'erreur
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user');
   }
@@ -105,12 +105,12 @@ export const getProfile = async () => {
     const response = await api.get('/auth/profile');
     return response.data;
   } catch (error) {
-    console.error('Erreur rÃ©cupÃ©ration profil:', error);
+    console.error('Erreur récupération profil:', error);
     throw error;
   }
 };
 
-// Fonction pour vÃ©rifier si l'utilisateur est authentifiÃ©
+// Fonction pour vérifier si l'utilisateur est authentifié
 export const isAuthenticated = () => {
   const token = localStorage.getItem('auth_token');
   const user = localStorage.getItem('user');
@@ -123,7 +123,7 @@ export const getCurrentUser = () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   } catch (error) {
-    console.error('Erreur lors de la rÃ©cupÃ©ration de l\'utilisateur:', error);
+    console.error('Erreur lors de la récupération de l\'utilisateur:', error);
     return null;
   }
 };
@@ -143,5 +143,10 @@ export const updatePartnership = (data) => api.put('/partnership/update', data, 
 export const getMyPartnership = () => api.get('/partnership/my-application');
 
 export const getApprovedPartners = () => api.get('/partnerships/approved');
+export const getPartnerById = (uuid) => api.get(`/partnerships/${uuid}`);
+
+// Modeles de maison (public)
+export const getHouseModels = () => api.get('/house-models');
+export const getHouseModelById = (identifier) => api.get(`/house-models/${identifier}`);
 
 export default api;

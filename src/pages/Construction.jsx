@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Building,
   Users,
@@ -24,12 +24,14 @@ const Construction = () => {
   const [loadError, setLoadError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("tous");
-  const [budgetFilter, setBudgetFilter] = useState("tous");
+  const [typeFilter, setTypeFilter] = useState("tous");
+  const [surfaceFilter, setSurfaceFilter] = useState("tous");
   const [sortOrder, setSortOrder] = useState("recent");
 
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80";
   const navigate = useNavigate();
+  const pageLocation = useLocation();
   const apiBase =
     import.meta.env.VITE_API_URL || "https://api.kovatech.digital/api";
   const storageBase = apiBase.replace(/\/api\/?$/, "");
@@ -57,6 +59,16 @@ const Construction = () => {
       location,
       progress: project.progress_percent || null,
       priceFrom: project.budget_min || null,
+      projectType:
+        project.project_type ||
+        project.type ||
+        project.property_type?.name ||
+        "",
+      surfaceArea:
+        project.surface_area ??
+        project.surface ??
+        project.total_surface ??
+        null,
       features: Array.isArray(project.features) ? project.features : [],
       city: project.city || "",
       createdAt: project.created_at || null,
@@ -92,6 +104,27 @@ const Construction = () => {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(pageLocation.search);
+    const queryText = params.get("search") || "";
+    const city = params.get("city") || "tous";
+    const type = (params.get("property_type") || "tous").toLowerCase();
+    const minSurface = params.get("min_surface");
+    const maxSurface = params.get("max_surface");
+
+    let nextSurface = "tous";
+    if (minSurface && maxSurface) {
+      nextSurface = `${minSurface}-${maxSurface}`;
+    } else if (minSurface && !maxSurface) {
+      nextSurface = `${minSurface}+`;
+    }
+
+    setSearchQuery(queryText);
+    setCityFilter(city);
+    setTypeFilter(type);
+    setSurfaceFilter(nextSurface);
+  }, [pageLocation.search]);
 
   const projectsSource = constructionProjects;
 
@@ -154,7 +187,10 @@ const Construction = () => {
       if (!query) return true;
       return (
         project.title.toLowerCase().includes(query) ||
-        project.location.toLowerCase().includes(query)
+        project.location.toLowerCase().includes(query) ||
+        String(project.projectType || "")
+          .toLowerCase()
+          .includes(query)
       );
     })
     .filter((project) => {
@@ -162,13 +198,29 @@ const Construction = () => {
       return project.city === cityFilter;
     })
     .filter((project) => {
-      if (budgetFilter === "tous") return true;
-      const price = Number(project.priceFrom);
-      if (Number.isNaN(price)) return false;
-      if (budgetFilter === "budget-bas") return price < 25000000;
-      if (budgetFilter === "budget-moyen")
-        return price >= 25000000 && price <= 75000000;
-      if (budgetFilter === "budget-haut") return price > 75000000;
+      if (typeFilter === "tous") return true;
+      const projectType = String(project.projectType || "").toLowerCase();
+      return projectType.includes(typeFilter);
+    })
+    .filter((project) => {
+      if (surfaceFilter === "tous") return true;
+      const surface = Number(project.surfaceArea);
+      if (Number.isNaN(surface)) return false;
+
+      if (surfaceFilter.includes("-")) {
+        const [minSurface, maxSurface] = surfaceFilter
+          .split("-")
+          .map((value) => Number(value));
+        if (Number.isNaN(minSurface) || Number.isNaN(maxSurface)) return true;
+        return surface >= minSurface && surface <= maxSurface;
+      }
+
+      if (surfaceFilter.endsWith("+")) {
+        const minSurface = Number(surfaceFilter.replace("+", ""));
+        if (Number.isNaN(minSurface)) return true;
+        return surface >= minSurface;
+      }
+
       return true;
     })
     .sort((a, b) => {
@@ -187,6 +239,14 @@ const Construction = () => {
       projectsSource
         .map((project) => project.city)
         .filter((city) => city && city.trim()),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
+  const constructionTypes = Array.from(
+    new Set(
+      projectsSource
+        .map((project) => String(project.projectType || "").trim())
+        .filter(Boolean),
     ),
   ).sort((a, b) => a.localeCompare(b));
 
@@ -280,7 +340,7 @@ const Construction = () => {
           </div>
 
           <div className="bg-white shadow-md p-4 sm:p-6 mb-10 sm:mb-12 border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
               <div>
                 <label className="text-xs font-semibold text-gray-500">
                   Recherche
@@ -312,17 +372,37 @@ const Construction = () => {
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500">
-                  Budget
+                  Type de bien
                 </label>
                 <select
-                  value={budgetFilter}
-                  onChange={(event) => setBudgetFilter(event.target.value)}
+                  value={typeFilter}
+                  onChange={(event) =>
+                    setTypeFilter(event.target.value.toLowerCase())
+                  }
                   className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
                 >
-                  <option value="tous">Tous les budgets</option>
-                  <option value="budget-bas">Moins de 25M XOF</option>
-                  <option value="budget-moyen">25M a 75M XOF</option>
-                  <option value="budget-haut">Plus de 75M XOF</option>
+                  <option value="tous">Tous les types</option>
+                  {constructionTypes.map((type) => (
+                    <option key={type} value={type.toLowerCase()}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-500">
+                  Surface
+                </label>
+                <select
+                  value={surfaceFilter}
+                  onChange={(event) => setSurfaceFilter(event.target.value)}
+                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                >
+                  <option value="tous">Toutes les surfaces</option>
+                  <option value="0-100">0 - 100 m2</option>
+                  <option value="100-200">100 - 200 m2</option>
+                  <option value="200-400">200 - 400 m2</option>
+                  <option value="400+">400 m2 et plus</option>
                 </select>
               </div>
               <div>

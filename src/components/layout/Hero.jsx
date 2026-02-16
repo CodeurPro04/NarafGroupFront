@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { propertyService } from "../../services/propertyService";
+import api from "../../api/axios";
 import {
   Search,
   MapPin,
@@ -8,19 +9,65 @@ import {
   ChevronLeft,
   ChevronRight,
   TrendingUp,
+  Maximize,
 } from "lucide-react";
+
+const propertyTransactionOptions = [
+  { value: "", label: "Acheter ou louer" },
+  { value: "vente", label: "Acheter" },
+  { value: "location", label: "Louer" },
+];
+
+const constructionSurfaceOptions = [
+  { value: "", label: "Surface" },
+  { value: "0-100", label: "0 - 100 m2" },
+  { value: "100-200", label: "100 - 200 m2" },
+  { value: "200-400", label: "200 - 400 m2" },
+  { value: "400+", label: "400 m2 et plus" },
+];
+
+const investmentBudgetOptions = [
+  { value: "", label: "Budget" },
+  { value: "0-5000000", label: "0 - 5M XOF" },
+  { value: "5000000-20000000", label: "5M - 20M XOF" },
+  { value: "20000000-50000000", label: "20M - 50M XOF" },
+  { value: "50000000+", label: "50M+ XOF" },
+];
+
+const basePropertyTypeOption = { value: "", label: "Type de bien" };
+const baseInvestmentTypeOption = {
+  value: "",
+  label: "Type d'investissement",
+};
+
+const sections = [
+  { key: "properties", label: "Trouver un bien" },
+  { key: "construction", label: "Construction" },
+  { key: "investment", label: "Investissement" },
+];
 
 const Hero = () => {
   const navigate = useNavigate();
-  const [searchType, setSearchType] = useState("vente");
+  const [activeSection, setActiveSection] = useState("properties");
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [location, setLocation] = useState("");
+
+  const [locationText, setLocationText] = useState("");
+
   const [propertyType, setPropertyType] = useState("");
-  const [budget, setBudget] = useState("");
-  const [propertyTypes, setPropertyTypes] = useState([
-    { value: "", label: "Type de bien" },
+  const [transactionType, setTransactionType] = useState("");
+
+  const [constructionType, setConstructionType] = useState("");
+  const [constructionSurface, setConstructionSurface] = useState("");
+
+  const [investmentType, setInvestmentType] = useState("");
+  const [investmentBudget, setInvestmentBudget] = useState("");
+
+  const [propertyTypes, setPropertyTypes] = useState([basePropertyTypeOption]);
+  const [investmentTypes, setInvestmentTypes] = useState([
+    baseInvestmentTypeOption,
   ]);
-  const [loadingTypes, setLoadingTypes] = useState(false);
+  const [loadingPropertyTypes, setLoadingPropertyTypes] = useState(false);
+  const [loadingInvestmentTypes, setLoadingInvestmentTypes] = useState(false);
 
   const slides = [
     {
@@ -46,18 +93,12 @@ const Hero = () => {
     },
   ];
 
-  const budgetRanges = [
-    { value: "", label: "Acheter/Louer" },
-    { value: "", label: "Louer" },
-    { value: "", label: "Acheter" },
-  ];
-
   useEffect(() => {
     let isMounted = true;
 
     const loadPropertyTypes = async () => {
       try {
-        setLoadingTypes(true);
+        setLoadingPropertyTypes(true);
         const response = await propertyService.getPropertyTypes();
         const payload = response?.data ?? response ?? [];
         const list = payload?.data || payload;
@@ -67,17 +108,50 @@ const Hero = () => {
               label: type.name || "Type",
             }))
           : [];
+
         if (isMounted) {
-          setPropertyTypes([{ value: "", label: "Type de bien" }, ...options]);
+          setPropertyTypes([basePropertyTypeOption, ...options]);
         }
       } catch (error) {
         console.error("Erreur chargement types:", error);
       } finally {
-        if (isMounted) setLoadingTypes(false);
+        if (isMounted) setLoadingPropertyTypes(false);
+      }
+    };
+
+    const loadInvestmentTypes = async () => {
+      try {
+        setLoadingInvestmentTypes(true);
+        const response = await api.get("/investments");
+        const list = response?.data?.data?.data || response?.data?.data || [];
+        const uniqueTypes = Array.from(
+          new Set(
+            (Array.isArray(list) ? list : [])
+              .map((item) => item?.project_type)
+              .filter((type) => type && String(type).trim()),
+          ),
+        );
+
+        const options = uniqueTypes.map((type) => {
+          const normalized = String(type).trim().toLowerCase();
+          return {
+            value: normalized,
+            label: String(type).trim(),
+          };
+        });
+
+        if (isMounted) {
+          setInvestmentTypes([baseInvestmentTypeOption, ...options]);
+        }
+      } catch (error) {
+        console.error("Erreur chargement types investissement:", error);
+      } finally {
+        if (isMounted) setLoadingInvestmentTypes(false);
       }
     };
 
     loadPropertyTypes();
+    loadInvestmentTypes();
 
     return () => {
       isMounted = false;
@@ -99,23 +173,171 @@ const Hero = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  const applyRangeParams = (params, value, minKey, maxKey) => {
+    if (!value) return;
+
+    if (value.includes("-")) {
+      const [minValue, maxValue] = value.split("-");
+      if (minValue) params.set(minKey, minValue);
+      if (maxValue) params.set(maxKey, maxValue);
+      return;
+    }
+
+    if (value.endsWith("+")) {
+      params.set(minKey, value.replace("+", ""));
+    }
+  };
+
   const handleSearch = () => {
     const params = new URLSearchParams();
-    const transaction = searchType === "neuf" ? "vente" : searchType;
-    if (transaction) params.set("transaction_type", transaction);
-    if (location) params.set("search", location);
-    if (propertyType) params.set("property_type_id", propertyType);
-    if (budget) {
-      if (budget.includes("-")) {
-        const [minValue, maxValue] = budget.split("-");
-        if (minValue) params.set("min_price", minValue);
-        if (maxValue) params.set("max_price", maxValue);
-      } else if (budget.endsWith("+")) {
-        params.set("min_price", budget.replace("+", ""));
-      }
+
+    if (locationText.trim()) {
+      params.set("search", locationText.trim());
     }
-    navigate(`/properties?${params.toString()}`);
+
+    if (activeSection === "properties") {
+      if (propertyType) params.set("property_type_id", propertyType);
+      if (transactionType) params.set("transaction_type", transactionType);
+
+      const query = params.toString();
+      navigate(query ? `/properties?${query}` : "/properties");
+      return;
+    }
+
+    if (activeSection === "construction") {
+      if (constructionType) {
+        const selectedType = propertyTypes.find(
+          (type) => String(type.value) === String(constructionType),
+        );
+        if (selectedType?.label) {
+          params.set("property_type", selectedType.label.toLowerCase());
+        }
+      }
+
+      applyRangeParams(
+        params,
+        constructionSurface,
+        "min_surface",
+        "max_surface",
+      );
+
+      const query = params.toString();
+      navigate(query ? `/construction?${query}` : "/construction");
+      return;
+    }
+
+    if (investmentType) params.set("investment_type", investmentType);
+    applyRangeParams(params, investmentBudget, "min_budget", "max_budget");
+
+    const query = params.toString();
+    navigate(query ? `/investment?${query}` : "/investment");
   };
+
+  const secondaryField =
+    activeSection === "investment"
+      ? {
+          value: investmentType,
+          onChange: setInvestmentType,
+          options: investmentTypes,
+          loading: loadingInvestmentTypes,
+          icon: TrendingUp,
+        }
+      : {
+          value: activeSection === "properties" ? propertyType : constructionType,
+          onChange:
+            activeSection === "properties" ? setPropertyType : setConstructionType,
+          options: propertyTypes,
+          loading: loadingPropertyTypes,
+          icon: Home,
+        };
+
+  const tertiaryField =
+    activeSection === "properties"
+      ? {
+          value: transactionType,
+          onChange: setTransactionType,
+          options: propertyTransactionOptions,
+          icon: TrendingUp,
+        }
+      : activeSection === "construction"
+        ? {
+            value: constructionSurface,
+            onChange: setConstructionSurface,
+            options: constructionSurfaceOptions,
+            icon: Maximize,
+          }
+        : {
+            value: investmentBudget,
+            onChange: setInvestmentBudget,
+            options: investmentBudgetOptions,
+            icon: TrendingUp,
+          };
+
+  const SecondaryIcon = secondaryField.icon;
+  const TertiaryIcon = tertiaryField.icon;
+
+  const renderSearchForm = () => (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="relative md:col-span-1">
+        <MapPin
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+          size={20}
+        />
+        <input
+          type="text"
+          placeholder="Ville, commune ou quartier"
+          value={locationText}
+          onChange={(e) => setLocationText(e.target.value)}
+          className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+        />
+      </div>
+
+      <div className="relative">
+        <SecondaryIcon
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          size={20}
+        />
+        <select
+          value={secondaryField.value}
+          onChange={(e) => secondaryField.onChange(e.target.value)}
+          disabled={secondaryField.loading}
+          className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
+        >
+          {secondaryField.options.map((option) => (
+            <option key={option.value || option.label} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="relative">
+        <TertiaryIcon
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+          size={20}
+        />
+        <select
+          value={tertiaryField.value}
+          onChange={(e) => tertiaryField.onChange(e.target.value)}
+          className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
+        >
+          {tertiaryField.options.map((option) => (
+            <option key={option.value || option.label} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <button
+        onClick={handleSearch}
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-8 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
+      >
+        <Search size={20} />
+        <span>Rechercher</span>
+      </button>
+    </div>
+  );
 
   return (
     <>
@@ -167,98 +389,22 @@ const Hero = () => {
             <div className="max-w-5xl mx-auto hidden md:block">
               <div className="bg-white shadow-2xl p-6">
                 <div className="flex gap-3 mb-6">
-                  <button
-                    onClick={() => setSearchType("vente")}
-                    className={`flex-1 py-3 px-6 font-semibold transition-all duration-200 ${
-                      searchType === "vente"
-                        ? "bg-blue-600 text-white shadow-lg"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    Trouver un bien
-                  </button>
-                  <button
-                    onClick={() => setSearchType("location")}
-                    className={`flex-1 py-3 px-6 font-semibold transition-all duration-200 ${
-                      searchType === "location"
-                        ? "bg-blue-600 text-white shadow-lg"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    Construction
-                  </button>
-                  <button
-                    onClick={() => setSearchType("neuf")}
-                    className={`flex-1 py-3 px-6 font-semibold transition-all duration-200 ${
-                      searchType === "neuf"
-                        ? "bg-blue-600 text-white shadow-lg"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    Investissement
-                  </button>
+                  {sections.map((section) => (
+                    <button
+                      key={section.key}
+                      onClick={() => setActiveSection(section.key)}
+                      className={`flex-1 py-3 px-6 font-semibold transition-all duration-200 ${
+                        activeSection === section.key
+                          ? "bg-blue-600 text-white shadow-lg"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="relative md:col-span-1">
-                    <MapPin
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={20}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Ville, commune ou quartier"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    />
-                  </div>
-
-                  <div className="relative">
-                    <Home
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                      size={20}
-                    />
-                    <select
-                      value={propertyType}
-                      onChange={(e) => setPropertyType(e.target.value)}
-                      disabled={loadingTypes}
-                      className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
-                    >
-                      {propertyTypes.map((type) => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="relative">
-                    <TrendingUp
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                      size={20}
-                    />
-                    <select
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
-                    >
-                      {budgetRanges.map((range) => (
-                        <option key={range.value} value={range.value}>
-                          {range.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <button
-                    onClick={handleSearch}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-8 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
-                  >
-                    <Search size={20} />
-                    <span>Rechercher</span>
-                  </button>
-                </div>
+                {renderSearchForm()}
               </div>
             </div>
           </div>
@@ -269,98 +415,22 @@ const Hero = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           <div className="bg-white shadow-lg p-5">
             <div className="flex flex-col gap-3 mb-5">
-              <button
-                onClick={() => setSearchType("vente")}
-                className={`w-full py-3 px-6 font-semibold transition-all duration-200 ${
-                  searchType === "vente"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Acheter
-              </button>
-              <button
-                onClick={() => setSearchType("location")}
-                className={`w-full py-3 px-6 font-semibold transition-all duration-200 ${
-                  searchType === "location"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Louer
-              </button>
-              <button
-                onClick={() => setSearchType("neuf")}
-                className={`w-full py-3 px-6 font-semibold transition-all duration-200 ${
-                  searchType === "neuf"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Neuf
-              </button>
+              {sections.map((section) => (
+                <button
+                  key={section.key}
+                  onClick={() => setActiveSection(section.key)}
+                  className={`w-full py-3 px-6 font-semibold transition-all duration-200 ${
+                    activeSection === section.key
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {section.label}
+                </button>
+              ))}
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="relative">
-                <MapPin
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Ville, commune ou quartier"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              <div className="relative">
-                <Home
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={20}
-                />
-                <select
-                  value={propertyType}
-                  onChange={(e) => setPropertyType(e.target.value)}
-                  disabled={loadingTypes}
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
-                >
-                  {propertyTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="relative">
-                <TrendingUp
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={20}
-                />
-                <select
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
-                >
-                  {budgetRanges.map((range) => (
-                    <option key={range.value} value={range.value}>
-                      {range.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                onClick={handleSearch}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 px-8 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
-              >
-                <Search size={20} />
-                <span>Rechercher</span>
-              </button>
-            </div>
+            {renderSearchForm()}
           </div>
         </div>
       </section>

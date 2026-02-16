@@ -10,7 +10,10 @@ import Construction from './pages/Construction';
 import ConstructionDetails from './pages/ConstructionDetails';
 import Investment from './pages/Investment';
 import InvestmentDetails from './pages/InvestmentDetails';
+import HouseModels from './pages/HouseModels';
+import HouseModelDetails from './pages/HouseModelDetails';
 import Partnership from './pages/Partnership';
+import PartnerDetails from './pages/PartnerDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -41,7 +44,10 @@ function App() {
             <Route path="/construction/:uuid" element={<ConstructionDetails />} />
             <Route path="/investment" element={<Investment />} />
             <Route path="/investment/:uuid" element={<InvestmentDetails />} />
+            <Route path="/house-models" element={<HouseModels />} />
+            <Route path="/house-models/:uuid" element={<HouseModelDetails />} />
             <Route path="/partnership" element={<Partnership />} />
+            <Route path="/partners/:uuid" element={<PartnerDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />

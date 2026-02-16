@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   TrendingUp,
   Shield,
@@ -26,10 +26,12 @@ const Investment = () => {
   const [sortBy, setSortBy] = useState("roi_desc");
   const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [budgetFilter, setBudgetFilter] = useState("tous");
   const [investmentProjects, setInvestmentProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const navigate = useNavigate();
+  const pageLocation = useLocation();
 
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
@@ -144,6 +146,25 @@ const Investment = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(pageLocation.search);
+    const queryText = params.get("search") || "";
+    const type = (params.get("investment_type") || "tous").toLowerCase();
+    const minBudget = params.get("min_budget");
+    const maxBudget = params.get("max_budget");
+
+    let nextBudget = "tous";
+    if (minBudget && maxBudget) {
+      nextBudget = `${minBudget}-${maxBudget}`;
+    } else if (minBudget && !maxBudget) {
+      nextBudget = `${minBudget}+`;
+    }
+
+    setSearchTerm(queryText);
+    setActiveFilter(type);
+    setBudgetFilter(nextBudget);
+  }, [pageLocation.search]);
+
   const projectsSource = investmentProjects;
   const averageRoi =
     projectsSource.reduce(
@@ -251,6 +272,28 @@ const Investment = () => {
           project.type.toLowerCase().includes(searchLower)
         );
       }
+      return true;
+    })
+    .filter((project) => {
+      if (budgetFilter === "tous") return true;
+
+      const budget = Number(project.minInvestment);
+      if (Number.isNaN(budget)) return false;
+
+      if (budgetFilter.includes("-")) {
+        const [minBudget, maxBudget] = budgetFilter
+          .split("-")
+          .map((value) => Number(value));
+        if (Number.isNaN(minBudget) || Number.isNaN(maxBudget)) return true;
+        return budget >= minBudget && budget <= maxBudget;
+      }
+
+      if (budgetFilter.endsWith("+")) {
+        const minBudget = Number(budgetFilter.replace("+", ""));
+        if (Number.isNaN(minBudget)) return true;
+        return budget >= minBudget;
+      }
+
       return true;
     })
     .sort((a, b) => {
@@ -400,6 +443,23 @@ const Investment = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full xl:w-72 pl-12 pr-4 py-3 bg-white border-2 border-gray-200 focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none"
+                />
+              </div>
+              <div className="relative">
+                <select
+                  value={budgetFilter}
+                  onChange={(e) => setBudgetFilter(e.target.value)}
+                  className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-medium w-full sm:w-auto"
+                >
+                  <option value="tous">Tous les budgets</option>
+                  <option value="0-5000000">0 - 5M XOF</option>
+                  <option value="5000000-20000000">5M - 20M XOF</option>
+                  <option value="20000000-50000000">20M - 50M XOF</option>
+                  <option value="50000000+">50M+ XOF</option>
+                </select>
+                <Filter
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  size={18}
                 />
               </div>
               <div className="relative">

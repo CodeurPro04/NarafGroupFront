@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   MapPin,
   Bed,
@@ -8,6 +8,7 @@ import {
   Heart,
   Search,
   Phone,
+  Plus,
   Mail,
   Building2,
   Home,
@@ -23,10 +24,11 @@ import {
   Grid,
   List,
 } from "lucide-react";
-import api from "../api/axios";
+import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 
 const Properties = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("tous");
   const [viewMode, setViewMode] = useState("grid");
   const [showFilters, setShowFilters] = useState(false);
@@ -39,6 +41,11 @@ const Properties = () => {
   const [propertyFeatures, setPropertyFeatures] = useState([]);
   const [pendingTypeId, setPendingTypeId] = useState("");
   const [hasSyncedFilters, setHasSyncedFilters] = useState(false);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [announcementText, setAnnouncementText] = useState("");
+  const [announcementSubmitting, setAnnouncementSubmitting] = useState(false);
+  const [announcementError, setAnnouncementError] = useState("");
+  const [announcementSuccess, setAnnouncementSuccess] = useState("");
 
   const [filters, setFilters] = useState({
     search: "",
@@ -442,6 +449,52 @@ const Properties = () => {
     setSortBy("recommended");
   };
 
+  const currentUser = getCurrentUser();
+  const normalizedRole = currentUser?.role || currentUser?.role_name;
+  const isOwnerAuthenticated =
+    isAuthenticated() && normalizedRole === "proprietaire";
+
+  const handleAnnouncementClick = () => {
+    if (!isOwnerAuthenticated) {
+      navigate("/register?role=proprietaire");
+      return;
+    }
+    setAnnouncementError("");
+    setAnnouncementSuccess("");
+    setShowAnnouncementModal(true);
+  };
+
+  const submitAnnouncementRequest = async (event) => {
+    event.preventDefault();
+    if (!announcementText.trim()) {
+      setAnnouncementError("Veuillez decrire votre bien.");
+      return;
+    }
+
+    try {
+      setAnnouncementSubmitting(true);
+      setAnnouncementError("");
+      setAnnouncementSuccess("");
+
+      await api.post("/proprietaire/property-requests", {
+        description: announcementText.trim(),
+      });
+
+      setAnnouncementSuccess("Demande envoyee avec succes.");
+      setAnnouncementText("");
+      setTimeout(() => {
+        setShowAnnouncementModal(false);
+        setAnnouncementSuccess("");
+      }, 900);
+    } catch (error) {
+      const message =
+        error?.response?.data?.message || "Erreur lors de l'envoi de la demande.";
+      setAnnouncementError(message);
+    } finally {
+      setAnnouncementSubmitting(false);
+    }
+  };
+
   const formatPrice = (price) => {
     if (!price || price === 0) return "Prix non spécifié";
     return new Intl.NumberFormat("fr-FR", {
@@ -508,15 +561,18 @@ const Properties = () => {
                 <Search size={20} />
                 <span>Rechercher un bien</span>
               </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors">
-                <Phone size={20} />
-                <span>Nous contacter</span>
+              <button
+                onClick={handleAnnouncementClick}
+                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors"
+              >
+                <Plus size={20} />
+                <span>Faire une annonce</span>
               </button>
             </div>
           </div>
         </div>
       </div>
-
+{/*
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
@@ -534,7 +590,7 @@ const Properties = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Properties Section */}
       <section className="py-16 sm:py-20 bg-gray-50">
@@ -1134,7 +1190,7 @@ const Properties = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> 
 
       {/* CTA Section */}
       <section className="py-16 sm:py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white relative overflow-hidden">
@@ -1172,6 +1228,67 @@ const Properties = () => {
           </div>
         </div>
       </section>
+
+      {showAnnouncementModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center px-4">
+          <div className="w-full max-w-2xl bg-white shadow-2xl border border-slate-200">
+            <div className="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-slate-900">Faire une annonce</h3>
+              <button
+                type="button"
+                onClick={() => setShowAnnouncementModal(false)}
+                className="p-2 text-slate-500 hover:text-slate-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={submitAnnouncementRequest} className="p-5 sm:p-6 space-y-4">
+              <div>
+                <label className="text-sm font-medium text-slate-700">
+                  Decrivez votre bien
+                </label>
+                <textarea
+                  value={announcementText}
+                  onChange={(event) => setAnnouncementText(event.target.value)}
+                  rows={6}
+                  className="mt-2 w-full border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="J'aimerais ajouter une maison de 4 pieces situee a..."
+                  required
+                />
+              </div>
+
+              {announcementError && (
+                <div className="text-sm px-3 py-2 bg-red-50 border border-red-200 text-red-700">
+                  {announcementError}
+                </div>
+              )}
+              {announcementSuccess && (
+                <div className="text-sm px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  {announcementSuccess}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAnnouncementModal(false)}
+                  className="px-5 py-2.5 border border-slate-300 text-slate-700 hover:bg-slate-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={announcementSubmitting}
+                  className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                >
+                  {announcementSubmitting ? "Envoi..." : "Envoyer la demande"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
