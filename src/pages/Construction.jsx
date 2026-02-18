@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Building,
-  Users,
   MapPin,
   CheckCircle,
   TrendingUp,
@@ -14,19 +12,34 @@ import {
   Mail,
   Award,
   Play,
+  ArrowRight,
+  Search,
 } from "lucide-react";
 import api from "../api/axios";
+import { isAuthenticated } from "../api/axios";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 
 const Construction = () => {
   const [constructionProjects, setConstructionProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cityFilter, setCityFilter] = useState("tous");
-  const [typeFilter, setTypeFilter] = useState("tous");
-  const [surfaceFilter, setSurfaceFilter] = useState("tous");
+  const [needTab, setNeedTab] = useState("terrain");
+  const [localisationInput, setLocalisationInput] = useState("");
+  const [cityInput, setCityInput] = useState("tous");
+  const [surfaceMinInput, setSurfaceMinInput] = useState("");
+  const [priceMaxInput, setPriceMaxInput] = useState("");
+  const [projectTypeInput, setProjectTypeInput] = useState("tous");
+  const [roomsInput, setRoomsInput] = useState("tous");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [appliedFilters, setAppliedFilters] = useState({
+    mode: "terrain",
+    localisation: "",
+    city: "tous",
+    surfaceMin: "",
+    priceMax: "",
+    projectType: "tous",
+    rooms: "tous",
+  });
 
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80";
@@ -71,6 +84,12 @@ const Construction = () => {
         null,
       features: Array.isArray(project.features) ? project.features : [],
       city: project.city || "",
+      rooms:
+        project.bedrooms ??
+        project.rooms ??
+        project.pieces ??
+        project.number_of_rooms ??
+        null,
       createdAt: project.created_at || null,
     };
   };
@@ -111,19 +130,25 @@ const Construction = () => {
     const city = params.get("city") || "tous";
     const type = (params.get("property_type") || "tous").toLowerCase();
     const minSurface = params.get("min_surface");
-    const maxSurface = params.get("max_surface");
+    const maxPrice = params.get("max_price") || "";
 
-    let nextSurface = "tous";
-    if (minSurface && maxSurface) {
-      nextSurface = `${minSurface}-${maxSurface}`;
-    } else if (minSurface && !maxSurface) {
-      nextSurface = `${minSurface}+`;
-    }
+    setNeedTab(city !== "tous" ? "maison" : "terrain");
+    setLocalisationInput(queryText);
+    setCityInput(city);
+    setSurfaceMinInput(minSurface || "");
+    setPriceMaxInput(maxPrice);
+    setProjectTypeInput(type);
+    setRoomsInput("tous");
 
-    setSearchQuery(queryText);
-    setCityFilter(city);
-    setTypeFilter(type);
-    setSurfaceFilter(nextSurface);
+    setAppliedFilters({
+      mode: city !== "tous" ? "maison" : "terrain",
+      localisation: queryText,
+      city,
+      surfaceMin: minSurface || "",
+      priceMax: maxPrice,
+      projectType: type,
+      rooms: "tous",
+    });
   }, [pageLocation.search]);
 
   const projectsSource = constructionProjects;
@@ -174,54 +199,97 @@ const Construction = () => {
     },
   ];
 
-  const stats = [
-    { icon: <Building size={40} />, value: "150+", label: "Projets realises" },
-    { icon: <Users size={40} />, value: "2,500+", label: "Clients satisfaits" },
-    { icon: <Award size={40} />, value: "25 ans", label: "D'experience" },
-    { icon: <Home size={40} />, value: "98%", label: "Taux de satisfaction" },
+  const constructionTabs = [
+    {
+      title: "Nos maisons",
+      subtitle: "Modeles et plans",
+      to: "/house-models",
+      icon: <Home size={28} />,
+    },
+    {
+      title: "Votre projets",
+      subtitle: "Construction sur mesure",
+      to: "/construction",
+      icon: <Hammer size={28} />,
+    },
+    {
+      title: "Nos residences",
+      subtitle: "Programmes immobiliers",
+      to: "/properties",
+      icon: <Award size={28} />,
+    },
   ];
+
+  const roomsOptions = [
+    { value: "tous", label: "Nombre de pieces" },
+    { value: "1", label: "1+ piece" },
+    { value: "2", label: "2+ pieces" },
+    { value: "3", label: "3+ pieces" },
+    { value: "4", label: "4+ pieces" },
+    { value: "5", label: "5+ pieces" },
+  ];
+
+  const applySearchFilters = () => {
+    setAppliedFilters({
+      mode: needTab,
+      localisation: localisationInput.trim(),
+      city: cityInput,
+      surfaceMin: surfaceMinInput,
+      priceMax: priceMaxInput,
+      projectType: projectTypeInput,
+      rooms: roomsInput,
+    });
+  };
 
   const filteredProjects = projectsSource
     .filter((project) => {
-      const query = searchQuery.trim().toLowerCase();
+      const query = String(appliedFilters.localisation || "").toLowerCase();
       if (!query) return true;
       return (
         project.title.toLowerCase().includes(query) ||
         project.location.toLowerCase().includes(query) ||
+        String(project.city || "")
+          .toLowerCase()
+          .includes(query) ||
         String(project.projectType || "")
           .toLowerCase()
           .includes(query)
       );
     })
     .filter((project) => {
-      if (cityFilter === "tous") return true;
-      return project.city === cityFilter;
+      if (appliedFilters.mode !== "maison") return true;
+      if (appliedFilters.city === "tous") return true;
+      return String(project.city || "").toLowerCase() === String(appliedFilters.city).toLowerCase();
     })
     .filter((project) => {
-      if (typeFilter === "tous") return true;
+      if (appliedFilters.mode !== "terrain") return true;
+      if (appliedFilters.projectType === "tous") return true;
       const projectType = String(project.projectType || "").toLowerCase();
-      return projectType.includes(typeFilter);
+      return projectType.includes(String(appliedFilters.projectType).toLowerCase());
     })
     .filter((project) => {
-      if (surfaceFilter === "tous") return true;
+      if (!appliedFilters.surfaceMin) return true;
       const surface = Number(project.surfaceArea);
       if (Number.isNaN(surface)) return false;
-
-      if (surfaceFilter.includes("-")) {
-        const [minSurface, maxSurface] = surfaceFilter
-          .split("-")
-          .map((value) => Number(value));
-        if (Number.isNaN(minSurface) || Number.isNaN(maxSurface)) return true;
-        return surface >= minSurface && surface <= maxSurface;
-      }
-
-      if (surfaceFilter.endsWith("+")) {
-        const minSurface = Number(surfaceFilter.replace("+", ""));
-        if (Number.isNaN(minSurface)) return true;
-        return surface >= minSurface;
-      }
-
-      return true;
+      const minSurface = Number(appliedFilters.surfaceMin);
+      if (Number.isNaN(minSurface)) return true;
+      return surface >= minSurface;
+    })
+    .filter((project) => {
+      if (!appliedFilters.priceMax) return true;
+      const maxPrice = Number(appliedFilters.priceMax);
+      if (Number.isNaN(maxPrice)) return true;
+      const price = Number(project.priceFrom);
+      if (Number.isNaN(price)) return false;
+      return price <= maxPrice;
+    })
+    .filter((project) => {
+      if (appliedFilters.mode === "terrain") return true;
+      if (appliedFilters.rooms === "tous") return true;
+      const rooms = Number(project.rooms);
+      const minimumRooms = Number(appliedFilters.rooms);
+      if (Number.isNaN(rooms) || Number.isNaN(minimumRooms)) return false;
+      return rooms >= minimumRooms;
     })
     .sort((a, b) => {
       if (sortOrder === "prix-asc")
@@ -261,6 +329,19 @@ const Construction = () => {
     }).format(price);
   };
 
+  const handleClientSpace = () => {
+    if (isAuthenticated()) {
+      navigate("/profile");
+      return;
+    }
+    navigate("/login", {
+      state: {
+        message: "Veuillez vous connecter pour acceder a votre espace client.",
+        redirectTo: "/profile",
+      },
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div
@@ -292,9 +373,12 @@ const Construction = () => {
                 <Phone size={20} />
                 <span>Demander un devis</span>
               </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors">
+              <button
+                onClick={handleClientSpace}
+                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors"
+              >
                 <Play size={20} />
-                <span>Voir nos realisations</span>
+                <span>Espace client</span>
               </button>
             </div>
           </div>
@@ -302,20 +386,29 @@ const Construction = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-2xl p-5 sm:p-6 text-center border border-gray-100"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {constructionTabs.map((tab) => (
+            <Link
+              key={tab.title}
+              to={tab.to}
+              className="group bg-white/95 backdrop-blur-sm shadow-2xl p-5 sm:p-6 border border-gray-100 hover:border-green-200 transition-all"
             >
-              <div className="text-green-600 mb-3 flex justify-center">
-                {stat.icon}
+              <div className="flex items-start gap-4">
+                <span className="text-green-600 mt-1">{tab.icon}</span>
+                <div className="min-w-0">
+                  <h3 className="text-2xl font-bold text-slate-700 leading-tight">
+                    {tab.title}
+                  </h3>
+                  <p className="mt-1 text-lg text-slate-900 flex items-center gap-2">
+                    {tab.subtitle}
+                    <ArrowRight
+                      size={16}
+                      className="text-green-600 transition-transform group-hover:translate-x-1"
+                    />
+                  </p>
+                </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -324,10 +417,10 @@ const Construction = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Nos projets de construction
+              Faites construire votre maison partous en afrique même au village
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Decouvrez nos realisations en cours et terminees
+              Notre IA vous aides a Choisir votre future maison sans stress.
             </p>
             {isLoading && (
               <div className="mt-3">
@@ -340,85 +433,220 @@ const Construction = () => {
           </div>
 
           <div className="bg-white shadow-md p-4 sm:p-6 mb-10 sm:mb-12 border border-gray-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+            <div className="space-y-5">
               <div>
-                <label className="text-xs font-semibold text-gray-500">
-                  Recherche
-                </label>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Projet, ville, localisation..."
-                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-500">
-                  Ville
-                </label>
-                <select
-                  value={cityFilter}
-                  onChange={(event) => setCityFilter(event.target.value)}
-                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
-                >
-                  <option value="tous">Toutes les villes</option>
-                  {cities.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
+                <p className="text-sm font-semibold text-gray-800 mb-3">
+                  De quoi avez-vous besoin ?
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { key: "terrain", label: "Terrain" },
+                    { key: "maison-terrain", label: "Maison + terrain" },
+                    { key: "maison", label: "Maison" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => setNeedTab(tab.key)}
+                      className={`px-4 py-2.5 text-sm font-semibold border transition-colors ${
+                        needTab === tab.key
+                          ? "bg-green-600 text-white border-green-600"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-green-300"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-500">
-                  Type de bien
-                </label>
-                <select
-                  value={typeFilter}
-                  onChange={(event) =>
-                    setTypeFilter(event.target.value.toLowerCase())
-                  }
-                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
-                >
-                  <option value="tous">Tous les types</option>
-                  {constructionTypes.map((type) => (
-                    <option key={type} value={type.toLowerCase()}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+                {(needTab === "terrain" || needTab === "maison-terrain") && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">
+                      Localisation
+                    </label>
+                    <input
+                      type="text"
+                      value={localisationInput}
+                      onChange={(event) => setLocalisationInput(event.target.value)}
+                      placeholder="Ville, commune, quartier..."
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    />
+                  </div>
+                )}
+
+                {needTab === "maison" && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">
+                      Ville
+                    </label>
+                    <select
+                      value={cityInput}
+                      onChange={(event) => setCityInput(event.target.value)}
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    >
+                      <option value="tous">Toutes les villes</option>
+                      {cities.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500">
+                    Superficie minimum
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={surfaceMinInput}
+                    onChange={(event) => setSurfaceMinInput(event.target.value)}
+                    placeholder="Ex: 120"
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500">
+                    Prix maximum
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={priceMaxInput}
+                    onChange={(event) => setPriceMaxInput(event.target.value)}
+                    placeholder="Ex: 50000000"
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                  />
+                </div>
+
+                {needTab === "terrain" && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">
+                      Type de projet
+                    </label>
+                    <select
+                      value={projectTypeInput}
+                      onChange={(event) =>
+                        setProjectTypeInput(event.target.value.toLowerCase())
+                      }
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    >
+                      <option value="tous">Tous les types</option>
+                      {constructionTypes.map((type) => (
+                        <option key={type} value={type.toLowerCase()}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {(needTab === "maison-terrain" || needTab === "maison") && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">
+                      Nombre de pieces
+                    </label>
+                    <select
+                      value={roomsInput}
+                      onChange={(event) => setRoomsInput(event.target.value)}
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    >
+                      {roomsOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500">
+                    Trier par
+                  </label>
+                  <select
+                    value={sortOrder}
+                    onChange={(event) => setSortOrder(event.target.value)}
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                  >
+                    <option value="recent">Plus recents</option>
+                    <option value="prix-asc">Prix croissant</option>
+                    <option value="prix-desc">Prix decroissant</option>
+                    <option value="nom">Nom (A-Z)</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-500">
-                  Surface
-                </label>
-                <select
-                  value={surfaceFilter}
-                  onChange={(event) => setSurfaceFilter(event.target.value)}
-                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={applySearchFilters}
+                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 text-sm font-semibold transition-colors"
                 >
-                  <option value="tous">Toutes les surfaces</option>
-                  <option value="0-100">0 - 100 m2</option>
-                  <option value="100-200">100 - 200 m2</option>
-                  <option value="200-400">200 - 400 m2</option>
-                  <option value="400+">400 m2 et plus</option>
-                </select>
+                  <Search size={16} />
+                  Rechercher
+                </button>
               </div>
+            </div>
+          </div>
+
+          <div className="mb-10 sm:mb-12 border border-gray-200 bg-slate-50 p-5 sm:p-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
               <div>
-                <label className="text-xs font-semibold text-gray-500">
-                  Trier par
-                </label>
-                <select
-                  value={sortOrder}
-                  onChange={(event) => setSortOrder(event.target.value)}
-                  className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
-                >
-                  <option value="recent">Plus recents</option>
-                  <option value="prix-asc">Prix croissant</option>
-                  <option value="prix-desc">Prix decroissant</option>
-                  <option value="nom">Nom (A-Z)</option>
-                </select>
+                <h3 className="text-3xl font-bold text-slate-700 leading-tight mb-4">
+                  La satisfaction client est notre priorite
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Parce que chaque famille est unique, nous vous accompagnons
+                  tout au long de votre projet de construction de maison et
+                  nous engageons sur la qualite et la date de livraison de
+                  votre logement.
+                </p>
+                <p className="text-gray-600 leading-relaxed mt-4">
+                  Chaque detail est pense pour vous rendre la vie plus
+                  agreable.
+                </p>
+              </div>
+
+              <div>
+                <div className="text-green-600 mb-3">
+                  <Clock size={34} />
+                </div>
+                <h4 className="text-4xl font-bold text-slate-800 mb-2">Delais</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  En realisant votre projet avec NARAF, vous beneficiez d'une
+                  garantie de livraison a prix et delais convenus, avec un
+                  accompagnement rigoureux a chaque etape.
+                </p>
+              </div>
+
+              <div>
+                <div className="text-green-600 mb-3">
+                  <TrendingUp size={34} />
+                </div>
+                <h4 className="text-4xl font-bold text-slate-800 mb-2">Prix</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  L'accessibilite de nos maisons repose sur un reseau de
+                  partenaires solides et une maitrise des couts pour offrir le
+                  meilleur rapport qualite-prix.
+                </p>
+              </div>
+
+              <div>
+                <div className="text-green-600 mb-3">
+                  <Award size={34} />
+                </div>
+                <h4 className="text-4xl font-bold text-slate-800 mb-2">Qualite</h4>
+                <p className="text-gray-600 leading-relaxed">
+                  Nous concevons des projets conformes aux standards stricts,
+                  avec des materiaux performants et des equipements modernes
+                  pour un habitat durable.
+                </p>
               </div>
             </div>
           </div>
@@ -520,6 +748,48 @@ const Construction = () => {
 
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-14 sm:mb-16">
+            <div className="text-center max-w-4xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold text-green-800 mb-4">
+                Ne ratez pas cette offre exceptionnelle
+              </h2>
+              <p className="text-base sm:text-lg text-gray-600">
+                Deux offres speciales en video pour vous aider a lancer votre
+                projet au meilleur moment.
+              </p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <article className="border border-gray-200 bg-slate-50 p-3">
+                <div className="aspect-video bg-black">
+                  <iframe
+                    className="w-full h-full"
+                    src="https://www.youtube.com/embed/jfKfPfyJRdk?rel=0&modestbranding=1"
+                    title="Offre speciale 1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+                
+              </article>
+
+              <article className="border border-gray-200 bg-slate-50 p-3">
+                <div className="aspect-video bg-black">
+                  <iframe
+                    className="w-full h-full"
+                    src="https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&modestbranding=1"
+                    title="Offre speciale 2"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+                
+              </article>
+            </div>
+          </div>
+
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Pourquoi construire avec NARAF ?

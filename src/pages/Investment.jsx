@@ -17,6 +17,9 @@ import {
   Eye,
   Heart,
   Zap,
+  FileText,
+  Home,
+  Hammer,
 } from "lucide-react";
 import api from "../api/axios";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
@@ -30,6 +33,7 @@ const Investment = () => {
   const [investmentProjects, setInvestmentProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [activeHeroTab, setActiveHeroTab] = useState("nos-offres");
   const navigate = useNavigate();
   const pageLocation = useLocation();
 
@@ -166,43 +170,26 @@ const Investment = () => {
   }, [pageLocation.search]);
 
   const projectsSource = investmentProjects;
-  const averageRoi =
-    projectsSource.reduce(
-      (sum, project) => sum + (parseFloat(project.roi) || 0),
-      0,
-    ) / (projectsSource.length || 1);
-  const averageDuration =
-    projectsSource.reduce(
-      (sum, project) => sum + (project.durationMonths || 0),
-      0,
-    ) /
-    (projectsSource.length || 1) /
-    12;
-
-  const investmentStats = [
+  const heroTabs = [
     {
-      label: "Rendement moyen",
-      value: `${averageRoi.toFixed(1)}%`,
-      icon: <TrendingUp size={28} />,
-      trend: projectsSource.length ? "Actif" : "N/A",
+      key: "nos-offres",
+      title: "Nos offres",
+      icon: <Building2 size={22} />,
     },
     {
-      label: "Investissements securises",
-      value: "100%",
-      icon: <Shield size={28} />,
-      trend: "Garanti",
+      key: "je-veux",
+      title: "Je veux",
+      icon: <Target size={22} />,
     },
     {
-      label: "Duree moyenne",
-      value: `${averageDuration.toFixed(1)} ans`,
-      icon: <Clock size={28} />,
-      trend: "Stable",
+      key: "les-meilleurs",
+      title: "Les meilleurs",
+      icon: <TrendingUp size={22} />,
     },
     {
-      label: "Projets en ligne",
-      value: `${projectsSource.length}`,
-      icon: <Building2 size={28} />,
-      trend: "Ouvert",
+      key: "ou-investir",
+      title: "Ou investir",
+      icon: <MapPin size={22} />,
     },
   ];
 
@@ -389,24 +376,56 @@ const Investment = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {investmentStats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-2xl p-5 sm:p-6 border border-gray-100"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-3 bg-blue-50 text-blue-600">{stat.icon}</div>
-                <span className="text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-700">
-                  {stat.trend}
-                </span>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
+        <div className="bg-[#f2f2f2] border border-gray-200 shadow-2xl p-3 sm:p-4">
+          <div className="grid grid-cols-1 md:grid-cols-[1.15fr_5fr] gap-3 sm:gap-4">
+            <div className="bg-[#ececec] border border-gray-200 px-5 py-6 sm:py-7">
+              <p className="text-4xl leading-[1.05] text-slate-800">
+                Que
+                <br />
+                recherchez-
+                <br />
+                vous ?
+              </p>
+              <span className="block h-1 w-24 bg-amber-300 mt-2" />
             </div>
-          ))}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              {heroTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveHeroTab(tab.key)}
+                  className={`rounded-xl border px-4 py-4 text-left transition-all ${
+                    activeHeroTab === tab.key
+                      ? "bg-blue-600 border-blue-600 text-white shadow-md"
+                      : "bg-[#f6f6f6] border-gray-200 text-slate-800 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 hover:shadow-sm"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`${
+                        activeHeroTab === tab.key ? "text-white" : "text-blue-600"
+                      }`}
+                    >
+                      {tab.icon}
+                    </span>
+                  </div>
+                  <span
+                    className={`block h-1 w-14 mt-2 mb-2 ${
+                      activeHeroTab === tab.key ? "bg-white/80" : "bg-cyan-400"
+                    }`}
+                  />
+                  <p
+                    className={`text-2xl leading-tight ${
+                      activeHeroTab === tab.key ? "text-white" : "text-slate-800"
+                    }`}
+                  >
+                    {tab.title}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -694,6 +713,44 @@ const Investment = () => {
               </button>
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="py-16 sm:py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 items-center bg-white border border-gray-200 p-5 sm:p-8">
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
+                Investir dans la renovation
+              </h2>
+              <p className="mt-4 text-base sm:text-lg text-gray-600 leading-relaxed">
+                Profitez d'opportunites de renovation a fort potentiel de
+                valorisation, avec un accompagnement complet sur l'etude,
+                l'execution et la mise en location ou revente.
+              </p>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
+                  Ticket d'entree flexible
+                </div>
+                <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
+                  Strategie de sortie claire
+                </div>
+                <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
+                  Suivi des travaux en continu
+                </div>
+                <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
+                  Optimisation rendement/risque
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1400&q=80"
+                alt="Investir dans la renovation"
+                className="w-full h-[280px] sm:h-[360px] object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
