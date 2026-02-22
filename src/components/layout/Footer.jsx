@@ -23,7 +23,7 @@ const Footer = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center space-x-3">
                 <img
-                  src="/images/logonaraf.png"
+                  src="/images/logonaraf1.jpeg"
                   alt="NARAF Immobilier"
                   className="h-12 w-auto object-contain"
                 />

@@ -13,6 +13,7 @@ import {
   AlertCircle,
   MapPin,
   CheckCircle,
+  ExternalLink,
 } from "lucide-react";
 import { visitorService } from "../services/visitorService";
 import { SkeletonBlock } from "../components/ui/Skeleton";
@@ -149,9 +150,10 @@ const ProfilePage = () => {
     }
   };
   const loadMessages = async () => {
+    if (!role) return;
     setLoading((prev) => ({ ...prev, messages: true }));
     try {
-      const response = await visitorService.getMessages();
+      const response = await visitorService.getMessagesByRole(role);
       setMessages(visitorService.extractList(response));
     } catch (error) {
       showNotice("error", "Impossible de charger les messages.");
@@ -207,7 +209,7 @@ const ProfilePage = () => {
     loadPropertyTypes();
   }, [isAuthenticated]);
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || loading.profile) return;
     if (activeTab === "messages" && messages.length === 0) {
       loadMessages();
     }
@@ -224,7 +226,7 @@ const ProfilePage = () => {
     ) {
       loadPropertyRequests();
     }
-  }, [activeTab, isAuthenticated, isOwner]);
+  }, [activeTab, isAuthenticated, isOwner, loading.profile, role]);
   const handleProfileChange = (event) => {
     const { name, value } = event.target;
     setProfileForm((prev) => ({ ...prev, [name]: value }));
@@ -374,7 +376,9 @@ const ProfilePage = () => {
     if (!replyText) return;
     setLoading((prev) => ({ ...prev, action: true }));
     try {
-      await visitorService.replyMessage(messageUuid, { message: replyText });
+      await visitorService.replyMessageByRole(role, messageUuid, {
+        message: replyText,
+      });
       setReplyDrafts((prev) => ({ ...prev, [messageUuid]: "" }));
       showNotice("success", "Reponse envoyee.");
       loadMessages();
@@ -463,13 +467,26 @@ const ProfilePage = () => {
                   <MessageSquare size={18} />
                   Messages
                 </button>
-                <button
-                  onClick={() => setActiveTab("recherche")}
-                  className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/40 text-white px-5 py-3 font-semibold hover:bg-white/10 transition"
-                >
-                  <Search size={18} />
-                  Demandes
-                </button>
+                {!isAgent && (
+                  <button
+                    onClick={() => setActiveTab("recherche")}
+                    className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/40 text-white px-5 py-3 font-semibold hover:bg-white/10 transition"
+                  >
+                    <Search size={18} />
+                    Demandes
+                  </button>
+                )}
+                {isAgent && (
+                  <a
+                    href="https://backoffice.africabuildinvest.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 bg-emerald-500 text-white px-5 py-3 font-semibold hover:bg-emerald-600 transition"
+                  >
+                    <ExternalLink size={18} />
+                    Espace administrateur
+                  </a>
+                )}
               </div>
             </div>
           </div>

@@ -14,6 +14,10 @@ import {
   Cpu,
   Handshake,
   ShieldCheck,
+  BadgeCheck,
+  FileText,
+  Eye,
+  Users,
 } from "lucide-react";
 
 const Home = () => {
@@ -25,31 +29,27 @@ const Home = () => {
 
   const stats = [
     { number: "2,500+", label: "Biens vendus" },
-    { number: "150+", label: "Projets livres" },
+    { number: "150+", label: "Projets livrés" },
     { number: "98%", label: "Satisfaction client" },
     { number: "25 ans", label: "D'experience" },
   ];
 
   const whyChooseUs = [
     {
-      icon: <Award size={24} />,
-      title: "Expertise reconnue",
-      text: "Plus de 25 ans d'experience dans l'immobilier",
+      icon: <BadgeCheck size={24} />,
+      title: "Partenaires certifiés",
     },
     {
-      icon: <Clock size={24} />,
-      title: "Reactivite",
-      text: "Reponse sous 24h a toutes vos demandes",
+      icon: <FileText size={24} />,
+      title: "Dossiers légaux complets",
     },
     {
-      icon: <CheckCircle size={24} />,
-      title: "Transparence",
-      text: "Des tarifs clairs et sans frais caches",
+      icon: <Eye size={24} />,
+      title: "Suivi transparent",
     },
     {
-      icon: <Shield size={24} />,
-      title: "Securite",
-      text: "Transactions 100% securisees et garanties",
+      icon: <Users size={24} />,
+      title: "Accompagnement humain",
     },
   ];
 
@@ -133,7 +133,9 @@ const Home = () => {
     const allModelImages = houseModels
       .flatMap((model) => [
         model?.cover_image_url,
-        ...(Array.isArray(model?.gallery_image_urls) ? model.gallery_image_urls : []),
+        ...(Array.isArray(model?.gallery_image_urls)
+          ? model.gallery_image_urls
+          : []),
       ])
       .filter(Boolean);
 
@@ -221,7 +223,6 @@ const Home = () => {
                     alt={activeModel?.title || "Modele"}
                     className="invisible w-full h-[280px] sm:h-[420px] object-cover"
                   />
-
                 </div>
                 {sliderImages.length > 1 && (
                   <div className="flex items-center justify-center gap-2 mt-3">
@@ -260,7 +261,9 @@ const Home = () => {
                   {modelHighlights.map((item) => (
                     <div key={item.label} className="flex items-center gap-4">
                       <span className="text-blue-600">{item.icon}</span>
-                      <span className="text-lg font-medium text-slate-900">{item.label}</span>
+                      <span className="text-lg font-medium text-slate-900">
+                        {item.label}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -277,55 +280,19 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Information + Video */}
       <section className="py-16 sm:py-18 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.08fr_1fr] gap-8 lg:gap-10 items-center">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl md:text-4xl font-bold leading-tight text-blue-700 mb-6">
-                Faire construire une maison avec
-                <br />
-                NARAF Group, c&apos;est...
-              </h2>
-
-              <div className="space-y-5 text-gray-900 text-base md:text-lg leading-relaxed">
-                <p>
-                  ...se lancer dans un projet de construction en toute serenite.
-                  Nous placons l'accompagnement de nos clients au coeur de nos
-                  priorites.
-                </p>
-
-                <p>
-                  C'est pourquoi nous vous proposons une offre de services:
-                  recherche du terrain, financement adapte, conseil sur le choix
-                  des plans, gestion des demarches administratives et de
-                  l'obtention des autorisations.
-                </p>
-
-                <p>
-                  Nos maisons disposent d'equipements performants, notamment
-                  pour l'optimisation energetique et le confort quotidien.
-                </p>
-
-                <p>
-                  *Les performances reelles dependent du type de projet, des
-                  options techniques choisies et des conditions d'utilisation.
-                </p>
-              </div>
-            </div>
-
-            <div className="w-full lg:max-w-[560px] lg:ml-auto">
-              <div className="bg-black shadow-2xl p-2">
-                <div className="aspect-video bg-black">
-                  <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&modestbranding=1"
-                    title="Presentation NARAF Group"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                </div>
+        <div className="min-h-[70vh] flex items-center justify-center px-4">
+          <div className="w-full max-w-[800px]">
+            <div className="bg-black shadow-2xl p-2">
+              <div className="aspect-video bg-black">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&modestbranding=1"
+                  title="Presentation NARAF Group"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
               </div>
             </div>
           </div>
@@ -337,18 +304,25 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Pourquoi Choisir NARAF ?
+              Pourquoi nous faire confiance ?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              L'excellence a chaque etape de votre projet immobilier
+              Plus de 25 ans d'experience, dans l'immobilier
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {whyChooseUs.map((item, index) => (
               <div key={index} className="text-center p-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-full mb-4">
-                  {item.icon}
+                <div
+                  className="group inline-flex items-center justify-center w-16 h-16 
+                bg-blue-100 text-blue-600 rounded-full mb-4 
+                transition-all duration-300 ease-in-out 
+                hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-lg"
+                >
+                  <div className="transition-transform duration-300 group-hover:rotate-6">
+                    {item.icon}
+                  </div>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">
                   {item.title}
@@ -379,7 +353,11 @@ const Home = () => {
               Nos partenaires
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Des entreprises de confiance qui travaillent avec Naraf Group.
+              Nous collaborons avec des acteurs fiables, vérifiés et engagés
+              pour la qualité.
+            </p>
+            <p className="text-lg text-gray-600">
+              Nos partenaires officiels seront dévoilés très prochainement.
             </p>
           </div>
 
@@ -442,20 +420,20 @@ const Home = () => {
       <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Pret a concretiser votre projet ?
+            Prêt à passer du rêve au concret ?
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Notre equipe d'experts est a votre disposition pour vous accompagner
-            dans toutes les etapes de votre projet immobilier.
+            Tu veux un projet sérieux, pas des paroles. On commence quand tu
+            veux.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
               <Phone size={20} />
               <span>+225 XX XX XX XX XX</span>
             </button>
-            <button className="bg-transparent text-white px-10 py-4 font-semibold hover:bg-white/10 transition-colors flex items-center justify-center space-x-2">
+            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
               <Mail size={20} />
-              <span>contact@naraf.ci</span>
+              <span>Prendre rendez-vous</span>
             </button>
           </div>
         </div>

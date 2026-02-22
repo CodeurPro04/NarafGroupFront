@@ -259,13 +259,18 @@ const Construction = () => {
     .filter((project) => {
       if (appliedFilters.mode !== "maison") return true;
       if (appliedFilters.city === "tous") return true;
-      return String(project.city || "").toLowerCase() === String(appliedFilters.city).toLowerCase();
+      return (
+        String(project.city || "").toLowerCase() ===
+        String(appliedFilters.city).toLowerCase()
+      );
     })
     .filter((project) => {
       if (appliedFilters.mode !== "terrain") return true;
       if (appliedFilters.projectType === "tous") return true;
       const projectType = String(project.projectType || "").toLowerCase();
-      return projectType.includes(String(appliedFilters.projectType).toLowerCase());
+      return projectType.includes(
+        String(appliedFilters.projectType).toLowerCase(),
+      );
     })
     .filter((project) => {
       if (!appliedFilters.surfaceMin) return true;
@@ -361,12 +366,14 @@ const Construction = () => {
               <span className="font-semibold">Construction & Renovation</span>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Construisez votre futur avec nous
+              Construire sans stress, même depuis le diaspora
             </h1>
+            <p className="text-base sm:text-lg lg:text-xl text-emerald-100 leading-relaxed">
+              Tu veux bâtir au pays, mais tu refuses les mauvaises surprises.
+            </p>
             <p className="text-base sm:text-lg lg:text-xl text-emerald-100 mb-8 leading-relaxed">
-              Des projets immobiliers innovants concus pour durer. Profitez de
-              nos garanties constructeur et d'un accompagnement complet de A a
-              Z.
+              Ici, tout est clair, suivi, prouvé. Tu avances en confiance, même
+              à distance
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button className="inline-flex items-center justify-center gap-3 bg-white text-green-900 px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-green-50 transition-colors shadow-lg">
@@ -469,7 +476,9 @@ const Construction = () => {
                     <input
                       type="text"
                       value={localisationInput}
-                      onChange={(event) => setLocalisationInput(event.target.value)}
+                      onChange={(event) =>
+                        setLocalisationInput(event.target.value)
+                      }
                       placeholder="Ville, commune, quartier..."
                       className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
                     />
@@ -599,17 +608,13 @@ const Construction = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
               <div>
                 <h3 className="text-3xl font-bold text-slate-700 leading-tight mb-4">
-                  La satisfaction client est notre priorite
+                  Ici, ton projet passe avant tout.
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Parce que chaque famille est unique, nous vous accompagnons
-                  tout au long de votre projet de construction de maison et
-                  nous engageons sur la qualite et la date de livraison de
-                  votre logement.
-                </p>
-                <p className="text-gray-600 leading-relaxed mt-4">
-                  Chaque detail est pense pour vous rendre la vie plus
-                  agreable.
+                  Parce que chaque famille a son histoire, on t’accompagne du
+                  premier plan à la remise des clés. On s’engage sur la qualité,
+                  les délais et la transparence. Chaque détail est pensé pour
+                  que ton projet soit simple, clair et sans stress.
                 </p>
               </div>
 
@@ -617,11 +622,12 @@ const Construction = () => {
                 <div className="text-green-600 mb-3">
                   <Clock size={34} />
                 </div>
-                <h4 className="text-4xl font-bold text-slate-800 mb-2">Delais</h4>
+                <h4 className="text-4xl font-bold text-slate-800 mb-2">
+                  Delais
+                </h4>
                 <p className="text-gray-600 leading-relaxed">
-                  En realisant votre projet avec NARAF, vous beneficiez d'une
-                  garantie de livraison a prix et delais convenus, avec un
-                  accompagnement rigoureux a chaque etape.
+                  Avec AFRICA, tu sais où tu vas. Livraison garantie, délais
+                  respectés, suivi carré. Pas de surprise, pas de retard caché.
                 </p>
               </div>
 
@@ -631,9 +637,9 @@ const Construction = () => {
                 </div>
                 <h4 className="text-4xl font-bold text-slate-800 mb-2">Prix</h4>
                 <p className="text-gray-600 leading-relaxed">
-                  L'accessibilite de nos maisons repose sur un reseau de
-                  partenaires solides et une maitrise des couts pour offrir le
-                  meilleur rapport qualite-prix.
+                  Des maisons accessibles grâce à des partenaires fiables et une
+                  vraie maîtrise des coûts. Tu payes le juste prix, pour une
+                  qualité qui dure.
                 </p>
               </div>
 
@@ -641,11 +647,13 @@ const Construction = () => {
                 <div className="text-green-600 mb-3">
                   <Award size={34} />
                 </div>
-                <h4 className="text-4xl font-bold text-slate-800 mb-2">Qualite</h4>
+                <h4 className="text-4xl font-bold text-slate-800 mb-2">
+                  Qualite
+                </h4>
                 <p className="text-gray-600 leading-relaxed">
-                  Nous concevons des projets conformes aux standards stricts,
-                  avec des materiaux performants et des equipements modernes
-                  pour un habitat durable.
+                  Des projets conçus selon des standards exigeants. Matériaux
+                  solides, équipements modernes, finitions propres. Un logement
+                  pensé pour durer, pas pour impressionner deux minutes
                 </p>
               </div>
             </div>
@@ -771,7 +779,6 @@ const Construction = () => {
                     allowFullScreen
                   />
                 </div>
-                
               </article>
 
               <article className="border border-gray-200 bg-slate-50 p-3">
@@ -785,7 +792,6 @@ const Construction = () => {
                     allowFullScreen
                   />
                 </div>
-                
               </article>
             </div>
           </div>

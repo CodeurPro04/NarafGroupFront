@@ -400,6 +400,13 @@ const Register = () => {
             Choisissez le type de compte qui correspond à vos besoins
           </p>
 
+          {userType !== "visitor" && (
+            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Votre compte sera active par un administrateur avant votre premiere connexion.
+            </div>
+          )}
+
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {userTypes.map((type) => (
               <UserTypeCard key={type.value} type={type} />

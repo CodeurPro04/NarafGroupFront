@@ -48,6 +48,8 @@ const PropertyDetails = () => {
     phone: '',
     message: ''
   });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+  const [contactNotice, setContactNotice] = useState({ type: '', message: '' });
 
   useEffect(() => {
     fetchPropertyDetails();
@@ -91,20 +93,36 @@ const PropertyDetails = () => {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    setContactNotice({ type: '', message: '' });
+    if (!property?.id && !property?.uuid) return;
+
     try {
-      // Envoyer le message via l'API
-      const response = await api.post('/messages', {
-        property_id: property?.id,
-        ...contactForm
+      setIsSubmittingContact(true);
+      const response = await api.post('/client-requests', {
+        request_type: 'immobilier',
+        property_id: property.id || null,
+        property_uuid: property.uuid,
+        name: contactForm.name,
+        email: contactForm.email || null,
+        phone: contactForm.phone || null,
+        message: contactForm.message
       });
       
       if (response.data.success) {
-        alert('Message envoyé avec succès!');
-        setContactForm({ name: '', email: '', phone: '', message: '' });
+        setContactNotice({
+          type: 'success',
+          message: 'Votre demande a ete envoyee avec succes.',
+        });
+        setContactForm((prev) => ({ ...prev, message: '' }));
       }
     } catch (error) {
       console.error('Erreur envoi message:', error);
-      alert('Erreur lors de l\'envoi du message');
+      setContactNotice({
+        type: 'error',
+        message: error.response?.data?.message || "Erreur lors de l'envoi du message.",
+      });
+    } finally {
+      setIsSubmittingContact(false);
     }
   };
 
@@ -484,17 +502,6 @@ const PropertyDetails = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Navigation className="text-gray-400" size={20} />
-                    <div>
-                      <div className="text-sm text-gray-500">Localisation GPS</div>
-                      <div className="font-medium">
-        {property.latitude != null && property.longitude != null 
-          ? `${parseFloat(property.latitude).toFixed(6)}, ${parseFloat(property.longitude).toFixed(6)}`
-          : 'Non disponible'}
-      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
                     <Clock className="text-gray-400" size={20} />
                     <div>
                       <div className="text-sm text-gray-500">Publié le</div>
@@ -529,6 +536,17 @@ const PropertyDetails = () => {
               </div>
               
               <form onSubmit={handleContactSubmit} className="space-y-4">
+                {contactNotice.message && (
+                  <div
+                    className={`rounded-lg px-4 py-3 text-sm ${
+                      contactNotice.type === 'success'
+                        ? 'bg-green-50 text-green-700 border border-green-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
+                    }`}
+                  >
+                    {contactNotice.message}
+                  </div>
+                )}
                 <div>
                   <input
                     type="text"
@@ -578,9 +596,10 @@ const PropertyDetails = () => {
                   type="submit" 
                   variant="primary" 
                   className="w-full py-3 font-semibold text-lg"
+                  disabled={isSubmittingContact}
                 >
                   <Mail size={20} className="mr-2 inline" />
-                  Envoyer la demande
+                  {isSubmittingContact ? 'Envoi en cours...' : 'Envoyer la demande'}
                 </Button>
               </form>
 
@@ -607,7 +626,7 @@ const PropertyDetails = () => {
               </div>
             </div>
 
-            {/* Schedule Visit */}
+            {/* Schedule Visit 
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl shadow-xl p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="bg-white/20 p-3 rounded-xl">
@@ -627,9 +646,9 @@ const PropertyDetails = () => {
               >
                 Prendre rendez-vous
               </Button>
-            </div>
+            </div> */}
 
-            {/* Agent Info */}
+            {/* Agent Info 
             {property.agent && (
               <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
@@ -651,9 +670,9 @@ const PropertyDetails = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {/* Security Badge */}
+            {/* Security Badge 
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl shadow-xl p-6">
               <div className="flex items-center space-x-3 mb-3">
                 <Shield size={24} />
@@ -673,7 +692,7 @@ const PropertyDetails = () => {
                   Accompagnement personnalisé
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -750,3 +769,5 @@ const PropertyDetails = () => {
 };
 
 export default PropertyDetails;
+
+

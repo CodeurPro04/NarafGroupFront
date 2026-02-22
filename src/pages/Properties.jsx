@@ -76,7 +76,7 @@ const Properties = () => {
     {
       icon: <Shield size={32} />,
       title: "Transaction Sécurisée",
-      description: "Garantie et protection à chaque étape",
+      description: "Ton argent protégé, ton projet sécurisé.",
       features: [
         "Due diligence complète",
         "Garanties bancaires",
@@ -86,7 +86,7 @@ const Properties = () => {
     {
       icon: <Clock size={32} />,
       title: "Visite 24/7",
-      description: "Réservation en ligne disponible",
+      description: "Visite quand tu veux, où que tu sois.",
       features: [
         "Visite virtuelle 360°",
         "Planning flexible",
@@ -96,7 +96,7 @@ const Properties = () => {
     {
       icon: <Award size={32} />,
       title: "Expertise Certifiée",
-      description: "Agents professionnels vérifiés",
+      description: "Des pros fiables, pas des improvisés.",
       features: [
         "Conseillers certifiés",
         "Formation continue",
@@ -106,7 +106,7 @@ const Properties = () => {
     {
       icon: <CheckCircle size={32} />,
       title: "Accompagnement",
-      description: "Suivi personnalisé de A à Z",
+      description: "On t’accompagne du premier clic aux clés.",
       features: ["Conseiller dédié", "Aide financement", "Support 7j/7"],
     },
   ];
@@ -488,7 +488,8 @@ const Properties = () => {
       }, 900);
     } catch (error) {
       const message =
-        error?.response?.data?.message || "Erreur lors de l'envoi de la demande.";
+        error?.response?.data?.message ||
+        "Erreur lors de l'envoi de la demande.";
       setAnnouncementError(message);
     } finally {
       setAnnouncementSubmitting(false);
@@ -541,12 +542,15 @@ const Properties = () => {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Trouvez Votre Bien Idéal
+              Des biens fiables, pas des promesses
             </h1>
 
+            <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-2 leading-relaxed">
+              Tu veux investir au pays ou en Afrique francophone, mais tu veux
+              du sérieux
+            </p>
             <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 leading-relaxed">
-              Découvrez notre sélection exclusive de {totalProperties}{" "}
-              propriétés premium avec accompagnement personnalisé.
+              Ici, chaque bien est vérifié, documenté et prêt pour toi.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -572,7 +576,7 @@ const Properties = () => {
           </div>
         </div>
       </div>
-{/*
+      {/*
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
@@ -820,7 +824,7 @@ const Properties = () => {
 
             <div className="mt-10 sm:mt-12 text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Nos Biens Immobiliers
+                Trouvez le bien qui vous ressemble
               </h2>
               {/* nombre de propriete 
               <p className="text-xl text-gray-600">
@@ -1152,10 +1156,10 @@ const Properties = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Pourquoi Choisir NARAF ?
+              Notre promesse
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Une expérience immobilière complète et sécurisée
+              Construire avec toi, pour toi, et toujours dans les règles.
             </p>
           </div>
 
@@ -1163,68 +1167,55 @@ const Properties = () => {
             {advantages.map((adv, index) => (
               <div
                 key={index}
-                className="group bg-white p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                className="group bg-white p-8 shadow-lg hover:shadow-2xl 
+                 transition-all duration-500 hover:-translate-y-2 
+                 border border-gray-100 text-center"
               >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 mb-6 group-hover:scale-110 transition-transform">
-                  <div className="text-blue-600">{adv.icon}</div>
+                <div
+                  className="flex justify-center mb-6 
+                      group-hover:scale-110 transition-transform"
+                >
+                  <div
+                    className="flex items-center justify-center 
+                        w-16 h-16 
+                        bg-gradient-to-br from-blue-50 to-blue-100"
+                  >
+                    <div className="text-blue-600">{adv.icon}</div>
+                  </div>
                 </div>
+
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   {adv.title}
                 </h3>
+
                 <p className="text-gray-600 mb-4">{adv.description}</p>
-                <ul className="space-y-2">
-                  {adv.features.map((feature, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-center text-sm text-gray-500"
-                    >
-                      <CheckCircle
-                        size={14}
-                        className="text-emerald-500 mr-2"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
         </div>
-      </section> 
+      </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-              Prêt à Trouver Votre Futur Chez Vous ?
-            </h2>
-            <p className="text-base sm:text-xl text-blue-100 mb-10 leading-relaxed">
-              Notre équipe d'experts vous accompagne dans toutes les étapes de
-              votre projet immobilier.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10 sm:mb-12">
-              <button className="flex items-center justify-center space-x-2 bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors shadow-lg">
-                <Phone size={20} />
-                <span>+225 XX XX XX XX XX</span>
-              </button>
-              <button className="flex items-center justify-center space-x-2 bg-transparent border-2 border-white text-white px-10 py-4 font-semibold hover:bg-white/10 transition-colors">
-                <Mail size={20} />
-                <span>Prendre rendez-vous</span>
-              </button>
-            </div>
+      <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Prêt à trouver ton bien ?
+          </h2>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+            Tu cherches un projet sérieux, rentable et sécurisé.
+          </p>
+          <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+            On t’accompagne du choix jusqu’à la remise des clés.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+              <Home size={20} />
+              <span>Trouver mon bien</span>
+            </button>
+            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
+              <Phone size={20} />
+              <span>Parler à un conseiller</span>
+            </button>
           </div>
         </div>
       </section>
@@ -1233,7 +1224,9 @@ const Properties = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center px-4">
           <div className="w-full max-w-2xl bg-white shadow-2xl border border-slate-200">
             <div className="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-900">Faire une annonce</h3>
+              <h3 className="text-xl font-bold text-slate-900">
+                Faire une annonce
+              </h3>
               <button
                 type="button"
                 onClick={() => setShowAnnouncementModal(false)}
@@ -1243,7 +1236,10 @@ const Properties = () => {
               </button>
             </div>
 
-            <form onSubmit={submitAnnouncementRequest} className="p-5 sm:p-6 space-y-4">
+            <form
+              onSubmit={submitAnnouncementRequest}
+              className="p-5 sm:p-6 space-y-4"
+            >
               <div>
                 <label className="text-sm font-medium text-slate-700">
                   Decrivez votre bien

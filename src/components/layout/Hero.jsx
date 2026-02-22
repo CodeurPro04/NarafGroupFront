@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { propertyService } from "../../services/propertyService";
 import api from "../../api/axios";
@@ -42,8 +42,8 @@ const baseInvestmentTypeOption = {
 
 const sections = [
   { key: "properties", label: "Trouver un bien" },
-  { key: "construction", label: "Construction" },
-  { key: "investment", label: "Investissement" },
+  { key: "construction", label: "Construire" },
+  { key: "investment", label: "Investir" },
 ];
 
 const Hero = () => {
@@ -73,22 +73,29 @@ const Hero = () => {
     {
       image:
         "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80",
-      title: "Votre maison de reve vous attend",
-      subtitle: "Decouvrez notre selection exclusive de proprietes d'exception",
+      title: "Des biens fiables, pas des promesses",
+      subtitle: "Villas, appartements, terrains sécurisés, programmes neufs.\nChaque projet est vérifié, documenté et prêt pour toi.",
       overlay: "from-black/70 via-black/50 to-transparent",
     },
     {
       image:
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-      title: "Investissez dans votre avenir",
-      subtitle: "Des opportunites immobilieres rentables et securisees",
+      title: "Investir en Afrique, intelligemment",
+      subtitle: "Marchés en croissance, forte demande, rentabilité solide.\nOn t’aide à choisir les bonnes opportunités, sans pièges.",
       overlay: "from-blue-900/70 via-blue-800/50 to-transparent",
     },
     {
       image:
         "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80",
-      title: "Construisez votre patrimoine",
-      subtitle: "Projets de construction modernes et innovants",
+      title: "Construire sans stress, même depuis la diaspora",
+      subtitle: "Plans validés, devis clairs, preuves visuelles, validation étape par étape.\nTu ne finances plus à l’aveugle.",
+      overlay: "from-slate-900/70 via-slate-800/50 to-transparent",
+    },
+    {
+      image:
+        "/images/carou.jpeg",
+      title: "Pour la diaspora, par des gens qui comprennent",
+      subtitle: "Fini les “on va gérer” sans preuve.Ici, tout est carré : documents, partenaires, suivi, transparence.Tu avances en confiance, même à distance",
       overlay: "from-slate-900/70 via-slate-800/50 to-transparent",
     },
   ];

@@ -80,13 +80,14 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {" "}
           {/* Logo */}{" "}
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex flex-col items-center space-y-2">
             {" "}
             <img
-              src="/images/logonaraf.png"
+              src="/images/logonaraf1.jpeg"
               alt="NARAF Immobilier"
-              className="h-12 w-auto object-contain"
+              className="h-11 w-auto object-contain rounded-full"
             />{" "}
+            <span className="text-sm text- font-bold text-gray-800">“On avance ensemble, pas à pas.”</span>{" "}
           </Link>{" "}
           {/* Navigation Desktop */}{" "}
           <nav className="hidden lg:flex items-center space-x-1">
