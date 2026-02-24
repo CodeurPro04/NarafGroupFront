@@ -156,23 +156,23 @@ const Construction = () => {
   const advantages = [
     {
       icon: <Shield size={32} />,
-      title: "Garantie Decennale",
-      description: "Protection complete pendant 10 ans",
+      title: "Garantie décennale",
+      description: "Une protection complète pendant 10 ans, pour construire en toute tranquillité.",
     },
     {
       icon: <TrendingUp size={32} />,
-      title: "TVA Reduite",
-      description: "Avantages fiscaux a l'achat dans le neuf",
+      title: "TVA réduite",
+      description: "Des avantages fiscaux réservés au neuf pour optimiser ton budget.",
     },
     {
       icon: <CheckCircle size={32} />,
       title: "Normes Modernes",
-      description: "Construction aux dernieres normes",
+      description: "Des constructions conformes aux standards actuels, durables et performantes.",
     },
     {
       icon: <Clock size={32} />,
       title: "Livraison Garantie",
-      description: "Respect des delais contractuels",
+      description: "Des délais respectés, contractualisés et suivis avec rigueur.",
     },
   ];
 
@@ -195,7 +195,7 @@ const Construction = () => {
     {
       number: "04",
       title: "Livraison",
-      description: "Remise des cles et garanties constructeur",
+      description: "Remise des clés et garanties constructeur",
     },
   ];
 
@@ -361,10 +361,7 @@ const Construction = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-green-950/90 via-green-900/85 to-emerald-900/80" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 text-white mb-6">
-              <Hammer size={20} />
-              <span className="font-semibold">Construction & Renovation</span>
-            </div>
+            
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Construire sans stress, même depuis le diaspora
             </h1>
@@ -798,7 +795,7 @@ const Construction = () => {
 
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Pourquoi construire avec NARAF ?
+              Pourquoi construire avec AFRICA ?
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
               Des avantages exclusifs pour votre projet de construction
@@ -884,29 +881,6 @@ const Construction = () => {
                 <Mail size={20} />
                 <span>Demander un devis</span>
               </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-              <div className="bg-white/10 backdrop-blur-sm p-6">
-                <CheckCircle className="text-green-300 mb-3" size={32} />
-                <h3 className="text-lg font-bold mb-2">Devis</h3>
-                <p className="text-green-100 text-sm">
-                  Estimation detaillee sans engagement
-                </p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm p-6">
-                <CheckCircle className="text-green-300 mb-3" size={32} />
-                <h3 className="text-lg font-bold mb-2">Conseil Expert</h3>
-                <p className="text-green-100 text-sm">
-                  Accompagnement personnalise 7j/7
-                </p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm p-6">
-                <CheckCircle className="text-green-300 mb-3" size={32} />
-                <h3 className="text-lg font-bold mb-2">Garanties Incluses</h3>
-                <p className="text-green-100 text-sm">
-                  Protection decennale et conformite
-                </p>
-              </div>
             </div>
           </div>
         </div>

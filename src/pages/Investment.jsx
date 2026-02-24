@@ -196,20 +196,20 @@ const Investment = () => {
   const benefits = [
     {
       icon: <Shield size={32} />,
-      title: "Securite maximale",
-      description: "Audit rigoureux et garanties contractuelles",
+      title: "Sécurité maximale",
+      description: "Une sélection rigoureuse pour protéger ton investissement.",
       features: [
-        "Due diligence complete",
+        "Due diligence",
         "Garanties bancaires",
         "Assurances projet",
       ],
     },
     {
       icon: <BarChart3 size={32} />,
-      title: "Rendement optimise",
-      description: "Performance superieure grace a notre expertise",
+      title: "Rendement optimisé",
+      description: "Des performances maîtrisées, basées sur des analyses réelles.",
       features: [
-        "Etude de marche approfondie",
+        "Études de marché",
         "Optimisation fiscale",
         "Gestion active",
       ],
@@ -217,17 +217,17 @@ const Investment = () => {
     {
       icon: <Target size={32} />,
       title: "Accompagnement",
-      description: "Suivi personnalise de votre investissement",
-      features: ["Conseiller dedie", "Reporting trimestriel", "Support 7j/7"],
+      description: "Un suivi humain, clair et constant.",
+      features: ["Conseiller dédié", "Reporting régulier", "Support 7j/7"],
     },
     {
       icon: <Zap size={32} />,
-      title: "Process simplifie",
-      description: "Investissez en toute simplicite",
+      title: "Process simplifié",
+      description: "Investir devient simple, même depuis l’étranger.",
       features: [
         "Plateforme digitale",
         "Documentation claire",
-        "Paiement securise",
+        "Paiement sécurisé",
       ],
     },
   ];
@@ -345,18 +345,16 @@ const Investment = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
           <div className="max-w-3xl">
             <div className="inline-flex items-center space-x-2 px-4 py-2 text-white mb-6">
-              <TrendingUp size={20} />
-              <span className="font-semibold">Investissement intelligent</span>
+              
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Faites fructifier
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-100">
-                votre capital
-              </span>
+              Investir en Afrique, intelligemment
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-100"></span>
             </h1>
             <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 leading-relaxed">
-              Des projets immobiliers selectionnes, des rendements clairs, et un
-              accompagnement d'experts pour chaque investissement.
+              On sélectionne uniquement des programmes solides, portés par des
+              promoteurs sérieux. Tu sais où tu mets ton argent, comment il
+              travaille, et ce que tu gagnes.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-6 sm:px-8 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl group">
@@ -404,7 +402,9 @@ const Investment = () => {
                   <div className="flex items-center justify-between">
                     <span
                       className={`${
-                        activeHeroTab === tab.key ? "text-white" : "text-blue-600"
+                        activeHeroTab === tab.key
+                          ? "text-white"
+                          : "text-blue-600"
                       }`}
                     >
                       {tab.icon}
@@ -417,7 +417,9 @@ const Investment = () => {
                   />
                   <p
                     className={`text-2xl leading-tight ${
-                      activeHeroTab === tab.key ? "text-white" : "text-slate-800"
+                      activeHeroTab === tab.key
+                        ? "text-white"
+                        : "text-slate-800"
                     }`}
                   >
                     {tab.title}
@@ -601,62 +603,16 @@ const Investment = () => {
                         <MapPin size={14} className="mr-1 flex-shrink-0" />
                         <span className="text-sm">{project.location}</span>
                       </div>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-4">
-                        <span>Surface: {project.surfaceArea || "N/A"} m2</span>
-                        <span>CP: {project.postalCode || "N/A"}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 mb-4 text-xs text-gray-600">
-                        <div className="flex items-center justify-between border border-gray-100 px-3 py-2">
-                          <span>ROI cible</span>
-                          <span className="font-semibold text-gray-900">
-                            {project.roi}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between border border-gray-100 px-3 py-2">
-                          <span>Ticket min</span>
-                          <span className="font-semibold text-gray-900">
-                            {formatPrice(project.minInvestment)}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between border border-gray-100 px-3 py-2">
-                          <span>Duree</span>
-                          <span className="font-semibold text-gray-900">
-                            {project.duration}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between border border-gray-100 px-3 py-2">
-                          <span>Ref</span>
-                          <span className="font-semibold text-gray-900">
-                            {project.reference
-                              ? String(project.reference)
-                                  .slice(0, 12)
-                                  .toUpperCase()
-                              : "N/A"}
-                          </span>
-                        </div>
-                      </div>
                       <p className="text-sm text-gray-600 leading-relaxed mb-5">
                         {getExcerpt(project.description)}
                       </p>
-                      <div className="mb-6">
-                        <div className="flex flex-wrap gap-2">
-                          {project.features.slice(0, 3).map((feature, idx) => (
-                            <span
-                              key={idx}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs"
-                            >
-                              <CheckCircle size={12} /> {feature}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
                       <div className="space-y-4">
                         <div className="text-center p-3 bg-gray-50">
                           <div className="text-sm text-gray-600 mb-1">
-                            Retour annuel estime
+                            Rendement annuel estime
                           </div>
                           <div className="text-lg font-bold text-gray-900">
-                            {annualReturn}
+                            {project.roi}
                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -724,22 +680,26 @@ const Investment = () => {
                 Investir dans la renovation
               </h2>
               <p className="mt-4 text-base sm:text-lg text-gray-600 leading-relaxed">
-                Profitez d'opportunites de renovation a fort potentiel de
-                valorisation, avec un accompagnement complet sur l'etude,
-                l'execution et la mise en location ou revente.
+                Profite d’opportunités à fort potentiel, avec un accompagnement
+                sérieux du début à la fin. On analyse, on exécute, on suit, on
+                optimise. Tu avances en confiance, même à distance.
               </p>
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  Ticket d'entree flexible
+                  <h3 className="font-bold">Ticket d'entree flexible</h3>
+                  <p>Pour investir selon ton budget, sans pression.</p>
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  Strategie de sortie claire
+                <h3 className="font-bold">Strategie de sortie claire</h3>
+                  Tu sais comment tu entres, tu sais comment tu sors.
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  Suivi des travaux en continu
+                  <h3 className="font-bold">Suivi des travaux en continu</h3>
+                  <p>Preuves, photos, vidéos : rien n’avance sans toi.</p>
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  Optimisation rendement/risque
+                  <h3 className="font-bold">Optimisation rendement/risque</h3>
+                  <p>On cherche le meilleur équilibre, pas les promesses faciles.</p>
                 </div>
               </div>
             </div>
@@ -760,19 +720,18 @@ const Investment = () => {
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Pourquoi investir avec
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
-                NARAF Capital ?
+                AFRICA Build Investment ?
               </span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-              Une approche qui combine expertise immobiliere, transparence et
-              performance.
+              Une approche rigoureuse, transparente et pensée pour protéger ton argent.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="group bg-white p-6 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                className="group text-center p-6 sm:p-7 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
               >
                 <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 mb-6 group-hover:scale-110 transition-transform">
                   <div className="text-blue-600">{benefit.icon}</div>
@@ -781,7 +740,7 @@ const Investment = () => {
                   {benefit.title}
                 </h3>
                 <p className="text-gray-600 mb-4">{benefit.description}</p>
-                <ul className="space-y-2">
+                <ul className="space-y-2 group text-center p-6 sm:p-7">
                   {benefit.features.map((feature, idx) => (
                     <li
                       key={idx}
@@ -805,20 +764,19 @@ const Investment = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-              Pret a transformer votre epargne ?
+              Prêt à donner plus de valeur à votre épargne ?
             </h2>
             <p className="text-base sm:text-xl text-blue-100 mb-10 leading-relaxed">
-              Rejoignez nos investisseurs et beneficiez d'un accompagnement
-              premium tout au long du projet.
+              Accédez à des opportunités sélectionnées et à un accompagnement premium tout au long de votre investissement.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
-                <Award size={22} />
-                <span>Rencontrer un expert</span>
-              </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-white/10 transition-all">
                 <Phone size={22} />
-                <span>Recevoir la brochure</span>
+                <span>Parler a un expert</span>
+              </button>
+              <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
+                <FileText size={22} />
+                <span>Découvrir les opportunités</span>
               </button>
             </div>
           </div>
