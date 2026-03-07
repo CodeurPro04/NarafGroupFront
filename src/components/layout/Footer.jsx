@@ -1,5 +1,4 @@
 import {
-  Building2,
   Phone,
   Mail,
   MapPin,
@@ -14,13 +13,11 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
+    <footer className="bg-gray-900 pb-8 pt-16 text-white">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Company Info */}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="flex items-center space-x-3 mb-6">
-              {/* Logo */}
+            <div className="mb-6 flex items-center space-x-3">
               <Link to="/" className="flex items-center space-x-3">
                 <img
                   src="/images/logonaraf1.jpeg"
@@ -29,46 +26,33 @@ const Footer = () => {
                 />
               </Link>
             </div>
-            <p className="text-gray-400 mb-6">
+            <p className="mb-6 text-gray-400">
               Votre partenaire de confiance pour tous vos projets immobiliers :
               achat, vente, location, construction et investissement.
             </p>
             <div className="flex space-x-4">
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Facebook size={20} />
               </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Twitter size={20} />
               </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Linkedin size={20} />
               </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Instagram size={20} />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Liens rapides</h3>
+            <h3 className="mb-6 text-lg font-semibold">Liens rapides</h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   to="/properties"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 transition-colors hover:text-white"
                 >
                   Recherche de biens
                 </Link>
@@ -76,7 +60,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/construction"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 transition-colors hover:text-white"
                 >
                   Projets de construction
                 </Link>
@@ -84,36 +68,29 @@ const Footer = () => {
               <li>
                 <Link
                   to="/investment"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 transition-colors hover:text-white"
                 >
                   Investissements
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="#" className="text-gray-400 transition-colors hover:text-white">
                   Devenir agent
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="#" className="text-gray-400 transition-colors hover:text-white">
                   Publier une annonce
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Services */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Nos services</h3>
+            <h3 className="mb-6 text-lg font-semibold">Nos services</h3>
             <ul className="space-y-3">
-              <li className="text-gray-400">Vente immobilière</li>
-              <li className="text-gray-400">Location saisonnière</li>
+              <li className="text-gray-400">Vente immobiliere</li>
+              <li className="text-gray-400">Location saisonniere</li>
               <li className="text-gray-400">Gestion locative</li>
               <li className="text-gray-400">Construction sur mesure</li>
               <li className="text-gray-400">Conseil en investissement</li>
@@ -121,32 +98,31 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Contact</h3>
+            <h3 className="mb-6 text-lg font-semibold">Contact</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <Phone size={20} className="text-blue-400 mt-1" />
+                <Phone size={20} className="mt-1 text-blue-400" />
                 <div>
-                  <p className="font-medium">Téléphone</p>
+                  <p className="font-medium">Telephone</p>
                   <p className="text-gray-400">+225 XX XX XX XX XX</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <Mail size={20} className="text-blue-400 mt-1" />
+                <Mail size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Email</p>
                   <p className="text-gray-400">contact@naraf-immobilier.fr</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={20} className="text-blue-400 mt-1" />
+                <MapPin size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Adresse</p>
                   <p className="text-gray-400">
                     Grand-Bassam
                     <br />
-                    Abidjan, Côte d'Ivoire
+                    Abidjan, Cote d'Ivoire
                   </p>
                 </div>
               </div>
@@ -154,21 +130,18 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500">
-          <p>© {currentYear} NARAF GROUPE SARL. Tous droits réservés.</p>
+        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
+          <p>© {currentYear} NARAF GROUPE SARL. Tous droits reserves. by <a href="https://www.kofgo-consulting.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
+            Kofgo-consulting
+          </a></p>
           <p className="mt-2 text-sm">
-            <a href="#" className="hover:text-gray-400 transition-colors">
-              Mentions légales
-            </a>
+            <Link to="/legal" className="transition-colors hover:text-gray-400">
+              Mentions legales
+            </Link>
             {" • "}
-            <a href="#" className="hover:text-gray-400 transition-colors">
-              Politique de confidentialité
-            </a>
-            {" • "}
-            <a href="#" className="hover:text-gray-400 transition-colors">
-              CGU
-            </a>
+            <Link to="/privacy" className="transition-colors hover:text-gray-400">
+              Politique de confidentialite
+            </Link>
           </p>
         </div>
       </div>

@@ -16,8 +16,11 @@ import Partnership from './pages/Partnership';
 import PartnerDetails from './pages/PartnerDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RegisterSuccess from './pages/RegisterSuccess';
 import Profile from './pages/Profile';
 import Maintenance from './pages/Maintenance';
+import LegalNotice from './pages/LegalNotice';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import './index.css';
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -57,7 +60,10 @@ function App() {
             <Route path="/partners/:uuid" element={<PartnerDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/success" element={<RegisterSuccess />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/legal" element={<LegalNotice />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </main>
         <Footer />

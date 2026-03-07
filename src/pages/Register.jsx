@@ -182,11 +182,12 @@ const Register = () => {
           response.data?.requires_activation ||
           response.data?.user?.is_active === false;
         if (requiresActivation) {
-          setMessage({
-            type: "success",
-            text: "Compte cree. Votre demande est en attente d'activation par un administrateur.",
-          });
-          setIsLoading(false);
+          navigate(
+            `/register/success?role=${encodeURIComponent(
+              roleMapping[userType]
+            )}`,
+            { replace: true }
+          );
           return;
         }
 

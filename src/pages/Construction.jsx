@@ -32,6 +32,25 @@ const Construction = () => {
   const [projectTypeInput, setProjectTypeInput] = useState("tous");
   const [roomsInput, setRoomsInput] = useState("tous");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [spotlightContent, setSpotlightContent] = useState({
+    title: "Ne ratez pas cette offre exceptionnelle",
+    description:
+      "Deux offres speciales en video pour vous aider a lancer votre projet au meilleur moment.",
+    videos: [
+      {
+        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+        title: "Offre speciale 1",
+        description:
+          "Decouvrez une premiere offre pour demarrer votre projet de construction.",
+      },
+      {
+        url: "https://www.youtube.com/watch?v=tgbNymZ7vqY",
+        title: "Offre speciale 2",
+        description:
+          "Une deuxieme opportunite video pour comparer et passer a l action.",
+      },
+    ],
+  });
   const [appliedFilters, setAppliedFilters] = useState({
     mode: "terrain",
     localisation: "",
@@ -47,6 +66,42 @@ const Construction = () => {
   const navigate = useNavigate();
   const pageLocation = useLocation();
   const getStorageUrl = (path) => toMediaUrl(path);
+
+  const toEmbedVideoUrl = (rawUrl) => {
+    if (!rawUrl) return null;
+    try {
+      const parsedUrl = new URL(rawUrl);
+
+      if (parsedUrl.hostname.includes("youtube.com")) {
+        const embedId =
+          parsedUrl.searchParams.get("v") ||
+          parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId
+          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
+          : null;
+      }
+
+      if (parsedUrl.hostname.includes("youtu.be")) {
+        const embedId = parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId
+          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
+          : null;
+      }
+
+      if (parsedUrl.hostname.includes("vimeo.com")) {
+        const embedId = parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId ? `https://player.vimeo.com/video/${embedId}` : null;
+      }
+
+      if (rawUrl.includes("/embed/") || rawUrl.includes("player.vimeo.com")) {
+        return rawUrl;
+      }
+
+      return rawUrl;
+    } catch {
+      return null;
+    }
+  };
 
   const normalizeProject = (project) => {
     const location = project.location || project.city || "";
@@ -94,11 +149,37 @@ const Construction = () => {
       try {
         const response = await api.get("/construction-projects");
         const list = response?.data?.data || response?.data || [];
+        const spotlight = response?.data?.spotlight;
         const normalized = Array.isArray(list)
           ? list.map(normalizeProject)
           : [];
         if (isMounted) {
           setConstructionProjects(normalized);
+          if (spotlight) {
+            setSpotlightContent({
+              title: spotlight.title || "Ne ratez pas cette offre exceptionnelle",
+              description:
+                spotlight.description ||
+                "Deux offres speciales en video pour vous aider a lancer votre projet au meilleur moment.",
+              videos:
+                Array.isArray(spotlight.videos) && spotlight.videos.length
+                  ? spotlight.videos.slice(0, 2)
+                  : [
+                      {
+                        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+                        title: "Offre speciale 1",
+                        description:
+                          "Decouvrez une premiere offre pour demarrer votre projet de construction.",
+                      },
+                      {
+                        url: "https://www.youtube.com/watch?v=tgbNymZ7vqY",
+                        title: "Offre speciale 2",
+                        description:
+                          "Une deuxieme opportunite video pour comparer et passer a l action.",
+                      },
+                    ],
+            });
+          }
         }
       } catch (error) {
         if (isMounted) {
@@ -325,6 +406,14 @@ const Construction = () => {
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  const spotlightVideos = (spotlightContent.videos || [])
+    .map((video) => ({
+      ...video,
+      embedUrl: toEmbedVideoUrl(video?.url),
+    }))
+    .filter((video) => video.embedUrl)
+    .slice(0, 2);
 
   const handleClientSpace = () => {
     if (isAuthenticated()) {
@@ -748,40 +837,36 @@ const Construction = () => {
           <div className="mb-14 sm:mb-16">
             <div className="text-center max-w-4xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-green-800 mb-4">
-                Ne ratez pas cette offre exceptionnelle
+                {spotlightContent.title}
               </h2>
               <p className="text-base sm:text-lg text-gray-600">
-                Deux offres speciales en video pour vous aider a lancer votre
-                projet au meilleur moment.
+                {spotlightContent.description}
               </p>
             </div>
 
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <article className="border border-gray-200 bg-slate-50 p-3">
-                <div className="aspect-video bg-black">
-                  <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/jfKfPfyJRdk?rel=0&modestbranding=1"
-                    title="Offre speciale 1"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                </div>
-              </article>
-
-              <article className="border border-gray-200 bg-slate-50 p-3">
-                <div className="aspect-video bg-black">
-                  <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&modestbranding=1"
-                    title="Offre speciale 2"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                </div>
-              </article>
+              {spotlightVideos.map((video, index) => (
+                <article key={`${video.url}-${index}`} className="border border-gray-200 bg-slate-50 p-3">
+                  <div className="aspect-video bg-black">
+                    <iframe
+                      className="w-full h-full"
+                      src={video.embedUrl}
+                      title={video.title || `Offre speciale ${index + 1}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="px-1 pb-1 pt-4">
+                    <h3 className="text-xl font-bold text-slate-900">
+                      {video.title || `Offre speciale ${index + 1}`}
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-gray-600">
+                      {video.description || "Description indisponible pour cette video."}
+                    </p>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
 

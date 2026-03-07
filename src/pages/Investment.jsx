@@ -186,6 +186,41 @@ const Investment = () => {
     },
   ];
 
+  const heroTabStyles = {
+    "nos-offres": {
+      hover: "hover:bg-slate-200 hover:border-slate-400 hover:text-slate-900",
+      icon: "text-slate-700",
+      accent: "bg-slate-400",
+      active: "bg-slate-800 border-slate-800 text-white shadow-md",
+      activeIcon: "text-white",
+      activeAccent: "bg-white/80",
+    },
+    "je-veux": {
+      hover: "hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-700",
+      icon: "text-emerald-600",
+      accent: "bg-emerald-400",
+      active: "bg-emerald-600 border-emerald-600 text-white shadow-md",
+      activeIcon: "text-white",
+      activeAccent: "bg-white/80",
+    },
+    "les-meilleurs": {
+      hover: "hover:bg-violet-100 hover:border-violet-300 hover:text-violet-700",
+      icon: "text-violet-600",
+      accent: "bg-violet-400",
+      active: "bg-violet-600 border-violet-600 text-white shadow-md",
+      activeIcon: "text-white",
+      activeAccent: "bg-white/80",
+    },
+    "ou-investir": {
+      hover: "hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700",
+      icon: "text-blue-600",
+      accent: "bg-cyan-400",
+      active: "bg-blue-600 border-blue-600 text-white shadow-md",
+      activeIcon: "text-white",
+      activeAccent: "bg-white/80",
+    },
+  };
+
   const benefits = [
     {
       icon: <Shield size={32} />,
@@ -366,60 +401,45 @@ const Investment = () => {
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
-        <div className="bg-[#f2f2f2] border border-gray-200 shadow-2xl p-3 sm:p-4">
-          <div className="grid grid-cols-1 md:grid-cols-[1.15fr_5fr] gap-3 sm:gap-4">
-            <div className="bg-[#ececec] border border-gray-200 px-5 py-6 sm:py-7">
-              <p className="text-4xl leading-[1.05] text-slate-800">
-                Que
-                <br />
-                recherchez-
-                <br />
-                vous ?
-              </p>
-              <span className="block h-1 w-24 bg-amber-300 mt-2" />
-            </div>
+      <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-10 sm:px-6 lg:-mt-10 lg:px-8">
+        <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
+          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
+            {heroTabs.map((tab) => {
+              const tabStyle =
+                heroTabStyles[tab.key] || heroTabStyles["nos-offres"];
+              const isActive = activeHeroTab === tab.key;
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-              {heroTabs.map((tab) => (
+              return (
                 <button
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveHeroTab(tab.key)}
-                  className={`rounded-xl border px-4 py-4 text-left transition-all ${
-                    activeHeroTab === tab.key
-                      ? "bg-blue-600 border-blue-600 text-white shadow-md"
-                      : "bg-[#f6f6f6] border-gray-200 text-slate-800 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 hover:shadow-sm"
+                  className={`rounded-lg border px-3 py-3 text-left transition-all duration-200 ${
+                    isActive
+                      ? tabStyle.active
+                      : `bg-[#f6f6f6] border-gray-200 text-slate-800 ${tabStyle.hover} hover:shadow-sm`
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span
-                      className={`${
-                        activeHeroTab === tab.key
-                          ? "text-white"
-                          : "text-blue-600"
-                      }`}
-                    >
+                    <span className={isActive ? tabStyle.activeIcon : tabStyle.icon}>
                       {tab.icon}
                     </span>
                   </div>
                   <span
-                    className={`block h-1 w-14 mt-2 mb-2 ${
-                      activeHeroTab === tab.key ? "bg-white/80" : "bg-cyan-400"
+                    className={`mb-1.5 mt-1.5 block h-1 w-10 ${
+                      isActive ? tabStyle.activeAccent : tabStyle.accent
                     }`}
                   />
                   <p
-                    className={`text-2xl leading-tight ${
-                      activeHeroTab === tab.key
-                        ? "text-white"
-                        : "text-slate-800"
+                    className={`text-[1.2rem] leading-tight ${
+                      isActive ? "text-white" : ""
                     }`}
                   >
                     {tab.title}
                   </p>
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

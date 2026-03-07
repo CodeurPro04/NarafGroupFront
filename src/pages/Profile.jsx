@@ -82,6 +82,7 @@ const ProfilePage = () => {
   const isPartner = role === "entreprise" || role === "partenaire";
   const isManager = role === "gestionnaire";
   const isAgent = role === "agent";
+  const isAdmin = role === "admin" || role === "administrateur";
   const tabs = useMemo(() => {
     const baseTabs = [
       { id: "profil", label: "Profil", icon: <User size={18} /> },
@@ -104,20 +105,6 @@ const ProfilePage = () => {
       });
     }
 
-    if (
-      !isPartner &&
-      !isManager &&
-      !isOwner &&
-      !isAgent &&
-      isVisitor === false
-    ) {
-      baseTabs.push({
-        id: "recherche",
-        label: "Demandes",
-        icon: <Search size={18} />,
-      });
-    }
-
     baseTabs.push({
       id: "securite",
       label: "Securite",
@@ -125,7 +112,7 @@ const ProfilePage = () => {
     });
 
     return baseTabs;
-  }, [isManager, isOwner, isPartner, isVisitor]);
+  }, [isOwner, isVisitor]);
   const showNotice = (type, message) => {
     setNotice({ type, message });
     setTimeout(() => setNotice({ type: "", message: "" }), 4000);
@@ -467,7 +454,7 @@ const ProfilePage = () => {
                   <MessageSquare size={18} />
                   Messages
                 </button>
-                {!isAgent && (
+                {isVisitor && (
                   <button
                     onClick={() => setActiveTab("recherche")}
                     className="inline-flex items-center justify-center gap-2 bg-transparent border border-white/40 text-white px-5 py-3 font-semibold hover:bg-white/10 transition"
@@ -476,7 +463,7 @@ const ProfilePage = () => {
                     Demandes
                   </button>
                 )}
-                {isAgent && (
+                {(isAgent || isAdmin) && profile?.is_active && (
                   <a
                     href="https://backoffice.africabuildinvest.com/"
                     target="_blank"
@@ -486,6 +473,12 @@ const ProfilePage = () => {
                     <ExternalLink size={18} />
                     Espace administrateur
                   </a>
+                )}
+                {isAgent && !profile?.is_active && (
+                  <div className="inline-flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-5 py-3 font-medium">
+                    <ExternalLink size={18} />
+                    Espace administrateur disponible apres activation
+                  </div>
                 )}
               </div>
             </div>

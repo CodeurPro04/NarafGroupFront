@@ -27,6 +27,13 @@ const Home = () => {
   const [houseModels, setHouseModels] = useState([]);
   const [houseModelsLoading, setHouseModelsLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [houseModelsSection, setHouseModelsSection] = useState({
+    title: "Modeles de maison",
+    description:
+      "Decouvrez nos modeles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
+    videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+  });
 
   const stats = [
     { number: "2,500+", label: "Biens vendus" },
@@ -61,6 +68,43 @@ const Home = () => {
     { icon: <ShieldCheck size={28} />, label: "Garanties" },
   ];
 
+  const toEmbedVideoUrl = (rawUrl) => {
+    if (!rawUrl) return null;
+
+    try {
+      const parsedUrl = new URL(rawUrl);
+
+      if (parsedUrl.hostname.includes("youtube.com")) {
+        const embedId =
+          parsedUrl.searchParams.get("v") ||
+          parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId
+          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
+          : null;
+      }
+
+      if (parsedUrl.hostname.includes("youtu.be")) {
+        const embedId = parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId
+          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
+          : null;
+      }
+
+      if (parsedUrl.hostname.includes("vimeo.com")) {
+        const embedId = parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId ? `https://player.vimeo.com/video/${embedId}` : null;
+      }
+
+      if (rawUrl.includes("/embed/") || rawUrl.includes("player.vimeo.com")) {
+        return rawUrl;
+      }
+
+      return rawUrl;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     const loadPartners = async () => {
       try {
@@ -86,17 +130,32 @@ const Home = () => {
       try {
         setHouseModelsLoading(true);
         const response = await getHouseModels();
-        const payload = response?.data?.data ?? response?.data ?? [];
-        const list = payload?.data || payload;
+        const payload = response?.data ?? {};
+        const list = payload?.data ?? [];
 
         if (isMounted) {
           const models = Array.isArray(list) ? list : [];
           setHouseModels(models);
+          setHouseModelsSection({
+            title: payload?.section?.title || "Modeles de maison",
+            description:
+              payload?.section?.description ||
+              "Decouvrez nos modeles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
+            videos:
+              Array.isArray(payload?.section?.videos) &&
+              payload.section.videos.length
+                ? payload.section.videos
+                : ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+          });
         }
       } catch (error) {
         console.error("Erreur chargement modeles maison:", error);
         if (isMounted) {
           setHouseModels([]);
+          setHouseModelsSection((prev) => ({
+            ...prev,
+            videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+          }));
         }
       } finally {
         if (isMounted) {
@@ -145,6 +204,10 @@ const Home = () => {
   }, [sliderImages]);
 
   useEffect(() => {
+    setActiveVideoIndex(0);
+  }, [houseModelsSection.videos]);
+
+  useEffect(() => {
     if (!sliderImages.length) return undefined;
 
     const timer = setInterval(() => {
@@ -154,6 +217,15 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [sliderImages.length]);
 
+  const videoEmbeds = (houseModelsSection.videos || [])
+    .map((video) => ({
+      source: video,
+      embed: toEmbedVideoUrl(video),
+    }))
+    .filter((video) => video.embed);
+
+  const activeVideo = videoEmbeds[activeVideoIndex] || videoEmbeds[0] || null;
+
   return (
     <div className="bg-white">
       <Hero />
@@ -161,6 +233,15 @@ const Home = () => {
       {/* Nos Services / Modeles */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 mx-auto max-w-3xl text-center">
+            <h2 className="text-4xl font-bold text-slate-900 leading-tight">
+              {houseModelsSection.title}
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-slate-600">
+              {houseModelsSection.description}
+            </p>
+          </div>
+
           {houseModelsLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
               <div>
@@ -271,21 +352,58 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-18 bg-slate-50">
-        <div className="min-h-[70vh] flex items-center justify-center px-4">
-          <div className="w-full max-w-[800px]">
-            <div className="bg-black shadow-2xl p-2">
-              <div className="aspect-video bg-black">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/tgbNymZ7vqY?rel=0&modestbranding=1"
-                  title="Presentation NARAF Group"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
+      <section className="bg-slate-50 py-16 sm:py-18">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                Videos de presentation
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
+                Consulte les contenus video ajoutes depuis l'espace administrateur
+                pour decouvrir l'univers ABI et ses modeles.
+              </p>
             </div>
+
+            {activeVideo ? (
+              <div className="space-y-5">
+                <div className="bg-black p-2 shadow-2xl">
+                  <div className="aspect-video bg-black">
+                    <iframe
+                      className="h-full w-full"
+                      src={activeVideo.embed}
+                      title={`Presentation video ${activeVideoIndex + 1}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+
+                {videoEmbeds.length > 1 && (
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {videoEmbeds.map((video, index) => (
+                      <button
+                        key={`${video.source}-${index}`}
+                        type="button"
+                        onClick={() => setActiveVideoIndex(index)}
+                        className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                          index === activeVideoIndex
+                            ? "border-blue-600 bg-blue-600 text-white"
+                            : "border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700"
+                        }`}
+                      >
+                        Video {index + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
+                Aucune video disponible pour le moment.
+              </div>
+            )}
           </div>
         </div>
       </section>

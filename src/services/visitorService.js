@@ -10,6 +10,8 @@ const extractList = (response) => {
   return [];
 };
 
+const emptyResponse = { data: { data: [] } };
+
 export const visitorService = {
   extractList,
   getProfile: () => api.get("/auth/profile"),
@@ -19,13 +21,15 @@ export const visitorService = {
   getMessagesByRole: (role) => {
     if (role === "agent") return api.get("/agent/messages");
     if (role === "proprietaire") return api.get("/proprietaire/messages");
-    return api.get("/visiteur/messages");
+    if (role === "visiteur" || !role) return api.get("/visiteur/messages");
+    return Promise.resolve(emptyResponse);
   },
   replyMessage: (uuid, payload) => api.post(`/visiteur/messages/${uuid}/reply`, payload),
   replyMessageByRole: (role, uuid, payload) => {
     if (role === "agent") return api.post(`/agent/messages/${uuid}/respond`, payload);
     if (role === "proprietaire") return api.post(`/proprietaire/messages/${uuid}/reply`, payload);
-    return api.post(`/visiteur/messages/${uuid}/reply`, payload);
+    if (role === "visiteur" || !role) return api.post(`/visiteur/messages/${uuid}/reply`, payload);
+    return Promise.resolve({ data: { success: true } });
   },
   getSearchRequests: () => api.get("/visiteur/search-requests"),
   createSearchRequest: (payload) => api.post("/visiteur/search-requests", payload),
