@@ -17,6 +17,7 @@ import Button from "../components/ui/Button";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toMediaUrl } from "../utils/media";
 const ConstructionDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -39,14 +40,7 @@ const ConstructionDetails = () => {
   const [activePlan, setActivePlan] = useState(null);
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-  const getStorageUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, "");
-    return `${storageBase}/storage/${cleaned}`;
-  };
+  const getStorageUrl = (path) => toMediaUrl(path);
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -102,7 +96,7 @@ const ConstructionDetails = () => {
       ? project.images_path
       : [];
     const resolved = images.map(getStorageUrl).filter(Boolean);
-    if (project.cover_image) resolved.unshift(project.cover_image);
+    if (project.cover_image) resolved.unshift(getStorageUrl(project.cover_image));
     if (resolved.length === 0) {
       resolved.push(defaultImage);
     }

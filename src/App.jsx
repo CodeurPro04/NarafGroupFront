@@ -17,6 +17,7 @@ import PartnerDetails from './pages/PartnerDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Maintenance from './pages/Maintenance';
 import './index.css';
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -30,6 +31,12 @@ const ScrollToTop = () => {
 
 
 function App() {
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
+
+  if (isMaintenanceMode) {
+    return <Maintenance launchDate="27 Mars 2026" />;
+  }
+
   return (
     <Router>
       <div className="app min-h-screen flex flex-col">

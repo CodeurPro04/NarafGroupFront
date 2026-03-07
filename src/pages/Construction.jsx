@@ -18,6 +18,7 @@ import {
 import api from "../api/axios";
 import { isAuthenticated } from "../api/axios";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 
 const Construction = () => {
   const [constructionProjects, setConstructionProjects] = useState([]);
@@ -45,16 +46,7 @@ const Construction = () => {
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80";
   const navigate = useNavigate();
   const pageLocation = useLocation();
-  const apiBase =
-    import.meta.env.VITE_API_URL || "https://api.kovatech.digital/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-
-  const getStorageUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, "");
-    return `${storageBase}/storage/${cleaned}`;
-  };
+  const getStorageUrl = (path) => toMediaUrl(path);
 
   const normalizeProject = (project) => {
     const location = project.location || project.city || "";
@@ -65,8 +57,8 @@ const Construction = () => {
       id: project.uuid || project.id,
       image:
         (images.length ? getStorageUrl(images[0]) : "") ||
-        project.cover_image ||
-        project.image_url ||
+        getStorageUrl(project.cover_image) ||
+        getStorageUrl(project.image_url) ||
         defaultImage,
       title: project.title || "Projet de construction",
       location,

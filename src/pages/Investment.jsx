@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import api from "../api/axios";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 
 const Investment = () => {
   const [activeFilter, setActiveFilter] = useState("tous");
@@ -39,15 +40,7 @@ const Investment = () => {
 
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-
-  const getStorageUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, "");
-    return `${storageBase}/storage/${cleaned}`;
-  };
+  const getStorageUrl = (path) => toMediaUrl(path);
 
   const formatDuration = (months) => {
     if (!months) return "N/A";
@@ -88,8 +81,8 @@ const Investment = () => {
       id: project.uuid || project.id,
       image:
         (images.length ? getStorageUrl(images[0]) : "") ||
-        project.cover_image ||
-        project.image_url ||
+        getStorageUrl(project.cover_image) ||
+        getStorageUrl(project.image_url) ||
         defaultImage,
       gallery: images.map(getStorageUrl),
       title: project.title || "Projet d'investissement",

@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Building2, Globe, Mail, MapPin, Phone, Package, ShieldCheck } from "lucide-react";
 import { getPartnerById } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 
 const PartnerDetails = () => {
   const { uuid } = useParams();
@@ -42,15 +43,6 @@ const PartnerDetails = () => {
     };
   }, [uuid]);
 
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-
-  const getStorageUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    return `${storageBase}/storage/${String(path).replace(/^public\//, "")}`;
-  };
-
   const serviceOffers = useMemo(() => {
     if (Array.isArray(partner?.service_offers) && partner.service_offers.length > 0) {
       return partner.service_offers;
@@ -67,7 +59,15 @@ const PartnerDetails = () => {
 
   const heroTitle = partner?.profile_title || `A propos de ${partner?.company_name || "ce partenaire"}`;
   const heroDescription = partner?.profile_description || partner?.description || "Aucune description detaillee disponible.";
-  const coverImage = getStorageUrl(partner?.cover_image_path) || getStorageUrl(partner?.logo_path);
+  const coverImage = [
+    partner?.cover_image_url,
+    partner?.cover_image_path,
+    partner?.logo_url,
+    partner?.logo_path,
+    partner?.logo?.file_path,
+  ]
+    .map(toMediaUrl)
+    .find(Boolean);
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -202,4 +202,3 @@ const PartnerDetails = () => {
 };
 
 export default PartnerDetails;
-

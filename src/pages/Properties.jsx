@@ -25,6 +25,7 @@ import {
   List,
 } from "lucide-react";
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
+import { toMediaUrl } from "../utils/media";
 
 const Properties = () => {
   const location = useLocation();
@@ -258,12 +259,10 @@ const Properties = () => {
   // Fonctions utilitaires
   const getPropertyImages = (property) => {
     if (property.primary_image?.file_path) {
-      return [
-        `http://localhost:8000/storage/${property.primary_image.file_path}`,
-      ];
+      return [toMediaUrl(property.primary_image.file_path)];
     }
     if (property.media?.[0]?.file_path) {
-      return [`http://localhost:8000/storage/${property.media[0].file_path}`];
+      return [toMediaUrl(property.media[0].file_path)];
     }
     return [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",

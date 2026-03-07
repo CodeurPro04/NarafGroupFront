@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getHouseModels } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 
 const HouseModels = () => {
   const location = useLocation();
@@ -46,8 +47,8 @@ const HouseModels = () => {
   }, [location.search]);
 
   const getMainImage = (model) =>
-    model?.cover_image_url ||
-    model?.gallery_image_urls?.[0] ||
+    toMediaUrl(model?.cover_image_url || model?.cover_image_path) ||
+    toMediaUrl(model?.gallery_image_urls?.[0]) ||
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80";
 
   const getParagraphs = (value) =>
@@ -112,7 +113,9 @@ const HouseModels = () => {
 
           {models.map((model, index) => {
             const paragraphs = getParagraphs(model.description || model.short_description);
-            const gallery = model.gallery_image_urls || [];
+            const gallery = Array.isArray(model.gallery_image_urls)
+              ? model.gallery_image_urls.map(toMediaUrl).filter(Boolean)
+              : [];
             const reverse = index % 2 === 1;
 
             return (
@@ -163,7 +166,7 @@ const HouseModels = () => {
                     {gallery.slice(1, 5).map((image, idx) => (
                       <img
                         key={`${model.uuid}-gallery-${idx}`}
-                        src={image}
+                        src={toMediaUrl(image)}
                         alt={`${model.title} ${idx + 2}`}
                         className="w-full h-36 object-cover"
                       />

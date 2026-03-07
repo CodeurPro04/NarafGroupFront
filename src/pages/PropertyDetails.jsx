@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Bed, 
-  Bath, 
-  Square, 
-  MapPin, 
-  Calendar, 
-  Phone, 
-  Mail, 
-  Share2, 
-  Heart, 
-  ChevronLeft, 
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Bed,
+  Bath,
+  Square,
+  MapPin,
+  Calendar,
+  Phone,
+  Mail,
+  Share2,
+  Heart,
+  ChevronLeft,
   ChevronRight,
   Building2,
   Car,
@@ -26,12 +26,13 @@ import {
   Users,
   Shield,
   Award,
-  Check
-} from 'lucide-react';
-import api from '../api/axios';
-import Button from '../components/ui/Button';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+  Check,
+} from "lucide-react";
+import api from "../api/axios";
+import Button from "../components/ui/Button";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { toMediaUrl } from "../utils/media";
 
 const PropertyDetails = () => {
   const { uuid } = useParams();
@@ -43,14 +44,13 @@ const PropertyDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [relatedProperties, setRelatedProperties] = useState([]);
   const [contactForm, setContactForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
   });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
-  const [contactNotice, setContactNotice] = useState({ type: '', message: '' });
-
+  const [contactNotice, setContactNotice] = useState({ type: "", message: "" });
   useEffect(() => {
     fetchPropertyDetails();
     fetchRelatedProperties();
@@ -60,17 +60,17 @@ const PropertyDetails = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await api.get(`/properties/${uuid}`);
-      
+
       if (response.data.success) {
         setProperty(response.data.data);
       } else {
-        setError('Propriété non trouvée');
+        setError("Propriété non trouvée");
       }
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
-      setError('Erreur lors du chargement de la propriété');
+      console.error("Erreur lors du chargement:", error);
+      setError("Erreur lors du chargement de la propriété");
     } finally {
       setLoading(false);
     }
@@ -78,48 +78,52 @@ const PropertyDetails = () => {
 
   const fetchRelatedProperties = async () => {
     try {
-      const response = await api.get('/properties', {
-        params: { per_page: 4 }
+      const response = await api.get("/properties", {
+        params: { per_page: 4 },
       });
-      
+
       if (response.data.success) {
-        const propertiesData = response.data.data.data || response.data.data || [];
-        setRelatedProperties(propertiesData.filter(p => p.uuid !== uuid).slice(0, 3));
+        const propertiesData =
+          response.data.data.data || response.data.data || [];
+        setRelatedProperties(
+          propertiesData.filter((p) => p.uuid !== uuid).slice(0, 3),
+        );
       }
     } catch (error) {
-      console.error('Erreur propriétés similaires:', error);
+      console.error("Erreur propriétés similaires:", error);
     }
   };
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setContactNotice({ type: '', message: '' });
+    setContactNotice({ type: "", message: "" });
     if (!property?.id && !property?.uuid) return;
 
     try {
       setIsSubmittingContact(true);
-      const response = await api.post('/client-requests', {
-        request_type: 'immobilier',
+      const response = await api.post("/client-requests", {
+        request_type: "immobilier",
         property_id: property.id || null,
         property_uuid: property.uuid,
         name: contactForm.name,
         email: contactForm.email || null,
         phone: contactForm.phone || null,
-        message: contactForm.message
+        message: contactForm.message,
       });
-      
+
       if (response.data.success) {
         setContactNotice({
-          type: 'success',
-          message: 'Votre demande a ete envoyee avec succes.',
+          type: "success",
+          message: "Votre demande a ete envoyee avec succes.",
         });
-        setContactForm((prev) => ({ ...prev, message: '' }));
+        setContactForm((prev) => ({ ...prev, message: "" }));
       }
     } catch (error) {
-      console.error('Erreur envoi message:', error);
+      console.error("Erreur envoi message:", error);
       setContactNotice({
-        type: 'error',
-        message: error.response?.data?.message || "Erreur lors de l'envoi du message.",
+        type: "error",
+        message:
+          error.response?.data?.message || "Erreur lors de l'envoi du message.",
       });
     } finally {
       setIsSubmittingContact(false);
@@ -129,7 +133,7 @@ const PropertyDetails = () => {
   const handleInputChange = (e) => {
     setContactForm({
       ...contactForm,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -140,38 +144,40 @@ const PropertyDetails = () => {
 
   const formatPrice = (price) => {
     if (!price) return "Prix non spécifié";
-    
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'XOF',
+
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "XOF",
       maximumFractionDigits: 0,
     }).format(price);
   };
 
   const getPropertyImages = () => {
     if (!property) return [];
-    
+
     const images = [];
-    
+
     // Image principale
     if (property.primary_image?.file_path) {
-      images.push(`http://localhost:8000/storage/${property.primary_image.file_path}`);
+      images.push(toMediaUrl(property.primary_image.file_path));
     }
-    
+
     // Autres images
     if (property.media && property.media.length > 0) {
-      property.media.forEach(media => {
+      property.media.forEach((media) => {
         if (media.file_path) {
-          images.push(`http://localhost:8000/storage/${media.file_path}`);
+          images.push(toMediaUrl(media.file_path));
         }
       });
     }
-    
+
     // Image par défaut si aucune image
     if (images.length === 0) {
-      images.push('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80');
+      images.push(
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+      );
     }
-    
+
     return images;
   };
 
@@ -194,7 +200,7 @@ const PropertyDetails = () => {
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Lien copié dans le presse-papier!');
+      alert("Lien copié dans le presse-papier!");
     }
   };
 
@@ -215,13 +221,13 @@ const PropertyDetails = () => {
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">🏠</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {error || 'Bien non trouvé'}
+            {error || "Bien non trouvé"}
           </h2>
           <p className="text-gray-600 mb-6">
             Le bien que vous recherchez n'existe pas ou a été supprimé.
           </p>
-          <Button 
-            onClick={() => navigate('/properties')}
+          <Button
+            onClick={() => navigate("/properties")}
             variant="primary"
             className="w-full md:w-auto"
           >
@@ -233,9 +239,9 @@ const PropertyDetails = () => {
   }
 
   const images = getPropertyImages();
-  const formattedDate = property.created_at 
-    ? format(new Date(property.created_at), 'dd MMMM yyyy', { locale: fr })
-    : 'Non spécifiée';
+  const formattedDate = property.created_at
+    ? format(new Date(property.created_at), "dd MMMM yyyy", { locale: fr })
+    : "Non spécifiée";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -252,7 +258,7 @@ const PropertyDetails = () => {
             <Home size={64} className="text-gray-300" />
           </div>
         )}
-        
+
         {/* Navigation */}
         {images.length > 1 && (
           <>
@@ -281,9 +287,9 @@ const PropertyDetails = () => {
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentImageIndex 
-                    ? 'bg-white w-6' 
-                    : 'bg-white/60 hover:bg-white/80'
+                  index === currentImageIndex
+                    ? "bg-white w-6"
+                    : "bg-white/60 hover:bg-white/80"
                 }`}
                 aria-label={`Aller à l'image ${index + 1}`}
               />
@@ -296,14 +302,18 @@ const PropertyDetails = () => {
           <button
             onClick={toggleFavorite}
             className="p-3 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all hover:scale-110 shadow-lg"
-            aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+            aria-label={
+              isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"
+            }
           >
             <Heart
               size={20}
-              className={isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'}
+              className={
+                isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"
+              }
             />
           </button>
-          <button 
+          <button
             onClick={shareProperty}
             className="p-3 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all hover:scale-110 shadow-lg"
             aria-label="Partager"
@@ -314,27 +324,34 @@ const PropertyDetails = () => {
 
         {/* Status Badge */}
         <div className="absolute top-4 left-4">
-          <span className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
-            property.status === 'approved' 
-              ? 'bg-green-500 text-white' 
-              : property.status === 'pending'
-              ? 'bg-yellow-500 text-white'
-              : 'bg-gray-500 text-white'
-          }`}>
-            {property.status === 'approved' ? 'Disponible' : 
-             property.status === 'pending' ? 'En attente' : 
-             property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
+              property.status === "approved"
+                ? "bg-green-500 text-white"
+                : property.status === "pending"
+                  ? "bg-yellow-500 text-white"
+                  : "bg-gray-500 text-white"
+            }`}
+          >
+            {property.status === "approved"
+              ? "Disponible"
+              : property.status === "pending"
+                ? "En attente"
+                : property.status.charAt(0).toUpperCase() +
+                  property.status.slice(1)}
           </span>
         </div>
 
         {/* Transaction Type Badge */}
         <div className="absolute top-4 left-28 md:left-32">
-          <span className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
-            property.transaction_type === 'vente'
-              ? 'bg-blue-600 text-white'
-              : 'bg-purple-600 text-white'
-          }`}>
-            {property.transaction_type === 'vente' ? 'À Vendre' : 'À Louer'}
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
+              property.transaction_type === "vente"
+                ? "bg-blue-600 text-white"
+                : "bg-purple-600 text-white"
+            }`}
+          >
+            {property.transaction_type === "vente" ? "À Vendre" : "À Louer"}
           </span>
         </div>
       </div>
@@ -359,12 +376,38 @@ const PropertyDetails = () => {
                       {property.city}
                     </span>
                   </div>
-                  
+                  <div className="md:text-left mb-4">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">
+                      {formatPrice(property.price)}
+                    </div>
+                    {property.transaction_type === "location" && (
+                      <div className="text-gray-600">/ mois</div>
+                    )}
+                    {property.price && property.surface_area && (
+                      <div className="text-sm text-gray-500 mt-2">
+                        ≈{" "}
+                        {Math.round(
+                          property.price / property.surface_area,
+                        ).toLocaleString()}{" "}
+                        XOF/m²
+                      </div>
+                    )}
+                    <div className="mt-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <CheckCircle size={14} className="mr-1" />
+                        {property.negotiable ? "Prix négociable" : "Prix ferme"}
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Features Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-6 border-y border-gray-200">
                     <div className="text-center group">
                       <div className="flex items-center justify-center space-x-2 mb-2">
-                        <Bed className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                        <Bed
+                          className="text-blue-600 group-hover:scale-110 transition-transform"
+                          size={24}
+                        />
                         <span className="text-2xl font-bold text-gray-900">
                           {property.bedrooms || 0}
                         </span>
@@ -373,16 +416,24 @@ const PropertyDetails = () => {
                     </div>
                     <div className="text-center group">
                       <div className="flex items-center justify-center space-x-2 mb-2">
-                        <Bath className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                        <Bath
+                          className="text-blue-600 group-hover:scale-110 transition-transform"
+                          size={24}
+                        />
                         <span className="text-2xl font-bold text-gray-900">
                           {property.bathrooms || 0}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600">Salles de bain</div>
+                      <div className="text-sm text-gray-600">
+                        Salles de bain
+                      </div>
                     </div>
                     <div className="text-center group">
                       <div className="flex items-center justify-center space-x-2 mb-2">
-                        <Maximize className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                        <Maximize
+                          className="text-blue-600 group-hover:scale-110 transition-transform"
+                          size={24}
+                        />
                         <span className="text-2xl font-bold text-gray-900">
                           {property.surface_area || 0}
                         </span>
@@ -391,33 +442,16 @@ const PropertyDetails = () => {
                     </div>
                     <div className="text-center group">
                       <div className="flex items-center justify-center space-x-2 mb-2">
-                        <Car className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+                        <Car
+                          className="text-blue-600 group-hover:scale-110 transition-transform"
+                          size={24}
+                        />
                         <span className="text-2xl font-bold text-gray-900">
                           {property.parking_spaces || 0}
                         </span>
                       </div>
                       <div className="text-sm text-gray-600">Parkings</div>
                     </div>
-                  </div>
-                </div>
-                
-                <div className="md:text-right">
-                  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">
-                    {formatPrice(property.price)}
-                  </div>
-                  {property.transaction_type === 'location' && (
-                    <div className="text-gray-600">/ mois</div>
-                  )}
-                  {property.price && property.surface_area && (
-                    <div className="text-sm text-gray-500 mt-2">
-                      ≈ {Math.round(property.price / property.surface_area).toLocaleString()} XOF/m²
-                    </div>
-                  )}
-                  <div className="mt-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                      <CheckCircle size={14} className="mr-1" />
-                      {property.negotiable ? 'Prix négociable' : 'Prix ferme'}
-                    </span>
                   </div>
                 </div>
               </div>
@@ -449,11 +483,16 @@ const PropertyDetails = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {property.features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div
+                      key={index}
+                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
                       <div className="bg-blue-100 p-2 rounded-lg">
                         <CheckCircle size={18} className="text-blue-600" />
                       </div>
-                      <span className="font-medium text-gray-700">{feature.name}</span>
+                      <span className="font-medium text-gray-700">
+                        {feature.name}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -471,7 +510,9 @@ const PropertyDetails = () => {
                     <Building2 className="text-gray-400" size={20} />
                     <div>
                       <div className="text-sm text-gray-500">Type de bien</div>
-                      <div className="font-medium">{property.property_type?.name || 'Non spécifié'}</div>
+                      <div className="font-medium">
+                        {property.property_type?.name || "Non spécifié"}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -479,26 +520,35 @@ const PropertyDetails = () => {
                     <div>
                       <div className="text-sm text-gray-500">Étage</div>
                       <div className="font-medium">
-                        {property.floor_number ? `Étage ${property.floor_number}` : 'Rez-de-chaussée'}
-                        {property.total_floors && ` sur ${property.total_floors}`}
+                        {property.floor_number
+                          ? `Étage ${property.floor_number}`
+                          : "Rez-de-chaussée"}
+                        {property.total_floors &&
+                          ` sur ${property.total_floors}`}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Calendar className="text-gray-400" size={20} />
                     <div>
-                      <div className="text-sm text-gray-500">Année de construction</div>
-                      <div className="font-medium">{property.year_built || 'Non spécifiée'}</div>
+                      <div className="text-sm text-gray-500">
+                        Année de construction
+                      </div>
+                      <div className="font-medium">
+                        {property.year_built || "Non spécifiée"}
+                      </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <DollarSign className="text-gray-400" size={20} />
                     <div>
                       <div className="text-sm text-gray-500">Devise</div>
-                      <div className="font-medium">{property.currency || 'XOF'}</div>
+                      <div className="font-medium">
+                        {property.currency || "XOF"}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -510,11 +560,13 @@ const PropertyDetails = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Property ID */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <div className="text-sm text-gray-500">Référence du bien</div>
-                <div className="font-mono font-bold text-lg text-gray-900">{property.uuid}</div>
+                <div className="font-mono font-bold text-lg text-gray-900">
+                  {property.uuid}
+                </div>
               </div>
             </div>
           </div>
@@ -531,17 +583,19 @@ const PropertyDetails = () => {
                   <h3 className="text-xl font-bold text-gray-900">
                     Intéressé par ce bien ?
                   </h3>
-                  <p className="text-gray-600 text-sm">Contactez-nous rapidement</p>
+                  <p className="text-gray-600 text-sm">
+                    Contactez-nous rapidement
+                  </p>
                 </div>
               </div>
-              
+
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 {contactNotice.message && (
                   <div
                     className={`rounded-lg px-4 py-3 text-sm ${
-                      contactNotice.type === 'success'
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                      contactNotice.type === "success"
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
                     }`}
                   >
                     {contactNotice.message}
@@ -592,14 +646,16 @@ const PropertyDetails = () => {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  variant="primary" 
+                <Button
+                  type="submit"
+                  variant="primary"
                   className="w-full py-3 font-semibold text-lg"
                   disabled={isSubmittingContact}
                 >
                   <Mail size={20} className="mr-2 inline" />
-                  {isSubmittingContact ? 'Envoi en cours...' : 'Envoyer la demande'}
+                  {isSubmittingContact
+                    ? "Envoi en cours..."
+                    : "Envoyer la demande"}
                 </Button>
               </form>
 
@@ -703,36 +759,38 @@ const PropertyDetails = () => {
               <h2 className="text-2xl font-bold text-gray-900">
                 Propriétés similaires
               </h2>
-              <Button 
-                variant="outline"
-                onClick={() => navigate('/properties')}
-              >
+              <Button variant="outline" onClick={() => navigate("/properties")}>
                 Voir tous les biens
               </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedProperties.map((relatedProp) => (
-                <div 
+                <div
                   key={relatedProp.uuid}
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
                   onClick={() => navigate(`/property/${relatedProp.uuid}`)}
                 >
                   <div className="relative h-48">
                     <img
-                      src={relatedProp.primary_image?.file_path 
-                        ? `http://localhost:8000/storage/${relatedProp.primary_image.file_path}`
-                        : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80'
+                      src={
+                        relatedProp.primary_image?.file_path
+                          ? toMediaUrl(relatedProp.primary_image.file_path)
+                          : "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80"
                       }
                       alt={relatedProp.title}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-3 left-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        relatedProp.transaction_type === 'vente'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-purple-600 text-white'
-                      }`}>
-                        {relatedProp.transaction_type === 'vente' ? 'À Vendre' : 'À Louer'}
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          relatedProp.transaction_type === "vente"
+                            ? "bg-blue-600 text-white"
+                            : "bg-purple-600 text-white"
+                        }`}
+                      >
+                        {relatedProp.transaction_type === "vente"
+                          ? "À Vendre"
+                          : "À Louer"}
                       </span>
                     </div>
                   </div>
@@ -769,5 +827,3 @@ const PropertyDetails = () => {
 };
 
 export default PropertyDetails;
-
-

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getHouseModelById } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 
 const HouseModelDetails = () => {
   const { uuid } = useParams();
@@ -50,9 +51,11 @@ const HouseModelDetails = () => {
     [model],
   );
 
-  const gallery = model?.gallery_image_urls || [];
+  const gallery = Array.isArray(model?.gallery_image_urls)
+    ? model.gallery_image_urls.map(toMediaUrl).filter(Boolean)
+    : [];
   const cover =
-    model?.cover_image_url ||
+    toMediaUrl(model?.cover_image_url || model?.cover_image_path) ||
     gallery[0] ||
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80";
 

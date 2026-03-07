@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Hero from "../components/layout/Hero";
 import { getApprovedPartners, getHouseModels } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 import {
   Shield,
   Phone,
@@ -111,16 +112,6 @@ const Home = () => {
     };
   }, []);
 
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-
-  const getLogoUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, "");
-    return `${storageBase}/storage/${cleaned}`;
-  };
-
   const activeModel = houseModels[0] || null;
   const fallbackSliderImages = [
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80",
@@ -132,9 +123,9 @@ const Home = () => {
   const sliderImages = useMemo(() => {
     const allModelImages = houseModels
       .flatMap((model) => [
-        model?.cover_image_url,
+        toMediaUrl(model?.cover_image_url || model?.cover_image_path),
         ...(Array.isArray(model?.gallery_image_urls)
-          ? model.gallery_image_urls
+          ? model.gallery_image_urls.map(toMediaUrl)
           : []),
       ])
       .filter(Boolean);
@@ -381,36 +372,48 @@ const Home = () => {
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {partners.map((partner) => (
-                <Link
-                  key={partner.uuid}
-                  to={`/partners/${partner.uuid}`}
-                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition block"
-                >
-                  <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden">
-                    {partner.logo_path ? (
-                      <img
-                        src={getLogoUrl(partner.logo_path)}
-                        alt={partner.company_name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm font-semibold text-slate-500">
-                        Logo
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                    {partner.company_name}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {partner.company_type || "Entreprise"}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {partner.city || "Localisation a definir"}
-                  </p>
-                </Link>
-              ))}
+              {partners.map((partner) => {
+                const partnerLogo = [
+                  partner.logo_url,
+                  partner.logo_path,
+                  partner.cover_image_url,
+                  partner.cover_image_path,
+                  partner.logo?.file_path,
+                ]
+                  .map(toMediaUrl)
+                  .find(Boolean);
+
+                return (
+                  <Link
+                    key={partner.uuid}
+                    to={`/partners/${partner.uuid}`}
+                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition block"
+                  >
+                    <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden">
+                      {partnerLogo ? (
+                        <img
+                          src={partnerLogo}
+                          alt={partner.company_name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm font-semibold text-slate-500">
+                          Logo
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                      {partner.company_name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {partner.company_type || "Entreprise"}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      {partner.city || "Localisation a definir"}
+                    </p>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

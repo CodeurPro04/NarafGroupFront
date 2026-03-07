@@ -19,6 +19,7 @@ import {
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { toMediaUrl } from "../utils/media";
 const InvestmentDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -39,14 +40,7 @@ const InvestmentDetails = () => {
   const [investSuccess, setInvestSuccess] = useState("");
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-  const storageBase = apiBase.replace(/\/api\/?$/, "");
-  const getStorageUrl = (path) => {
-    if (!path) return "";
-    if (/^https?:\/\//i.test(path)) return path;
-    const cleaned = path.replace(/^public\//, "");
-    return `${storageBase}/storage/${cleaned}`;
-  };
+  const getStorageUrl = (path) => toMediaUrl(path);
   useEffect(() => {
     fetchProject();
     fetchRelated();
@@ -137,7 +131,9 @@ const InvestmentDetails = () => {
   const images = useMemo(() => {
     if (!project) return [defaultImage];
     const resolved = project.images.map(getStorageUrl).filter(Boolean);
-    if (project.raw?.cover_image) resolved.unshift(project.raw.cover_image);
+    if (project.raw?.cover_image) {
+      resolved.unshift(getStorageUrl(project.raw.cover_image));
+    }
     if (resolved.length === 0) resolved.push(defaultImage);
     return resolved;
   }, [project]);
