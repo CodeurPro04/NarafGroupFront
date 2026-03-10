@@ -23,9 +23,12 @@ import {
   ArrowUpDown,
   Grid,
   List,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 import { toMediaUrl } from "../utils/media";
+import PropertiesHero from "../components/layout/PropertiesHero";
 
 const Properties = () => {
   const location = useLocation();
@@ -47,6 +50,7 @@ const Properties = () => {
   const [announcementSubmitting, setAnnouncementSubmitting] = useState(false);
   const [announcementError, setAnnouncementError] = useState("");
   const [announcementSuccess, setAnnouncementSuccess] = useState("");
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -111,6 +115,45 @@ const Properties = () => {
       features: ["Conseiller dédié", "Aide financement", "Support 7j/7"],
     },
   ];
+
+  const testimonials = [
+    {
+      quote:
+        "\"Mon compte principal. Creation facile, interfaces simples et efficaces. Je n'ai pas besoin de plus.\"",
+      author: "Merci Sogexa.",
+      meta: "Ludovic, Rennes",
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80",
+    },
+    {
+      quote:
+        "\"Une equipe reactive, des conseils concrets et un parcours vraiment limpide du debut a la signature.\"",
+      author: "Experience validee.",
+      meta: "Aminata, Abidjan",
+      image:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80",
+    },
+    {
+      quote:
+        "\"J'ai trouve un bien adapte a mon budget sans perdre de temps. L'accompagnement a fait la difference.\"",
+      author: "Service fiable.",
+      meta: "Cedric, Yamoussoukro",
+      image:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80",
+    },
+  ];
+
+  const previousTestimonial = () => {
+    setActiveTestimonial((prev) =>
+      prev === 0 ? testimonials.length - 1 : prev - 1,
+    );
+  };
+
+  const nextTestimonial = () => {
+    setActiveTestimonial((prev) =>
+      prev === testimonials.length - 1 ? 0 : prev + 1,
+    );
+  };
 
   // Fonction pour récupérer les types de propriétés avec fallback
   const fetchPropertyTypes = async () => {
@@ -522,6 +565,14 @@ const Properties = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
+      <PropertiesHero
+        onPrimaryAction={() => {
+          const searchBar = document.querySelector('input[type="text"]');
+          if (searchBar) searchBar.focus();
+        }}
+        onSecondaryAction={handleAnnouncementClick}
+      />
+      {/*
       <div
         className="relative min-h-[560px] lg:min-h-[620px]"
         style={{
@@ -575,6 +626,7 @@ const Properties = () => {
           </div>
         </div>
       </div>
+      */}
       {/*
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -821,7 +873,75 @@ const Properties = () => {
               )}
             </div>
 
-            <div className="mt-10 sm:mt-12 text-center">
+            <div className="mt-10 sm:mt-12">
+              <section className="mx-auto mb-10 max-w-5xl bg-[#d9e8f4] px-4 py-5 sm:px-6 sm:py-6">
+                <div className="space-y-4">
+                  <h2 className="max-w-4xl text-2xl font-bold leading-tight text-slate-950 sm:text-[2.05rem]">
+                    Plus de 650 000 particuliers et professionnels ont deja
+                    choisi ABI pour leur acquisition de bien immobilier.
+                  </h2>
+
+                  <div className="mx-auto grid max-w-[720px] grid-cols-1 overflow-hidden bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] sm:grid-cols-[150px_1fr]">
+                    <div className="h-[140px] bg-slate-200 sm:h-[150px]">
+                      <img
+                        src={testimonials[activeTestimonial].image}
+                        alt={testimonials[activeTestimonial].meta}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex min-h-[140px] flex-col justify-between px-5 py-4 sm:min-h-[150px] sm:px-8">
+                      <div>
+                        <p className="max-w-md text-[15px] leading-6 text-slate-700 sm:text-base">
+                          {testimonials[activeTestimonial].quote}
+                        </p>
+                        <p className="mt-3 text-sm font-semibold text-slate-900">
+                          {testimonials[activeTestimonial].author}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400">
+                          {testimonials[activeTestimonial].meta}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 flex items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={previousTestimonial}
+                          aria-label="Temoignage precedent"
+                          className="text-sky-600 transition hover:text-sky-800"
+                        >
+                          <ChevronLeft size={16} />
+                        </button>
+                        <div className="flex items-center gap-1.5">
+                          {testimonials.map((_, index) => (
+                            <button
+                              key={`testimonial-dot-${index}`}
+                              type="button"
+                              aria-label={`Temoignage ${index + 1}`}
+                              onClick={() => setActiveTestimonial(index)}
+                              className={`h-1.5 rounded-full transition-all ${
+                                index === activeTestimonial
+                                  ? "w-4 bg-sky-600"
+                                  : "w-1.5 bg-sky-200 hover:bg-sky-400"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={nextTestimonial}
+                          aria-label="Temoignage suivant"
+                          className="text-sky-600 transition hover:text-sky-800"
+                        >
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <div className="text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                 Trouvez le bien qui vous ressemble
               </h2>
@@ -835,6 +955,7 @@ const Properties = () => {
                         : "biens disponibles"
                     }`}
               </p> */}
+              </div>
             </div>
           </div>
 

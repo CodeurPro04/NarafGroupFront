@@ -131,9 +131,8 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
-          <p>© {currentYear} NARAF GROUPE SARL. Tous droits reserves. by <a href="https://www.kofgo-consulting.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
-            Kofgo-consulting
-          </a></p>
+          <p>© {currentYear} NARAF GROUPE SARL. Tous droits reserves.
+          </p>
           <p className="mt-2 text-sm">
             <Link to="/legal" className="transition-colors hover:text-gray-400">
               Mentions legales

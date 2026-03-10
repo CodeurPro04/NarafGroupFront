@@ -82,7 +82,7 @@ const Login = () => {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
           <img
-            src="/images/logonaraf.png"
+            src="/images/logonaraf1.jpeg"
             alt="NARAF"
             className="mx-auto h-12 mb-4"
           />

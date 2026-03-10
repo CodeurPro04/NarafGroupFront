@@ -381,7 +381,7 @@ const Register = () => {
             className="inline-flex items-center justify-center w-20 h-20"
           >
             <img
-              src="/images/logonaraf.png"
+              src="/images/logonaraf1.jpeg"
               alt="NARAF Immobilier"
               className="h-12 w-auto object-contain"
             />

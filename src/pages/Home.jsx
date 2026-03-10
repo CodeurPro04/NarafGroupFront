@@ -4,6 +4,7 @@ import Hero from "../components/layout/Hero";
 import { getApprovedPartners, getHouseModels } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { mapShowcaseSections } from "../utils/showcaseArticles";
 import {
   Shield,
   Phone,
@@ -22,6 +23,27 @@ import {
 } from "lucide-react";
 
 const Home = () => {
+  const defaultShowcaseSections = [
+    {
+      title: "Besoin d'un bien",
+      button_label: "Voir tous les articles",
+      button_link: "/properties",
+      items: [],
+    },
+    {
+      title: "Besoin d'un projet de construction",
+      button_label: "Voir tous les projets",
+      button_link: "/construction",
+      items: [],
+    },
+    {
+      title: "J'investis dans un projet",
+      button_label: "Voir les opportunites",
+      button_link: "/investment",
+      items: [],
+    },
+  ];
+
   const [partners, setPartners] = useState([]);
   const [partnersLoading, setPartnersLoading] = useState(true);
   const [houseModels, setHouseModels] = useState([]);
@@ -33,6 +55,7 @@ const Home = () => {
     description:
       "Decouvrez nos modeles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
     videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+    showcaseSections: defaultShowcaseSections,
   });
 
   const stats = [
@@ -146,6 +169,24 @@ const Home = () => {
               payload.section.videos.length
                 ? payload.section.videos
                 : ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+            showcaseSections:
+              Array.isArray(payload?.section?.showcase_sections) &&
+              payload.section.showcase_sections.length >= 3
+                ? payload.section.showcase_sections.map((section) => ({
+                    title: section?.title || "",
+                    button_label: section?.button_label || "",
+                    button_link: section?.button_link || "",
+                    items: Array.isArray(section?.items)
+                      ? section.items.filter(
+                          (item) =>
+                            item?.title ||
+                            item?.excerpt ||
+                            item?.image_url ||
+                            item?.link,
+                        )
+                      : [],
+                  }))
+                : defaultShowcaseSections,
           });
         }
       } catch (error) {
@@ -225,6 +266,20 @@ const Home = () => {
     .filter((video) => video.embed);
 
   const activeVideo = videoEmbeds[activeVideoIndex] || videoEmbeds[0] || null;
+  const showcaseSections = mapShowcaseSections(
+    houseModelsSection.showcaseSections,
+  ).filter(
+        (section) =>
+          section &&
+          (section.title ||
+            section.button_label ||
+            section.button_link ||
+            (Array.isArray(section.items) &&
+              section.items.some(
+                (item) =>
+                  item?.title || item?.excerpt || item?.image_url || item?.link,
+              ))),
+      );
 
   return (
     <div className="bg-white">
@@ -351,6 +406,81 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {showcaseSections.length > 0 && (
+        <section className="bg-white py-12 sm:py-14">
+          <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
+            {showcaseSections.map((section, sectionIndex) => {
+              const items = Array.isArray(section.items)
+                ? section.items.slice(0, 4)
+                : [];
+
+              return (
+                <div
+                  key={`home-showcase-${sectionIndex}`}
+                  className="border-t border-slate-200 pt-4"
+                >
+                  <div className="mb-5">
+                    <h2 className="text-[2rem] font-bold leading-tight text-slate-950">
+                      {section.title || "Besoin d'un bien"}
+                    </h2>
+                    <div className="mt-2 h-1 w-10 rounded-full bg-slate-950" />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                    {items.map((item, itemIndex) => {
+                      const imageUrl = toMediaUrl(item.image_url) || item.image_url;
+                      const cardLink = item.details_link || "#";
+
+                      return (
+                        <Link
+                          key={`home-showcase-card-${sectionIndex}-${itemIndex}`}
+                          to={cardLink}
+                          className="group block border-b border-slate-200 pb-4 transition duration-200 hover:-translate-y-1"
+                        >
+                          <div className="overflow-hidden bg-slate-100">
+                            {imageUrl ? (
+                              <img
+                                src={imageUrl}
+                                alt={item.title || `Element ${itemIndex + 1}`}
+                                className="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                              />
+                            ) : (
+                              <div className="flex h-40 w-full items-center justify-center bg-slate-200 text-sm text-slate-500">
+                                Image a ajouter
+                              </div>
+                            )}
+                          </div>
+                          <div className="pt-3">
+                            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-900">
+                              {item.title || "Titre a renseigner"}
+                            </h3>
+                            <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
+                              {item.excerpt ||
+                                "Resume a renseigner depuis l'espace administrateur."}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {section.button_label && (
+                    <div className="mt-6">
+                      <Link
+                        to={section.button_link || "#"}
+                        className="inline-flex items-center rounded-md bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                      >
+                        {section.button_label}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="bg-slate-50 py-16 sm:py-18">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
