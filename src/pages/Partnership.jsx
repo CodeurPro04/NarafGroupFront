@@ -232,7 +232,7 @@ const Partnership = () => {
                   Se connecter{" "}
                 </button>{" "}
                 <button
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/register?role=entreprise")}
                   className="px-4 py-2 bg-white border border-blue-200 text-blue-600 text-sm"
                 >
                   {" "}

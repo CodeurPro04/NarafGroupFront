@@ -74,14 +74,20 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 transition-colors hover:text-white">
+                <Link
+                  to="/register?role=agent"
+                  className="text-gray-400 transition-colors hover:text-white"
+                >
                   Devenir agent
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 transition-colors hover:text-white">
+                <Link
+                  to="/register?role=proprietaire"
+                  className="text-gray-400 transition-colors hover:text-white"
+                >
                   Publier une annonce
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

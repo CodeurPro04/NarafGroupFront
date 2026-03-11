@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import api from "../api/axios";
 import { isAuthenticated } from "../api/axios";
+import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
 
@@ -825,9 +826,10 @@ const Construction = () => {
           )}
 
           {filteredProjects.length === 0 && !isLoading && (
-            <div className="text-center py-12 text-gray-600">
-              Aucun projet de construction disponible pour le moment.
-            </div>
+            <EmptyState
+              title="Aucun projet de construction disponible pour le moment."
+              className="py-12"
+            />
           )}
         </div>
       </section>

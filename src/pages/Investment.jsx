@@ -22,6 +22,7 @@ import {
   Hammer,
 } from "lucide-react";
 import api from "../api/axios";
+import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
 
@@ -660,27 +661,21 @@ const Investment = () => {
           )}
 
           {!isLoading && filteredProjects.length === 0 && (
-            <div className="text-center py-20">
-              <div className="inline-flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 bg-blue-50 mb-8">
-                <div className="text-4xl sm:text-5xl">:-)</div>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                Aucun projet ne correspond a votre recherche
-              </h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Essayez de modifier vos criteres ou contactez-nous pour des
-                opportunites personnalisees
-              </p>
-              <button
-                onClick={() => {
-                  setActiveFilter("tous");
-                  setSearchTerm("");
-                }}
-                className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg"
-              >
-                Voir tous les projets
-              </button>
-            </div>
+            <EmptyState
+              title="Aucun projet ne correspond a votre recherche."
+              className="py-20"
+              action={
+                <button
+                  onClick={() => {
+                    setActiveFilter("tous");
+                    setSearchTerm("");
+                  }}
+                  className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg"
+                >
+                  Voir tous les projets
+                </button>
+              }
+            />
           )}
         </div>
       </section>

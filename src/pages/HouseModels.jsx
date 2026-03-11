@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getHouseModels } from "../api/axios";
+import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
 
@@ -108,7 +109,9 @@ const HouseModels = () => {
           {error && <p className="text-red-600">{error}</p>}
 
           {!loading && !error && models.length === 0 && (
-            <p className="text-slate-500">Aucun modele disponible pour le moment.</p>
+            <EmptyState
+              title="Aucun modele disponible pour le moment."
+            />
           )}
 
           {models.map((model, index) => {

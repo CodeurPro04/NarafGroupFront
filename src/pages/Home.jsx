@@ -1,10 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Hero from "../components/layout/Hero";
-import { getApprovedPartners, getHouseModels } from "../api/axios";
+import api, { getApprovedPartners, getHouseModels } from "../api/axios";
+import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
-import { mapShowcaseSections } from "../utils/showcaseArticles";
 import {
   Shield,
   Phone,
@@ -48,6 +48,8 @@ const Home = () => {
   const [partnersLoading, setPartnersLoading] = useState(true);
   const [houseModels, setHouseModels] = useState([]);
   const [houseModelsLoading, setHouseModelsLoading] = useState(true);
+  const [showcaseSectionsLoading, setShowcaseSectionsLoading] = useState(true);
+  const [showcaseSections, setShowcaseSections] = useState(defaultShowcaseSections);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [houseModelsSection, setHouseModelsSection] = useState({
@@ -90,6 +92,71 @@ const Home = () => {
     { icon: <Cpu size={28} />, label: "Equipements connectes" },
     { icon: <ShieldCheck size={28} />, label: "Garanties" },
   ];
+
+  const pickRandomItems = (items, maxItems = 4) => {
+    const source = Array.isArray(items) ? [...items] : [];
+    for (let index = source.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [source[index], source[randomIndex]] = [source[randomIndex], source[index]];
+    }
+    return source.slice(0, maxItems);
+  };
+
+  const normalizePropertyItem = (property) => {
+    const media = Array.isArray(property?.media) ? property.media : [];
+    const mediaImage = media.find((item) => item?.file_path)?.file_path;
+
+    return {
+      title: property?.title || "Bien immobilier",
+      excerpt:
+        property?.short_description ||
+        property?.description ||
+        "Decouvrez ce bien immobilier disponible actuellement.",
+      image_url:
+        toMediaUrl(property?.primary_image?.file_path) ||
+        toMediaUrl(mediaImage) ||
+        toMediaUrl(property?.cover_image) ||
+        toMediaUrl(property?.image_url) ||
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+      link: `/property/${property?.uuid || property?.id}`,
+    };
+  };
+
+  const normalizeConstructionItem = (project) => {
+    const images = Array.isArray(project?.images_path) ? project.images_path : [];
+
+    return {
+      title: project?.title || "Projet de construction",
+      excerpt:
+        project?.short_description ||
+        project?.description ||
+        "Consultez ce projet de construction disponible actuellement.",
+      image_url:
+        (images.length ? toMediaUrl(images[0]) : "") ||
+        toMediaUrl(project?.cover_image) ||
+        toMediaUrl(project?.image_url) ||
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+      link: `/construction/${project?.uuid || project?.id}`,
+    };
+  };
+
+  const normalizeInvestmentItem = (project) => {
+    const images = Array.isArray(project?.images_path) ? project.images_path : [];
+
+    return {
+      title: project?.title || "Projet d'investissement",
+      excerpt:
+        project?.short_description ||
+        project?.description ||
+        "Consultez cette opportunite d'investissement disponible actuellement.",
+      image_url:
+        (images.length ? toMediaUrl(images[0]) : "") ||
+        toMediaUrl(project?.cover_image) ||
+        toMediaUrl(project?.image_url) ||
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+      link: `/investment/${project?.uuid || project?.id}`,
+    };
+  };
 
   const toEmbedVideoUrl = (rawUrl) => {
     if (!rawUrl) return null;
@@ -212,6 +279,76 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadShowcaseSections = async () => {
+      try {
+        setShowcaseSectionsLoading(true);
+
+        const [propertiesResponse, constructionResponse, investmentsResponse] =
+          await Promise.all([
+            api.get("/properties", { params: { per_page: 50 } }),
+            api.get("/construction-projects"),
+            api.get("/investments"),
+          ]);
+
+        const propertiesList =
+          propertiesResponse?.data?.data?.data ||
+          propertiesResponse?.data?.data ||
+          [];
+        const constructionList =
+          constructionResponse?.data?.data || constructionResponse?.data || [];
+        const investmentsList =
+          investmentsResponse?.data?.data?.data ||
+          investmentsResponse?.data?.data ||
+          [];
+
+        if (isMounted) {
+          setShowcaseSections([
+            {
+              title: "Besoin d'un bien",
+              button_label: "Voir tous les articles",
+              button_link: "/properties",
+              items: pickRandomItems(propertiesList, 4).map(normalizePropertyItem),
+            },
+            {
+              title: "Besoin d'un projet de construction",
+              button_label: "Voir tous les projets",
+              button_link: "/construction",
+              items: pickRandomItems(constructionList, 4).map(
+                normalizeConstructionItem,
+              ),
+            },
+            {
+              title: "J'investis dans un projet",
+              button_label: "Voir les opportunites",
+              button_link: "/investment",
+              items: pickRandomItems(investmentsList, 4).map(
+                normalizeInvestmentItem,
+              ),
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Erreur chargement sections accueil:", error);
+        if (isMounted) {
+          setShowcaseSections(defaultShowcaseSections);
+        }
+      } finally {
+        if (isMounted) {
+          setShowcaseSectionsLoading(false);
+        }
+      }
+    };
+
+    loadShowcaseSections();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const activeModel = houseModels[0] || null;
   const fallbackSliderImages = [
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80",
@@ -266,20 +403,6 @@ const Home = () => {
     .filter((video) => video.embed);
 
   const activeVideo = videoEmbeds[activeVideoIndex] || videoEmbeds[0] || null;
-  const showcaseSections = mapShowcaseSections(
-    houseModelsSection.showcaseSections,
-  ).filter(
-        (section) =>
-          section &&
-          (section.title ||
-            section.button_label ||
-            section.button_link ||
-            (Array.isArray(section.items) &&
-              section.items.some(
-                (item) =>
-                  item?.title || item?.excerpt || item?.image_url || item?.link,
-              ))),
-      );
 
   return (
     <div className="bg-white">
@@ -330,7 +453,9 @@ const Home = () => {
               </div>
             </div>
           ) : !activeModel ? (
-            <p className="text-gray-500">Aucun modele de maison disponible.</p>
+            <EmptyState
+              title="Aucun modele de maison disponible pour le moment."
+            />
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
               <div>
@@ -427,43 +552,68 @@ const Home = () => {
                     <div className="mt-2 h-1 w-10 rounded-full bg-slate-950" />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                    {items.map((item, itemIndex) => {
-                      const imageUrl = toMediaUrl(item.image_url) || item.image_url;
-                      const cardLink = item.details_link || "#";
-
-                      return (
-                        <Link
-                          key={`home-showcase-card-${sectionIndex}-${itemIndex}`}
-                          to={cardLink}
-                          className="group block border-b border-slate-200 pb-4 transition duration-200 hover:-translate-y-1"
+                  {showcaseSectionsLoading ? (
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                      {[0, 1, 2, 3].map((itemIndex) => (
+                        <div
+                          key={`home-showcase-skeleton-${sectionIndex}-${itemIndex}`}
+                          className="border-b border-slate-200 pb-4"
                         >
-                          <div className="overflow-hidden bg-slate-100">
-                            {imageUrl ? (
-                              <img
-                                src={imageUrl}
-                                alt={item.title || `Element ${itemIndex + 1}`}
-                                className="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
-                              />
-                            ) : (
-                              <div className="flex h-40 w-full items-center justify-center bg-slate-200 text-sm text-slate-500">
-                                Image a ajouter
-                              </div>
-                            )}
-                          </div>
-                          <div className="pt-3">
-                            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-900">
-                              {item.title || "Titre a renseigner"}
-                            </h3>
-                            <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
-                              {item.excerpt ||
-                                "Resume a renseigner depuis l'espace administrateur."}
-                            </p>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
+                          <SkeletonBlock className="h-40 w-full" />
+                          <SkeletonBlock className="mt-3 h-5 w-5/6" />
+                          <SkeletonBlock className="mt-2 h-4 w-full" />
+                          <SkeletonBlock className="mt-2 h-4 w-4/5" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : items.length === 0 ? (
+                    <EmptyState
+                      title={
+                        sectionIndex === 0
+                          ? "Aucune propriete immobiliere disponible pour le moment."
+                          : sectionIndex === 1
+                            ? "Aucun projet de construction disponible pour le moment."
+                            : "Aucun projet d'investissement disponible pour le moment."
+                      }
+                    />
+                  ) : (
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                      {items.map((item, itemIndex) => {
+                        const imageUrl = toMediaUrl(item.image_url) || item.image_url;
+                        const cardLink = item.link || "#";
+
+                        return (
+                          <Link
+                            key={`home-showcase-card-${sectionIndex}-${itemIndex}`}
+                            to={cardLink}
+                            className="group block border-b border-slate-200 pb-4 transition duration-200 hover:-translate-y-1"
+                          >
+                            <div className="overflow-hidden bg-slate-100">
+                              {imageUrl ? (
+                                <img
+                                  src={imageUrl}
+                                  alt={item.title || `Element ${itemIndex + 1}`}
+                                  className="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                                />
+                              ) : (
+                                <div className="flex h-40 w-full items-center justify-center bg-slate-200 text-sm text-slate-500">
+                                  Image a ajouter
+                                </div>
+                              )}
+                            </div>
+                            <div className="pt-3">
+                              <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-900">
+                                {item.title || "Titre a renseigner"}
+                              </h3>
+                              <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
+                                {item.excerpt || "Resume indisponible pour le moment."}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
 
                   {section.button_label && (
                     <div className="mt-6">
@@ -530,9 +680,9 @@ const Home = () => {
                 )}
               </div>
             ) : (
-              <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
-                Aucune video disponible pour le moment.
-              </div>
+              <EmptyState
+                title="Aucune video disponible pour le moment."
+              />
             )}
           </div>
         </div>
@@ -615,9 +765,9 @@ const Home = () => {
               ))}
             </div>
           ) : partners.length === 0 ? (
-            <p className="text-center text-sm text-gray-500">
-              Aucun partenaire publie pour le moment.
-            </p>
+            <EmptyState
+              title="Aucun partenaire publie pour le moment."
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {partners.map((partner) => {

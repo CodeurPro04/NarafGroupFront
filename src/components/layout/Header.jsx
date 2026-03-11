@@ -98,6 +98,7 @@ const Header = () => {
             label: "Plateforme immobiliere",
             description: "Explorez l'offre globale et les parcours disponibles.",
             icon: PanelsTopLeft,
+            includeInGroupActive: false,
           },
           {
             path: "/abi/qui-sommes-nous",
@@ -254,9 +255,16 @@ const Header = () => {
     return location.pathname === path.split("?")[0];
   };
 
+  const hasActiveDescendant = (item) =>
+    isLinkActive(item.path) ||
+    (item.children ? item.children.some((child) => hasActiveDescendant(child)) : false);
+
   const isGroupActive = (group) =>
     isLinkActive(group.path) ||
-    group.children.some((child) => isLinkActive(child.path));
+    group.children.some(
+      (child) =>
+        child.includeInGroupActive !== false && hasActiveDescendant(child)
+    );
 
   const activeDesktopGroup =
     navGroups.find((group) => group.key === openDesktopMenu) || null;
@@ -289,7 +297,7 @@ const Header = () => {
                   }
                   className={`flex items-center gap-2 rounded-[8px] px-3 py-2 text-[15px] font-medium transition ${
                     isGroupActive(group)
-                      ? "bg-[#eef5ff] text-[#0d63c9]"
+                      ? "text-[#0d63c9]"
                       : "text-[#6f6f6f] hover:bg-[#f7f9fc] hover:text-[#0d63c9]"
                   }`}
                 >
@@ -414,7 +422,7 @@ const Header = () => {
                             <div className="min-w-0">
                               <p
                                 className={`text-[15px] font-semibold leading-6 transition ${
-                                  isLinkActive(child.path)
+                                  hasActiveDescendant(child)
                                     ? "text-[#0d63c9]"
                                     : "text-[#111111] group-hover:text-[#0d63c9]"
                                 }`}
@@ -481,7 +489,7 @@ const Header = () => {
                   }
                   className={`flex w-full items-center justify-between gap-3 px-3 py-3 text-left ${
                     isGroupActive(group)
-                      ? "bg-blue-50 text-blue-600"
+                      ? "text-blue-600"
                       : "text-gray-800 hover:bg-gray-50"
                   }`}
                 >

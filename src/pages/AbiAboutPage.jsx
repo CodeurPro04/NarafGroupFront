@@ -4,9 +4,9 @@ import {
   ChevronDown,
   ChevronRight,
   Search,
+  ShieldCheck,
   UserRoundPlus,
   WalletCards,
-  ShieldCheck,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
@@ -79,15 +79,15 @@ const AbiAboutPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[linear-gradient(180deg,#f4f7fb_0%,#f7f2ea_48%,#ffffff_100%)] pb-20">
+    <div className="bg-[linear-gradient(180deg,#f4f7fb_0%,#f7f2ea_48%,#ffffff_100%)]">
       <PropertiesHero
         onPrimaryAction={() => navigate("/properties")}
         onSecondaryAction={() => navigate("/partnership")}
         secondaryLabel="Faire une annonce"
       />
 
-      <div className="mx-auto mt-10 flex max-w-[1180px] flex-col gap-10 px-4 sm:px-6 lg:px-8">
-        <section className="mx-auto w-full max-w-[1040px] overflow-hidden border border-white/70 bg-white/95 px-6 py-10 text-center shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur sm:px-10 sm:py-12">
+      <section className="overflow-hidden border-y border-white/70 bg-white/95 text-center shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur">
+        <div className="mx-auto w-full max-w-[1180px] px-6 py-10 sm:px-10 sm:py-12 lg:px-8">
           <div className="mx-auto max-w-[520px]">
             <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
               Africa Business Invest
@@ -132,15 +132,26 @@ const AbiAboutPage = () => {
             <span className="h-2 w-2 rounded-full bg-[#2b87df]" />
             Un acces fluide, des verifications strictes et une experience structuree.
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="grid overflow-hidden border-y border-[#eadfcf] bg-[#f3e7d7] shadow-[0_18px_45px_rgba(15,23,42,0.06)] lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="mx-auto w-full max-w-[1180px] px-6 py-10 sm:px-10 sm:py-12 lg:px-8">
+      <section className="relative overflow-hidden bg-[#f3e7d7] shadow-[0_18px_45px_rgba(15,23,42,0.06)] md:min-h-[620px]">
+        <div className="absolute inset-y-0 right-0 hidden w-[52%] md:block lg:w-[46%] xl:w-[42%]">
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(243,231,215,1)_0%,rgba(243,231,215,0.72)_10%,rgba(243,231,215,0.08)_22%,rgba(243,231,215,0)_100%)]" />
+          <img
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
+            alt="Comment ca marche"
+            className="h-full w-full object-cover object-center"
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+          <div className="max-w-[760px] px-4 sm:px-6">
             <div className="max-w-[560px]">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1f6fd0]">
                 Parcours ABI
               </p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-900">
+              <h2 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-[2.2rem]">
                 Comment ca marche ?
               </h2>
               <div className="mt-8 space-y-5">
@@ -165,27 +176,26 @@ const AbiAboutPage = () => {
               </Link>
             </div>
           </div>
+        </div>
 
-          <div className="relative min-h-[360px] bg-[#d8c2a7]">
-            <img
-              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
-              alt="Comment ca marche"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </section>
+        <div className="relative min-h-[320px] md:hidden">
+          <img
+            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
+            alt="Comment ca marche"
+            className="h-full w-full object-cover object-center"
+          />
+        </div>
+      </section>
 
-      </div>
-
-      <section className="relative mt-10 overflow-hidden bg-[linear-gradient(90deg,#0272df_0%,#005bb7_38%,#003d8d_100%)] text-white shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
+      <section className="relative overflow-hidden bg-[linear-gradient(90deg,#0272df_0%,#005bb7_38%,#003d8d_100%)] text-white shadow-[0_22px_60px_rgba(15,23,42,0.08)] md:min-h-[620px]">
         <img
           src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=1600&q=80"
           alt="ABI Club"
-          className="absolute right-0 top-0 h-full w-full object-cover opacity-30 md:w-[48%] md:opacity-75"
+          className="absolute right-0 top-0 h-full w-full object-cover object-center opacity-45 sm:object-[center_top] md:w-[52%] md:opacity-80 lg:w-[46%] xl:w-[42%]"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,113,220,0.96)_0%,rgba(0,79,169,0.9)_48%,rgba(0,61,141,0.4)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,113,220,0.94)_0%,rgba(0,79,169,0.82)_42%,rgba(0,61,141,0.24)_100%)]" />
 
-        <div className="relative z-10 mx-auto max-w-[1180px] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="max-w-[760px] px-4 sm:px-6">
             <p className="text-4xl font-medium italic text-[#53d5ff]">
               ABI Club
@@ -214,9 +224,9 @@ const AbiAboutPage = () => {
         </div>
       </section>
 
-      <div className="mx-auto mt-10 flex max-w-[1180px] flex-col gap-10 px-4 sm:px-6 lg:px-8">
-        <section className="grid items-start gap-8 border border-slate-200 bg-white px-6 py-10 shadow-[0_20px_55px_rgba(15,23,42,0.06)] lg:grid-cols-[320px_1fr] lg:px-10 lg:py-12">
-          <div>
+      <section className="border-y border-slate-200 bg-white shadow-[0_20px_55px_rgba(15,23,42,0.06)]">
+        <div className="mx-auto grid max-w-[1180px] items-start gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[320px_1fr] lg:px-8 lg:py-12">
+          <div className="px-4 sm:px-6 lg:px-0">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1f6fd0]">
               Avantages ABI
             </p>
@@ -236,7 +246,7 @@ const AbiAboutPage = () => {
             </div>
           </div>
 
-          <div className="divide-y divide-slate-200 border-t border-slate-200 lg:mt-14">
+          <div className="divide-y divide-slate-200 border-t border-slate-200 px-4 sm:px-6 lg:mt-14 lg:px-0">
             {advantageItems.map((item, index) => {
               const isOpen = openAdvantage === index;
               return (
@@ -265,8 +275,8 @@ const AbiAboutPage = () => {
               );
             })}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -27,6 +27,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
+import EmptyState from "../components/ui/EmptyState";
 import { toMediaUrl } from "../utils/media";
 import PropertiesHero from "../components/layout/PropertiesHero";
 

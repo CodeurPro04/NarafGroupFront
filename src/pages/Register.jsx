@@ -40,8 +40,18 @@ const Register = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const role = params.get("role");
-    if (role === "proprietaire") {
-      setUserType("owner");
+    const roleToUserType = {
+      proprietaire: "owner",
+      owner: "owner",
+      agent: "agent",
+      entreprise: "company",
+      company: "company",
+      visiteur: "visitor",
+      visitor: "visitor",
+    };
+
+    if (roleToUserType[role]) {
+      setUserType(roleToUserType[role]);
     }
   }, [location.search]);
 
