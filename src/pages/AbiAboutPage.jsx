@@ -1,279 +1,664 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Building2,
   ChevronDown,
-  ChevronRight,
-  Search,
+  Globe2,
+  Handshake,
+  Landmark,
+  Leaf,
+  Mail,
+  MapPinned,
+  Network,
   ShieldCheck,
-  UserRoundPlus,
-  WalletCards,
+  Users,
+  CalendarRange,
+  FileSignature,
+  Workflow,
+  BadgeCheck,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
-const proofCards = [
+const overviewCards = [
   {
-    step: "01",
-    title: "Inscription",
-    text: "Renseignez votre profil en quelques minutes et accedez a un parcours simple.",
-    icon: UserRoundPlus,
+    title: "Plateforme panafricaine",
+    text: "Africa Build Investment soutient, finance et accompagne des projets d'immobilier, de construction et d'infrastructure durable a travers le continent.",
+    icon: Building2,
   },
   {
-    step: "02",
-    title: "Verification",
-    text: "ABI verifie vos informations pour securiser chaque interaction.",
-    icon: ShieldCheck,
+    title: "Ecosysteme d'acteurs",
+    text: "Nous reunissons investisseurs, promoteurs, experts techniques et partenaires publics pour catalyser des initiatives a fort impact socio-economique.",
+    icon: Handshake,
   },
   {
-    step: "03",
-    title: "Recherche ciblee",
-    text: "Identifiez les biens ou opportunites qui correspondent a vos objectifs.",
-    icon: Search,
-  },
-  {
-    step: "04",
-    title: "Activation",
-    text: "Passez a l'action avec un accompagnement concret a chaque etape.",
-    icon: WalletCards,
+    title: "Impact durable",
+    text: "Nos interventions privilegient des projets resilients, inclusifs et utiles aux territoires urbains comme ruraux.",
+    icon: Leaf,
   },
 ];
 
-const howItWorks = [
-  "Votre aventure ABI commence ici. Inscrivez-vous en 3 minutes.",
-  "Verifiez votre identite pour acceder a une experience securisee.",
-  "Choisissez le type de bien, l'investissement ou l'accompagnement souhaite.",
-  "Profitez d'un parcours pense pour convertir votre projet en resultat concret.",
-  "Plus vous avancez, plus vous gagnez. Il n'y a pas de limite a ce que vous pouvez accomplir.",
+const agencyRoles = [
+  "Identifier et sourcer des projets locaux.",
+  "Accompagner la structuration et la preparation des dossiers : faisabilite et due diligence.",
+  "Faciliter les relations avec les autorites locales et les partenaires techniques.",
+  "Assurer le suivi operationnel et le pilotage des projets sur le terrain.",
+  "Promouvoir l'acces au financement et au montage financier adapte.",
 ];
 
-const clubLogos = ["ABI Immo", "ABI Construction", "ABI Invest", "Partenaires+"];
-
-const advantageItems = [
-  {
-    title: "Rapidite d'execution",
-    text: "Des demarches plus fluides, une lecture claire des opportunites et un traitement plus rapide de vos demandes.",
-  },
-  {
-    title: "Carte de securite",
-    text: "Un suivi rigoureux et des etapes de verification pour reduire les risques sur vos transactions.",
-  },
-  {
-    title: "Conseillers faciles a joindre",
-    text: "Une equipe disponible pour vous orienter rapidement et garder le projet sous controle.",
-  },
-  {
-    title: "Payer et etre paye",
-    text: "Des flux plus simples pour les acomptes, les remboursements et les paiements de prestations.",
-  },
-  {
-    title: "Plafonds eleves",
-    text: "Des montants adaptes aux projets ambitieux, sans bloquer votre progression sur des seuils trop bas.",
-  },
-  {
-    title: "Gerer et controler, la totale autonomie",
-    text: "Un espace pour suivre, piloter et ajuster votre avancement a tout moment.",
-  },
+const regionalOffices = [
+  "Siege regional : Casablanca, Maroc.",
+  "Afrique de l'Ouest : Dakar (Senegal) et Abidjan (Cote d'Ivoire).",
+  "Afrique centrale : Douala (Cameroun).",
+  "Afrique de l'Est : Nairobi (Kenya).",
+  "Afrique australe : Johannesburg (Afrique du Sud).",
+  "Hub nigerian : Lagos (Nigeria).",
 ];
 
-const AbiAboutPage = () => {
-  const [openAdvantage, setOpenAdvantage] = useState(0);
-  const navigate = useNavigate();
+const agencyServices = [
+  "Accompagnement projets : technique, financier, ESG.",
+  "Bureau d'etudes local et partenariats metiers.",
+  "Formation et capacity building pour porteurs de projets locaux.",
+  "Point de contact pour investisseurs et partenaires.",
+];
+
+const proClubObjectives = [
+  "Faciliter l'acces a des opportunites d'investissement qualifiees.",
+  "Stimuler les partenariats public-prive et les co-investissements.",
+  "Promouvoir les bonnes pratiques en matiere d'eco-construction et d'impact social.",
+  "Renforcer les capacites et le reseautage des membres.",
+];
+
+const proClubBenefits = [
+  "Acces prioritaire aux projets et due diligences preselectionnees.",
+  "Sessions de matchmaking cible avec porteurs de projets et co-investisseurs.",
+  "Invitations exclusives a des evenements, masterclasses et visites de sites.",
+  "Bulletins d'opportunites et analyses de marche periodiques.",
+  "Acces a un repertoire d'experts : technique, juridique, financier, ESG.",
+];
+
+const proClubActivities = [
+  "Rencontres trimestrielles, physiques et virtuelles, et forums thematiques.",
+  "Programmes de mentoring et d'acceleration de projets.",
+  "Ateliers de formation et partenariats academiques.",
+  "Missions d'etude et visites de projets sur le terrain.",
+];
+
+const diasporaObjectives = [
+  "Canaliser l'epargne de la diaspora vers des projets viables et transparents.",
+  "Structurer des vehicules d'investissement : fonds ou SPV adaptes aux besoins locaux.",
+  "Favoriser le transfert de competences, de reseaux et de technologies.",
+  "Assurer un suivi rigoureux des retours financiers et de l'impact social.",
+];
+
+const diasporaBenefits = [
+  "Acces a des deals preselectionnes et co-investissements securises.",
+  "Due diligence consolidee et conseil en structuration financiere.",
+  "Gouvernance claire et reporting regulier sur performance et impact.",
+  "Reduction des risques via syndication et partenariats locaux.",
+  "Evenements dedies, webinaires et rencontres de networking.",
+];
+
+const diasporaOperations = [
+  "Selection et preselection de projets par l'equipe Africa Build Investment.",
+  "Mise en place de structures juridiques et financieres pour chaque deal.",
+  "Gouvernance participative avec comite d'investissement et reporting trimestriel.",
+  "Options d'investissement flexibles : ticket individuel, co-investissement, fonds.",
+];
+
+const listItemClass =
+  "flex gap-3 border-b border-slate-200 pb-3 last:border-b-0 last:pb-0";
+
+const AccordionCard = ({
+  title,
+  icon: Icon,
+  items,
+  children,
+  className = "",
+  iconWrapperClassName = "bg-[#f3f7fd] text-[#0f62c9]",
+  titleClassName = "text-lg font-semibold text-slate-950",
+  defaultOpen = false,
+  isOpen: controlledIsOpen,
+  onToggle,
+}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
+  const isControlled = typeof controlledIsOpen === "boolean";
+  const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
   return (
-    <div className="bg-[linear-gradient(180deg,#f4f7fb_0%,#f7f2ea_48%,#ffffff_100%)]">
+    <div
+      className={`border-b border-slate-200 bg-transparent py-1 ${className}`}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          if (isControlled) {
+            onToggle?.();
+            return;
+          }
+          setInternalIsOpen((value) => !value);
+        }}
+        className="flex w-full items-center justify-between gap-4 py-5 text-left"
+      >
+        <div className="flex items-center gap-3">
+          {Icon ? (
+            <div
+              className={`flex h-11 w-11 items-center justify-center rounded-full ${iconWrapperClassName}`}
+            >
+              <Icon size={18} />
+            </div>
+          ) : null}
+          <h3 className={titleClassName}>{title}</h3>
+        </div>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-slate-400 transition-transform duration-300 ease-out ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        />
+      </button>
+
+      <div
+        className={`grid overflow-hidden transition-all duration-500 ease-out ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            className={`grid gap-3 pb-5 text-sm leading-6 text-slate-600 transition-all duration-500 ease-out ${
+              isOpen ? "translate-y-0" : "-translate-y-2"
+            }`}
+          >
+            {items?.map((item) => (
+              <div key={item} className={listItemClass}>
+                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                <p className="text-sm leading-6 text-slate-600">{item}</p>
+              </div>
+            ))}
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AbiAboutPage = () => {
+  const navigate = useNavigate();
+  const [openAgencyAccordion, setOpenAgencyAccordion] = useState(0);
+  const [openProClubAccordion, setOpenProClubAccordion] = useState(0);
+  const [openDiasporaAccordion, setOpenDiasporaAccordion] = useState(0);
+
+  return (
+    <div className="bg-[linear-gradient(180deg,#f5f8fd_0%,#f9f4ec_42%,#ffffff_100%)] text-slate-900">
       <PropertiesHero
-        onPrimaryAction={() => navigate("/properties")}
-        onSecondaryAction={() => navigate("/partnership")}
-        secondaryLabel="Faire une annonce"
+        onPrimaryAction={() => navigate("/partnership")}
+        onSecondaryAction={() => navigate("/abi/plateforme-immobiliere")}
+        primaryLabel="Contacter ABI"
+        secondaryLabel="Voir la plateforme"
+        eyebrow="Qui sommes-nous ?"
+        title="Une plateforme panafricaine pour structurer, financer et accompagner les projets a impact."
+        descriptionLines={[
+          "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires publics.",
+          "Cette page presente notre mission, notre vision, notre reseau d'agences et les clubs qui animent l'ecosysteme ABI.",
+        ]}
+        backgroundImage="url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=1920&q=80')"
+        overlayClassName="bg-[linear-gradient(180deg,rgba(2,6,23,0.82)_0%,rgba(3,37,99,0.86)_42%,rgba(3,64,145,0.8)_100%)]"
       />
 
-      <section className="overflow-hidden border-y border-white/70 bg-white/95 text-center shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur">
-        <div className="mx-auto w-full max-w-[1180px] px-6 py-10 sm:px-10 sm:py-12 lg:px-8">
-          <div className="mx-auto max-w-[520px]">
+      <section className="relative overflow-hidden border-y border-white/70 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
+        <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,#d8e9ff_0%,rgba(216,233,255,0)_72%)]" />
+        <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-20">
+          <div className="max-w-[820px]">
             <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
-              Africa Business Invest
+              Qui sommes-nous ?
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-[2.2rem]">
-              1 an d'accompagnement offert.
-            </h2>
-            <p className="mt-4 text-sm leading-6 text-slate-500">
-              Une entree claire dans l'ecosysteme ABI pour acheter, construire
-              ou investir avec un cadre plus lisible et plus fiable.
+            <h1 className="mt-4 max-w-[780px] text-4xl font-semibold leading-tight text-slate-950 sm:text-[3.7rem] sm:leading-[1.02]">
+              Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
+            </h1>
+            <p className="mt-6 max-w-[700px] text-base leading-7 text-slate-600 sm:text-lg">
+              Africa Build Investment est une plateforme panafricaine dediee a soutenir,
+              financer et accompagner des projets d'immobilier, de construction et
+              d'infrastructure durable a travers le continent.
             </p>
+            <p className="mt-4 max-w-[700px] text-base leading-7 text-slate-600 sm:text-lg">
+              Nous reunissons investisseurs, promoteurs, experts techniques et partenaires
+              publics pour catalyser des initiatives a fort impact socio-economique.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                to="/partnership"
+                className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+              >
+                Parler a notre equipe
+                <ArrowRight size={16} />
+              </Link>
+              <a
+                href="mailto:contact@africabuildinvestment.com"
+                className="inline-flex items-center gap-2 border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+              >
+                contact@africabuildinvestment.com
+              </a>
+            </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {proofCards.map((item) => {
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {overviewCards.map((item) => {
               const Icon = item.icon;
               return (
                 <article
-                  key={item.step}
-                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7fbff_100%)] px-5 py-6 text-left shadow-[0_12px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(15,23,42,0.08)]"
+                  key={item.title}
+                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f6f9fd_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.05)]"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center bg-[#1f6fd0] text-white shadow-md">
-                      <Icon size={16} />
-                    </div>
-                    <span className="text-xs font-semibold text-slate-400">
-                      {item.step}
-                    </span>
+                  <div className="flex h-12 w-12 items-center justify-center bg-[#0f62c9] text-white shadow-md">
+                    <Icon size={18} />
                   </div>
-                  <h3 className="mt-5 text-sm font-semibold text-slate-900">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    {item.text}
-                  </p>
+                  <h2 className="mt-5 text-lg font-semibold text-slate-950">{item.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{item.text}</p>
                 </article>
               );
             })}
           </div>
-
-          <div className="mt-8 inline-flex items-center gap-2 border border-slate-200 bg-[#f7fbff] px-4 py-2 text-xs text-slate-500">
-            <span className="h-2 w-2 rounded-full bg-[#2b87df]" />
-            Un acces fluide, des verifications strictes et une experience structuree.
-          </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#f3e7d7] shadow-[0_18px_45px_rgba(15,23,42,0.06)] md:min-h-[620px]">
-        <div className="absolute inset-y-0 right-0 hidden w-[52%] md:block lg:w-[46%] xl:w-[42%]">
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(243,231,215,1)_0%,rgba(243,231,215,0.72)_10%,rgba(243,231,215,0.08)_22%,rgba(243,231,215,0)_100%)]" />
-          <img
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
-            alt="Comment ca marche"
-            className="h-full w-full object-cover object-center"
-          />
-        </div>
-
-        <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-          <div className="max-w-[760px] px-4 sm:px-6">
-            <div className="max-w-[560px]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1f6fd0]">
-                Parcours ABI
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-[2.2rem]">
-                Comment ca marche ?
-              </h2>
-              <div className="mt-8 space-y-5">
-                {howItWorks.map((item, index) => (
-                  <div
-                    key={item}
-                    className="grid grid-cols-[34px_1fr] gap-4 border-b border-black/8 pb-4"
-                  >
-                    <span className="text-sm font-medium text-slate-400">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <p className="text-sm leading-6 text-slate-700">{item}</p>
-                  </div>
-                ))}
+      <section className="bg-[#f6ead8]">
+        <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
+          <div className="max-w-[560px]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
+              Notre mission
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+              Faciliter l'acces au financement et aux competences pour des projets durables.
+            </h2>
+            <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
+              Nous soutenons des projets qui ameliorent la qualite de vie, creent des emplois
+              locaux et stimulent le developpement urbain et rural en Afrique.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="border border-black/8 bg-white/70 px-5 py-5">
+                <p className="text-sm font-semibold text-slate-950">Financement structure</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Des solutions pensees pour rendre les projets bancables et mieux executes.
+                </p>
               </div>
-              <Link
-                to="/abi/parrainage"
-                className="mt-8 inline-flex items-center gap-2 bg-[#1e76d3] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#135ca8]"
-              >
-                Mon espace de parrainage
-                <ChevronRight size={16} />
-              </Link>
+              <div className="border border-black/8 bg-white/70 px-5 py-5">
+                <p className="text-sm font-semibold text-slate-950">Accompagnement terrain</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Une mobilisation d'expertises techniques, financieres et locales.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="relative min-h-[320px] md:hidden">
+          <div className="relative overflow-hidden bg-[#d9c09a] shadow-[0_20px_45px_rgba(15,23,42,0.08)]">
+            <img
+              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&q=80"
+              alt="Projet immobilier en Afrique"
+              className="h-[320px] w-full object-cover object-center sm:h-[420px]"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[linear-gradient(90deg,#0a67cf_0%,#0452ac_45%,#033c87_100%)] text-white">
+        <div className="absolute inset-y-0 left-0 hidden w-[42%] lg:block">
           <img
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
-            alt="Comment ca marche"
-            className="h-full w-full object-cover object-center"
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1400&q=80"
+            alt="Infrastructure durable"
+            className="h-full w-full object-cover object-center opacity-45"
           />
         </div>
-      </section>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,60,135,0.24)_0%,rgba(4,82,172,0.88)_42%,rgba(10,103,207,0.96)_100%)]" />
 
-      <section className="relative overflow-hidden bg-[linear-gradient(90deg,#0272df_0%,#005bb7_38%,#003d8d_100%)] text-white shadow-[0_22px_60px_rgba(15,23,42,0.08)] md:min-h-[620px]">
-        <img
-          src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=1600&q=80"
-          alt="ABI Club"
-          className="absolute right-0 top-0 h-full w-full object-cover object-center opacity-45 sm:object-[center_top] md:w-[52%] md:opacity-80 lg:w-[46%] xl:w-[42%]"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,113,220,0.94)_0%,rgba(0,79,169,0.82)_42%,rgba(0,61,141,0.24)_100%)]" />
-
-        <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-          <div className="max-w-[760px] px-4 sm:px-6">
-            <p className="text-4xl font-medium italic text-[#53d5ff]">
-              ABI Club
+        <div className="relative mx-auto grid max-w-[1180px] gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-16">
+          <div />
+          <div className="max-w-[620px] justify-self-end">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8ed7ff]">
+              Notre vision
             </p>
-            <h2 className="mt-4 max-w-[360px] text-2xl font-semibold leading-tight">
-              Des avantages exclusifs dans tout l'ecosysteme ABI.
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.35rem]">
+              Un continent ou des infrastructures resilientes et inclusives soutiennent une croissance equitable.
             </h2>
-            <p className="mt-4 max-w-[390px] text-sm leading-6 text-white/85">
-              Immobilier, construction, investissement et partenaires verifies:
-              tout est reuni pour prolonger la valeur de votre compte ABI.
+            <p className="mt-5 text-sm leading-7 text-white/82 sm:text-base">
+              Nous defendons une Afrique ou des infrastructures respectueuses de l'environnement,
+              solides et portees par des acteurs locaux favorisent un developpement durable.
             </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-lg font-semibold text-white/90">
-              {clubLogos.map((logo) => (
-                <span key={logo}>{logo}</span>
-              ))}
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="border border-white/15 bg-white/10 px-5 py-5 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-white">Croissance equitable</p>
+                <p className="mt-2 text-sm leading-6 text-white/78">
+                  Des projets utiles aux territoires, aux populations et aux economies locales.
+                </p>
+              </div>
+              <div className="border border-white/15 bg-white/10 px-5 py-5 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-white">Acteurs locaux</p>
+                <p className="mt-2 text-sm leading-6 text-white/78">
+                  Une vision portee par les expertises regionales, les partenaires et les investisseurs engages.
+                </p>
+              </div>
             </div>
-
-            <Link
-              to="/abi/club"
-              className="mt-12 inline-flex bg-white px-5 py-3 text-sm font-semibold text-[#005bb7] shadow-md transition hover:bg-slate-100"
-            >
-              En savoir plus
-            </Link>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-white shadow-[0_20px_55px_rgba(15,23,42,0.06)]">
-        <div className="mx-auto grid max-w-[1180px] items-start gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[320px_1fr] lg:px-8 lg:py-12">
-          <div className="px-4 sm:px-6 lg:px-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1f6fd0]">
-              Avantages ABI
-            </p>
-            <h2 className="mt-3 max-w-[280px] text-3xl font-semibold leading-tight text-slate-900">
-              Tous nos avantages pour les professionnels en un seul compte.
-            </h2>
-            <p className="mt-4 max-w-[280px] text-sm leading-6 text-slate-500">
-              Une page plus lisible, des actions plus claires et un parcours
-              coherent avec l'univers du site public ABI.
-            </p>
-            <div className="mt-8 overflow-hidden bg-[#d8bf90]">
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
+          <div className="grid gap-6 self-stretch">
+            <div className="max-w-[620px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
+                Nos agences
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+                Une presence regionale pour accompagner les projets au plus pres du terrain.
+              </h2>
+              <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
+                Africa Build Investment dispose d'un reseau d'agences regionales pour assurer une presence operationnelle et un accompagnement de proximite des projets sur l'ensemble du continent.
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <AccordionCard
+                title="Roles des agences"
+                icon={BriefcaseBusiness}
+                items={agencyRoles}
+                iconWrapperClassName="bg-[#0f62c9] text-white"
+                isOpen={openAgencyAccordion === 0}
+                onToggle={() =>
+                  setOpenAgencyAccordion((currentIndex) =>
+                    currentIndex === 0 ? -1 : 0
+                  )
+                }
+              />
+
+              <div className="grid gap-2">
+                <AccordionCard
+                  title="Implantations regionales"
+                  icon={MapPinned}
+                  items={regionalOffices}
+                  isOpen={openAgencyAccordion === 1}
+                  onToggle={() =>
+                    setOpenAgencyAccordion((currentIndex) =>
+                      currentIndex === 1 ? -1 : 1
+                    )
+                  }
+                />
+
+                <AccordionCard
+                  title="Services en agence"
+                  icon={Landmark}
+                  items={agencyServices}
+                  isOpen={openAgencyAccordion === 2}
+                  onToggle={() =>
+                    setOpenAgencyAccordion((currentIndex) =>
+                      currentIndex === 2 ? -1 : 2
+                    )
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="self-stretch">
+            <div className="h-full overflow-hidden bg-[#e3edf8] shadow-[0_18px_38px_rgba(15,23,42,0.06)]">
               <img
-                src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=900&q=80"
-                alt="Professionnelle"
-                className="h-[320px] w-full object-cover"
+                src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=1400&q=80"
+                alt="Equipe ABI"
+                className="h-full min-h-[320px] w-full object-cover object-center sm:min-h-[420px]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="relative overflow-hidden border-t border-slate-200 bg-[#f7f9fc]">
+        <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,#d6e7fb_0%,rgba(214,231,251,0)_72%)]" />
+        <div className="relative mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-16 xl:gap-14">
+          <div className="self-stretch">
+            <div className="h-full overflow-hidden bg-[#d9e8fb] shadow-[0_18px_38px_rgba(15,23,42,0.06)]">
+              <img
+                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1400&q=80"
+                alt="Reseau d'investisseurs et de promoteurs"
+                className="h-full min-h-[320px] w-full object-cover object-center sm:min-h-[420px]"
               />
             </div>
           </div>
 
-          <div className="divide-y divide-slate-200 border-t border-slate-200 px-4 sm:px-6 lg:mt-14 lg:px-0">
-            {advantageItems.map((item, index) => {
-              const isOpen = openAdvantage === index;
-              return (
-                <div key={item.title} className="py-4">
-                  <button
-                    type="button"
-                    onClick={() => setOpenAdvantage(isOpen ? -1 : index)}
-                    className="flex w-full items-center justify-between gap-4 text-left transition hover:text-[#1f6fd0]"
-                  >
-                    <span className="text-sm font-medium text-slate-800">
-                      {item.title}
-                    </span>
-                    <ChevronDown
-                      size={16}
-                      className={`text-slate-400 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <p className="mt-3 max-w-[580px] text-sm leading-6 text-slate-500">
-                      {item.text}
-                    </p>
-                  )}
+          <div className="grid gap-6 self-stretch">
+            <div className="max-w-[620px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
+                Le Club Pro ABI !
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+                Un reseau exclusif pour accelerer les projets, les partenariats et les investissements.
+              </h2>
+              <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
+                Le Club Africa Build Investment reunit investisseurs, promoteurs,
+                professionnels de la construction, experts ESG et decideurs publics engages
+                dans la transformation des infrastructures et de l'immobilier en Afrique.
+              </p>
+              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                Le Club favorise le partage d'opportunites, l'acceleration de projets et la co-construction de solutions durables.
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <AccordionCard
+                title="Objectifs"
+                icon={Network}
+                items={proClubObjectives}
+                iconWrapperClassName="bg-[#0f62c9] text-white"
+                isOpen={openProClubAccordion === 0}
+                onToggle={() =>
+                  setOpenProClubAccordion((currentIndex) =>
+                    currentIndex === 0 ? -1 : 0
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Avantages pour les membres"
+                icon={ShieldCheck}
+                items={proClubBenefits}
+                isOpen={openProClubAccordion === 1}
+                onToggle={() =>
+                  setOpenProClubAccordion((currentIndex) =>
+                    currentIndex === 1 ? -1 : 1
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Activites principales"
+                icon={CalendarRange}
+                items={proClubActivities}
+                isOpen={openProClubAccordion === 2}
+                onToggle={() =>
+                  setOpenProClubAccordion((currentIndex) =>
+                    currentIndex === 2 ? -1 : 2
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Adhesion"
+                icon={FileSignature}
+                isOpen={openProClubAccordion === 3}
+                onToggle={() =>
+                  setOpenProClubAccordion((currentIndex) =>
+                    currentIndex === 3 ? -1 : 3
+                  )
+                }
+              >
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <p className="text-sm leading-7 text-slate-600">
+                    Conditions : profil professionnel lie aux secteurs de la construction,
+                    des infrastructures, de l'investissement ou du developpement.
+                  </p>
                 </div>
-              );
-            })}
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <p className="text-sm leading-7 text-slate-600">
+                    Modalites : inscription via la plateforme, evaluation par le comite du Club
+                    et versement d'une cotisation annuelle. Les tarifs et niveaux d'adhesion sont disponibles sur demande.
+                  </p>
+                </div>
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">Pourquoi rejoindre</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                      Accelerer l'acces a des deals de qualite, partager l'expertise, co-construire des projets a impact et s'inscrire durablement dans l'ecosysteme africain de la construction et de l'investissement.
+                    </p>
+                  </div>
+                </div>
+              </AccordionCard>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="bg-[#f3e7d7]">
+        <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
+          <div className="grid gap-6 self-stretch">
+            <div className="max-w-[620px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
+                Le Club Deal Diaspora !
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+                Investir collectivement dans des projets a impact en Afrique.
+              </h2>
+              <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
+                Le Club Deal Diaspora reunit des membres de la diaspora africaine souhaitant investir ensemble dans des projets d'infrastructure, d'immobilier et de developpement local en Afrique.
+              </p>
+              <p className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">
+                Il facilite la mobilisation de capitaux, le co-investissement et le suivi de projets a impact economique et social.
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <AccordionCard
+                title="Objectifs"
+                icon={Globe2}
+                items={diasporaObjectives}
+                className="border-black/8"
+                titleClassName="text-base font-semibold text-slate-950"
+                isOpen={openDiasporaAccordion === 0}
+                onToggle={() =>
+                  setOpenDiasporaAccordion((currentIndex) =>
+                    currentIndex === 0 ? -1 : 0
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Avantages pour les membres"
+                icon={Users}
+                items={diasporaBenefits}
+                className="border-black/8"
+                titleClassName="text-base font-semibold text-slate-950"
+                isOpen={openDiasporaAccordion === 1}
+                onToggle={() =>
+                  setOpenDiasporaAccordion((currentIndex) =>
+                    currentIndex === 1 ? -1 : 1
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Fonctionnement"
+                icon={Workflow}
+                items={diasporaOperations}
+                className="border-black/8"
+                titleClassName="text-base font-semibold text-slate-950"
+                isOpen={openDiasporaAccordion === 2}
+                onToggle={() =>
+                  setOpenDiasporaAccordion((currentIndex) =>
+                    currentIndex === 2 ? -1 : 2
+                  )
+                }
+              />
+
+              <AccordionCard
+                title="Conditions d'adhesion"
+                icon={BadgeCheck}
+                className="border-black/8"
+                titleClassName="text-base font-semibold text-slate-950"
+                isOpen={openDiasporaAccordion === 3}
+                onToggle={() =>
+                  setOpenDiasporaAccordion((currentIndex) =>
+                    currentIndex === 3 ? -1 : 3
+                  )
+                }
+              >
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <p className="text-sm leading-7 text-slate-600">
+                    Profil d'investisseur : resident de la diaspora ou soutien avere au developpement local.
+                  </p>
+                </div>
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <p className="text-sm leading-7 text-slate-600">
+                    Processus de KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.
+                  </p>
+                </div>
+                <div className={listItemClass}>
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">Pourquoi rejoindre</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                      Permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.
+                    </p>
+                  </div>
+                </div>
+              </AccordionCard>
+            </div>
+          </div>
+
+          <div className="self-stretch">
+            <div className="h-full overflow-hidden bg-[#d7c1a0] shadow-[0_20px_42px_rgba(15,23,42,0.08)]">
+              <img
+                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&q=80"
+                alt="Club Deal Diaspora"
+                className="h-full min-h-[320px] w-full object-cover object-center sm:min-h-[420px]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-[#f7f9fc]">
+        <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
+          <div className="grid gap-6 border border-slate-200 bg-white px-6 py-8 shadow-[0_16px_36px_rgba(15,23,42,0.04)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
+            <div className="max-w-[720px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
+                Contact
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950">
+                Besoin de connaitre l'agence la plus proche ou de prendre rendez-vous ?
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                Contactez notre equipe via le formulaire sur le site ou par email a contact@africabuildinvestment.com pour etre oriente vers le bon interlocuteur.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="mailto:contact@africabuildinvestment.com"
+                className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+              >
+                <Mail size={16} />
+                Nous ecrire
+              </a>
+              <Link
+                to="/partnership"
+                className="inline-flex items-center gap-2 border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+              >
+                Prendre rendez-vous
+                <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -388,12 +388,12 @@ const Register = () => {
         <div className="text-center py-20">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-20 h-20"
+            className="inline-flex items-center justify-center w-32 h-32"
           >
             <img
-              src="/images/logonaraf1.jpeg"
+              src="/images/logonew.png"
               alt="NARAF Immobilier"
-              className="h-12 w-auto object-contain"
+              className="h-40 w-auto object-contain"
             />
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-3">

@@ -22,6 +22,10 @@ import Maintenance from './pages/Maintenance';
 import LegalNotice from './pages/LegalNotice';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import AbiAboutPage from './pages/AbiAboutPage';
+import AbiRealEstatePlatformPage from './pages/AbiRealEstatePlatformPage';
+import AbiInvestPage from './pages/AbiInvestPage';
+import AbiFirstInvestmentPage from './pages/AbiFirstInvestmentPage';
+import AbiCustomConstructionPage from './pages/AbiCustomConstructionPage';
 import AbiComingSoonPage from './pages/AbiComingSoonPage';
 import AbiSubmenuPage from './pages/AbiSubmenuPage';
 import ShowcaseArticlesList from './pages/ShowcaseArticlesList';
@@ -55,6 +59,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/properties" element={<Properties />} />
+            <Route path="/abi/plateforme-immobiliere" element={<AbiRealEstatePlatformPage />} />
+            <Route path="/investment/je-veux-investir" element={<AbiInvestPage />} />
+            <Route path="/investment/je-veux-investir/premier-investissement" element={<AbiFirstInvestmentPage />} />
+            <Route path="/construction/mon-projet-sur-mesure" element={<AbiCustomConstructionPage />} />
             <Route path="/property/:uuid" element={<PropertyDetails />} />
             <Route path="/construction" element={<Construction />} />
             <Route path="/construction/:uuid" element={<ConstructionDetails />} />

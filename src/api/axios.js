@@ -29,11 +29,11 @@ api.interceptors.request.use(
   }
 );
 
-// Intercepteur pour gÃ©rer les rÃ©ponses et erreurs
+// Intercepteur pour gérer les réponses et erreurs
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Si token expirÃ© ou invalide (401)
+    // Si token expiré ou invalide (401)
     if (error.response?.status === 401) {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');

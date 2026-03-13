@@ -94,7 +94,7 @@ const Header = () => {
             icon: Home,
           },
           {
-            path: "/properties",
+            path: "/abi/plateforme-immobiliere",
             label: "Plateforme immobiliere",
             description: "Explorez l'offre globale et les parcours disponibles.",
             icon: PanelsTopLeft,
@@ -275,9 +275,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-[86px]">
           <Link to="/" className="flex items-center gap-3 min-w-[260px] shrink-0">
             <img
-              src="/images/logonaraf1.jpeg"
+              src="/images/logonew.png"
               alt="NARAF Immobilier"
-              className="h-16 w-auto object-contain"
+              className="h-40 w-auto object-contain"
             />
           </Link>
 

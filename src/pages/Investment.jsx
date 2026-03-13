@@ -20,6 +20,11 @@ import {
   FileText,
   Home,
   Hammer,
+  ChevronDown,
+  Mail,
+  Briefcase,
+  Layers3,
+  ShieldCheck,
 } from "lucide-react";
 import api from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
@@ -36,6 +41,7 @@ const Investment = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState("nos-offres");
+  const [openOfferIndex, setOpenOfferIndex] = useState(0);
   const navigate = useNavigate();
   const pageLocation = useLocation();
 
@@ -221,6 +227,113 @@ const Investment = () => {
       activeAccent: "bg-white/80",
     },
   };
+
+  const offerFamilies = [
+    {
+      title: "Co-investissements",
+      details:
+        "participation directe aux projets preselectionnes en syndication avec ABI et des co-investisseurs institutionnels.",
+    },
+    {
+      title: "Fonds sectoriels",
+      details:
+        "acces a des fonds thematiques sur le logement abordable, l'energie renouvelable, l'eau et assainissement et les infrastructures urbaines.",
+    },
+    {
+      title: "SPV / Vehicules dedies",
+      details:
+        "creation de societes ad hoc pour structurer un projet unique et isoler les risques.",
+    },
+    {
+      title: "Equity direct",
+      details:
+        "prises de participation au capital pour accompagner la croissance d'operateurs et de promoteurs locaux.",
+    },
+    {
+      title: "Dette amortissable et prets relais",
+      details:
+        "financements senior pour la construction, le levier de fonds propres et la stabilisation post-achevement.",
+    },
+    {
+      title: "Dette mezzanine et quasi-equity",
+      details:
+        "solutions hybrides pour combler le gap entre equity et dette senior.",
+    },
+    {
+      title: "Blended finance et subventions catalytiques",
+      details:
+        "combinaisons de capitaux concessionnels et commerciaux pour rendre viables les projets a fort impact.",
+    },
+    {
+      title: "Garanties et risk-sharing",
+      details:
+        "instruments de couverture pour reduire le risque investisseur, avec garanties partielles de credit et assurances political risk.",
+    },
+    {
+      title: "Project bonds et titrisation",
+      details:
+        "structuration de dettes long terme et acces aux marches de capitaux pour des projets matures.",
+    },
+    {
+      title: "Fonds d'impact / ESG-linked",
+      details:
+        "placements mesurant et remunerant la performance environnementale et sociale.",
+    },
+    {
+      title: "Mandats de gestion et fonds dedies",
+      details:
+        "gestion discretionnaire d'un portefeuille d'actifs infrastructurels pour investisseurs institutionnels.",
+    },
+    {
+      title: "Services d'accompagnement",
+      details:
+        "due diligence financiere, etudes de faisabilite, structuration juridique, conformite KYC/AML et suivi ESG.",
+    },
+  ];
+
+  const offerHighlights = [
+    {
+      icon: <Layers3 size={18} />,
+      title: "Modalites flexibles",
+      text: "Tickets adaptables selon l'offre pour investisseurs particuliers, family offices, fonds et institutions, avec gouvernance claire et reporting periodique.",
+    },
+  ];
+
+
+  const OfferAccordion = ({ title, details, isOpen, onToggle }) => (
+    <div className="border-b border-slate-300/90">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-4 py-5 text-left transition-colors duration-200 hover:text-[#0f62c9]"
+      >
+        <span className="text-[1.2rem] font-medium tracking-[-0.02em] text-slate-950 sm:text-[1.35rem]">
+          {title}
+        </span>
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-slate-500 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        />
+      </button>
+      <div
+        className={`grid overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            className={`origin-top pb-5 text-base leading-7 text-slate-600 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isOpen ? "translate-y-0 scale-y-100" : "-translate-y-2 scale-y-95"
+            }`}
+          >
+            <p>{details}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   const benefits = [
     {
@@ -444,6 +557,78 @@ const Investment = () => {
           </div>
         </div>
       </div>
+
+      <section className="bg-[#f4f3ef] py-16 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-stretch">
+            <div>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
+                Nos offres
+              </p>
+              <h2 className="mt-4 text-4xl sm:text-5xl font-bold tracking-[-0.04em] text-slate-950 leading-[0.98]">
+                Nos offres d'investissement.
+              </h2>
+              <p className="mt-6 max-w-[680px] text-lg leading-8 text-slate-600">
+                ABI structure plusieurs formats d'entree pour adapter l'investissement au type de projet, au niveau de risque et au profil de l'investisseur.
+              </p>
+              <div className="mt-10">
+                {offerFamilies.map((offer, index) => (
+                  <OfferAccordion
+                    key={offer.title}
+                    title={offer.title}
+                    details={offer.details}
+                    isOpen={openOfferIndex === index}
+                    onToggle={() =>
+                      setOpenOfferIndex((currentIndex) =>
+                        currentIndex === index ? -1 : index
+                      )
+                    }
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+              >
+                <Mail size={16} />
+                Recevoir la brochure detaillee
+              </button>
+            </div>
+
+            <div className="self-stretch overflow-hidden bg-[#ddd5ca] shadow-[0_24px_50px_rgba(15,23,42,0.08)]">
+              <img
+                src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1400&q=80"
+                alt="Offres d'investissement ABI"
+                className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-[760px]">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
+              Modalites
+            </p>
+            <h3 className="mt-3 text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-slate-950 leading-tight">
+              Un cadre d'offre plus flexible et plus lisible.
+            </h3>
+          </div>
+          <div className="mt-8 max-w-[760px] mx-auto">
+            {offerHighlights.map((item) => (
+              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.04)] text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f2f7fd] text-[#0f62c9]">
+                  {item.icon}
+                </div>
+                <h3 className="mt-4 text-sm font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
