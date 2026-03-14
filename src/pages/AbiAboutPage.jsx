@@ -117,7 +117,7 @@ const AccordionCard = ({
   children,
   className = "",
   iconWrapperClassName = "bg-[#f3f7fd] text-[#0f62c9]",
-  titleClassName = "text-lg font-semibold text-slate-950",
+  titleClassName = "text-2xl font-semibold text-slate-950",
   buttonClassName = "flex w-full items-center justify-between gap-4 py-5 text-left",
   contentClassName = "grid gap-3 pb-5 text-sm leading-6 text-slate-600",
   defaultOpen = false,
@@ -175,7 +175,7 @@ const AccordionCard = ({
             {items?.map((item) => (
               <div key={item} className={listItemClass}>
                 <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                <p className="text-sm leading-6 text-slate-600">{item}</p>
+                <p className="text-xl leading-6 text-slate-600">{item}</p>
               </div>
             ))}
             {children}
@@ -200,7 +200,7 @@ const AbiAboutPage = () => {
         primaryLabel="Contacter ABI"
         secondaryLabel="Voir la plateforme"
         eyebrow=""
-        title="Une plateforme panafricaine pour structurer, financer et accompagner les projets a impact."
+        title="Une plateforme panafricaine pour structurer, financer."
         descriptionLines={[
           "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires publics.",
           "Cette page presente notre mission, notre vision, notre reseau d'agences et les clubs qui animent l'ecosysteme ABI.",
@@ -213,7 +213,7 @@ const AbiAboutPage = () => {
         <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,#d8e9ff_0%,rgba(216,233,255,0)_72%)]" />
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-20">
           <div className="max-w-[820px]">
-            <h1 className="mt-4 max-w-[780px] text-4xl font-semibold leading-tight text-slate-950 sm:text-[3.7rem] sm:leading-[1.02]">
+            <h1 className="mt-4 max-w-[780px] text-4xl font-semibold leading-tight text-slate-950 sm:text-[2.7rem] sm:leading-[1.02]">
               Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
             </h1>
             <p className="mt-6 max-w-[700px] text-base leading-7 text-slate-600 sm:text-lg">
@@ -262,10 +262,10 @@ const AbiAboutPage = () => {
         </div>
       </section>
 
-      <section className="bg-[#f6ead8]">
+      <section className="bg-[#d8b4118d]">
         <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
           <div className="max-w-[560px]">
-            <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+            <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
               Faciliter l'acces au financement et aux competences pour des projets durables.
             </h2>
             <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
@@ -311,7 +311,7 @@ const AbiAboutPage = () => {
         <div className="relative mx-auto grid max-w-[1180px] gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-16">
           <div />
           <div className="max-w-[620px] justify-self-end">
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.35rem]">
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.1rem]">
               Un continent ou des infrastructures resilientes et inclusives soutiennent une croissance equitable.
             </h2>
             <p className="mt-5 text-sm leading-7 text-white/82 sm:text-base">
@@ -340,7 +340,7 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
                 Une presence regionale pour accompagner les projets au plus pres du terrain.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
@@ -416,7 +416,7 @@ const AbiAboutPage = () => {
 
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
                 Un reseau exclusif pour accelerer les projets, les partenariats et les investissements.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
@@ -509,18 +509,15 @@ const AbiAboutPage = () => {
           </div>
         </div>
       </section>
-      <section className="bg-[#f3e7d7]">
+      <section className="bg-[#d8b4118d]">
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
                 Investir collectivement dans des projets a impact en Afrique.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
                 Le Club Deal Diaspora reunit des membres de la diaspora africaine souhaitant investir ensemble dans des projets d'infrastructure, d'immobilier et de developpement local en Afrique.
-              </p>
-              <p className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">
-                Il facilite la mobilisation de capitaux, le co-investissement et le suivi de projets a impact economique et social.
               </p>
             </div>
 
@@ -589,21 +586,21 @@ const AbiAboutPage = () => {
               >
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600">
+                  <p className="text-2xl leading-7 text-slate-600">
                     Profil d'investisseur : resident de la diaspora ou soutien avere au developpement local.
                   </p>
                 </div>
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600">
+                  <p className="text-2xl leading-7 text-slate-600">
                     Processus de KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.
                   </p>
                 </div>
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
                   <div>
-                    <p className="text-sm font-semibold text-slate-950">Pourquoi rejoindre</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                    <p className="text-2xl font-semibold text-slate-950">Pourquoi rejoindre</p>
+                    <p className="mt-2 text-2xl leading-7 text-slate-600">
                       Permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.
                     </p>
                   </div>
@@ -628,7 +625,7 @@ const AbiAboutPage = () => {
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
           <div className="grid gap-6 border border-slate-200 bg-white px-6 py-8 shadow-[0_16px_36px_rgba(15,23,42,0.04)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
             <div className="max-w-[720px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950">
+              <h2 className="mt-3 text-[2rem] font-semibold leading-tight text-slate-950">
                 Besoin de connaitre l'agence la plus proche ou de prendre rendez-vous ?
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">

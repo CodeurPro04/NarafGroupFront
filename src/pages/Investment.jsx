@@ -559,7 +559,7 @@ const Investment = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-stretch">
             <div>
-              <h2 className="mt-4 text-4xl sm:text-5xl font-bold tracking-[-0.04em] text-slate-950 leading-[0.98]">
+              <h2 className="mt-4 text-4xl sm:text-[2.7rem] font-bold tracking-[-0.04em] text-slate-950 leading-[0.98]">
                 Nos offres d'investissement.
               </h2>
               <p className="mt-6 max-w-[680px] text-lg leading-8 text-slate-600">
@@ -603,7 +603,7 @@ const Investment = () => {
       <section className="bg-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-[760px]">
-            <h3 className="mt-3 text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-slate-950 leading-tight">
+            <h3 className="mt-3 text-3xl sm:text-[2.7rem] font-bold tracking-[-0.03em] text-slate-950 leading-tight">
               Un cadre d'offre plus flexible et plus lisible.
             </h3>
           </div>
@@ -625,7 +625,7 @@ const Investment = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-10">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+              <h2 className="text-3xl sm:text-[2.7rem] font-bold text-gray-900 mb-3">
                 Opportunites d'investissement
               </h2>
               <p className="text-gray-600">

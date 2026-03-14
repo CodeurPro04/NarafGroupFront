@@ -36,14 +36,14 @@ const PropertiesHero = ({
             </div>
           ) : null}
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight py-6">
             {title}
           </h1>
 
           {descriptionLines.map((line, index) => (
             <p
               key={`${line}-${index}`}
-              className={`text-base sm:text-lg lg:text-xl text-blue-100 leading-relaxed ${
+              className={`text-base sm:text-lg lg:text-2xl text-blue-100 leading-relaxed ${
                 index === descriptionLines.length - 1 ? "mb-8" : "mb-2"
               }`}
             >

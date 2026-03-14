@@ -304,7 +304,7 @@ const Partnership = () => {
      <div className="inline-flex items-center border border-[#d8dfeb] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
       Etape 1 sur 2
      </div>
-     <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-slate-950 sm:text-5xl lg:text-[4.2rem]">
+     <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-slate-950 sm:text-5xl lg:text-[3.2rem]">
       Choisissez votre type de partenaire.
      </h1>
      <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
