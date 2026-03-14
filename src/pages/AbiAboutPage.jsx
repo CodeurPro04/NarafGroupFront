@@ -118,6 +118,8 @@ const AccordionCard = ({
   className = "",
   iconWrapperClassName = "bg-[#f3f7fd] text-[#0f62c9]",
   titleClassName = "text-lg font-semibold text-slate-950",
+  buttonClassName = "flex w-full items-center justify-between gap-4 py-5 text-left",
+  contentClassName = "grid gap-3 pb-5 text-sm leading-6 text-slate-600",
   defaultOpen = false,
   isOpen: controlledIsOpen,
   onToggle,
@@ -139,7 +141,7 @@ const AccordionCard = ({
           }
           setInternalIsOpen((value) => !value);
         }}
-        className="flex w-full items-center justify-between gap-4 py-5 text-left"
+        className={buttonClassName}
       >
         <div className="flex items-center gap-3">
           {Icon ? (
@@ -166,7 +168,7 @@ const AccordionCard = ({
       >
         <div className="min-h-0 overflow-hidden">
           <div
-            className={`grid gap-3 pb-5 text-sm leading-6 text-slate-600 transition-all duration-500 ease-out ${
+            className={`${contentClassName} transition-all duration-500 ease-out ${
               isOpen ? "translate-y-0" : "-translate-y-2"
             }`}
           >
@@ -197,7 +199,7 @@ const AbiAboutPage = () => {
         onSecondaryAction={() => navigate("/abi/plateforme-immobiliere")}
         primaryLabel="Contacter ABI"
         secondaryLabel="Voir la plateforme"
-        eyebrow="Qui sommes-nous ?"
+        eyebrow=""
         title="Une plateforme panafricaine pour structurer, financer et accompagner les projets a impact."
         descriptionLines={[
           "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires publics.",
@@ -211,9 +213,6 @@ const AbiAboutPage = () => {
         <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,#d8e9ff_0%,rgba(216,233,255,0)_72%)]" />
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-20">
           <div className="max-w-[820px]">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
-              Qui sommes-nous ?
-            </p>
             <h1 className="mt-4 max-w-[780px] text-4xl font-semibold leading-tight text-slate-950 sm:text-[3.7rem] sm:leading-[1.02]">
               Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
             </h1>
@@ -266,9 +265,6 @@ const AbiAboutPage = () => {
       <section className="bg-[#f6ead8]">
         <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
           <div className="max-w-[560px]">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-              Notre mission
-            </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
               Faciliter l'acces au financement et aux competences pour des projets durables.
             </h2>
@@ -315,9 +311,6 @@ const AbiAboutPage = () => {
         <div className="relative mx-auto grid max-w-[1180px] gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-16">
           <div />
           <div className="max-w-[620px] justify-self-end">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8ed7ff]">
-              Notre vision
-            </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.35rem]">
               Un continent ou des infrastructures resilientes et inclusives soutiennent une croissance equitable.
             </h2>
@@ -347,9 +340,6 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-                Nos agences
-              </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
                 Une presence regionale pour accompagner les projets au plus pres du terrain.
               </h2>
@@ -358,7 +348,7 @@ const AbiAboutPage = () => {
               </p>
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-1">
               <AccordionCard
                 title="Roles des agences"
                 icon={BriefcaseBusiness}
@@ -372,7 +362,7 @@ const AbiAboutPage = () => {
                 }
               />
 
-              <div className="grid gap-2">
+              <div className="grid gap-1">
                 <AccordionCard
                   title="Implantations regionales"
                   icon={MapPinned}
@@ -426,9 +416,6 @@ const AbiAboutPage = () => {
 
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-                Le Club Pro ABI !
-              </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
                 Un reseau exclusif pour accelerer les projets, les partenariats et les investissements.
               </h2>
@@ -445,6 +432,8 @@ const AbiAboutPage = () => {
             <div className="grid gap-2">
               <AccordionCard
                 title="Objectifs"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={Network}
                 items={proClubObjectives}
                 iconWrapperClassName="bg-[#0f62c9] text-white"
@@ -458,6 +447,8 @@ const AbiAboutPage = () => {
 
               <AccordionCard
                 title="Avantages pour les membres"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={ShieldCheck}
                 items={proClubBenefits}
                 isOpen={openProClubAccordion === 1}
@@ -522,9 +513,6 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-                Le Club Deal Diaspora !
-              </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.35rem]">
                 Investir collectivement dans des projets a impact en Afrique.
               </h2>
@@ -536,9 +524,11 @@ const AbiAboutPage = () => {
               </p>
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-0">
               <AccordionCard
                 title="Objectifs"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={Globe2}
                 items={diasporaObjectives}
                 className="border-black/8"
@@ -553,6 +543,8 @@ const AbiAboutPage = () => {
 
               <AccordionCard
                 title="Avantages pour les membres"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={Users}
                 items={diasporaBenefits}
                 className="border-black/8"
@@ -567,6 +559,8 @@ const AbiAboutPage = () => {
 
               <AccordionCard
                 title="Fonctionnement"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={Workflow}
                 items={diasporaOperations}
                 className="border-black/8"
@@ -581,6 +575,8 @@ const AbiAboutPage = () => {
 
               <AccordionCard
                 title="Conditions d'adhesion"
+                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
+                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
                 icon={BadgeCheck}
                 className="border-black/8"
                 titleClassName="text-base font-semibold text-slate-950"
@@ -632,9 +628,6 @@ const AbiAboutPage = () => {
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
           <div className="grid gap-6 border border-slate-200 bg-white px-6 py-8 shadow-[0_16px_36px_rgba(15,23,42,0.04)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
             <div className="max-w-[720px]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-                Contact
-              </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950">
                 Besoin de connaitre l'agence la plus proche ou de prendre rendez-vous ?
               </h2>

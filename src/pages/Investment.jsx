@@ -486,9 +486,6 @@ const Investment = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-blue-950/85 to-blue-900/80" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center space-x-2 px-4 py-2 text-white mb-6">
-              
-            </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Investir en Afrique, intelligemment
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-100"></span>
@@ -562,9 +559,6 @@ const Investment = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-stretch">
             <div>
-              <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
-                Nos offres
-              </p>
               <h2 className="mt-4 text-4xl sm:text-5xl font-bold tracking-[-0.04em] text-slate-950 leading-[0.98]">
                 Nos offres d'investissement.
               </h2>
@@ -609,9 +603,6 @@ const Investment = () => {
       <section className="bg-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-[760px]">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
-              Modalites
-            </p>
             <h3 className="mt-3 text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-slate-950 leading-tight">
               Un cadre d'offre plus flexible et plus lisible.
             </h3>
@@ -619,7 +610,7 @@ const Investment = () => {
           <div className="mt-8 max-w-[760px] mx-auto">
             {offerHighlights.map((item) => (
               <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.04)] text-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f2f7fd] text-[#0f62c9]">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#f2f7fd] text-[#0f62c9]">
                   {item.icon}
                 </div>
                 <h3 className="mt-4 text-sm font-semibold text-slate-950">{item.title}</h3>

@@ -275,9 +275,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-[86px]">
           <Link to="/" className="flex items-center gap-3 min-w-[260px] shrink-0">
             <img
-              src="/images/logonew.png"
-              alt="NARAF Immobilier"
-              className="h-40 w-auto object-contain"
+              src="/images/logoabi.svg"
+              alt="ABI logo"
+              className="h-14 w-auto object-contain"
             />
           </Link>
 

@@ -174,7 +174,7 @@ const AbiFirstInvestmentPage = () => {
         onSecondaryAction={() => navigate("/partnership")}
         primaryLabel="Voir les opportunites"
         secondaryLabel="Etre accompagne"
-        eyebrow="Premier investissement"
+        eyebrow=""
         title="Faire votre premier investissement avec un parcours plus clair, plus accompagne et plus defendable."
         descriptionLines={[
           "Africa Build Investment vous aide a passer d'une intention d'investir a un engagement mieux structure.",
@@ -187,9 +187,6 @@ const AbiFirstInvestmentPage = () => {
       <section className="border-y border-white/80 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-18">
           <div className="max-w-[760px]">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.24em] text-[#1a4f9c]">
-              Faire votre premier investissement avec ABI
-            </p>
             <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-[3.9rem] sm:leading-[0.98]">
               Un parcours d'entree plus simple pour comprendre, verifier et investir sans avancer dans le flou.
             </h1>
@@ -221,9 +218,6 @@ const AbiFirstInvestmentPage = () => {
       <section className="bg-[#ecebea]">
         <div className="mx-auto grid max-w-[1180px] gap-12 px-6 py-14 sm:px-10 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-20">
           <div className="max-w-[620px]">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-              Les etapes du parcours
-            </p>
             <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-[3.7rem] sm:leading-[1]">
               Comment se passe un premier investissement avec ABI ?
             </h2>
@@ -269,9 +263,6 @@ const AbiFirstInvestmentPage = () => {
           </div>
 
           <div className="max-w-[560px] justify-self-end">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1a4f9c]">
-              Documents et delais
-            </p>
             <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-[3rem]">
               Les elements a preparer avant de passer au closing.
             </h2>
@@ -315,9 +306,6 @@ const AbiFirstInvestmentPage = () => {
 
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-18">
           <div className="max-w-[640px]">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8ed7ff]">
-              Besoin d'accompagnement personnalise ?
-            </p>
             <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-[3rem]">
               Contactez ABI pour etre mis en relation avec un conseiller dedie.
             </h2>

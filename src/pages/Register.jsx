@@ -391,12 +391,12 @@ const Register = () => {
             className="inline-flex items-center justify-center w-32 h-32"
           >
             <img
-              src="/images/logonew.png"
-              alt="NARAF Immobilier"
-              className="h-40 w-auto object-contain"
+              src="/images/logoabi.svg"
+              alt="ABI logo"
+              className="h-14 w-auto object-contain"
             />
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-4xl font-bold text-gray-900">
             Rejoignez NARAF
           </h1>
           <p className="text-gray-600">Créez votre compte selon votre profil</p>

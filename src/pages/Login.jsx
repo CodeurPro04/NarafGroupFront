@@ -82,11 +82,11 @@ const Login = () => {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
           <img
-            src="/images/logonew.png"
-            alt="NARAF"
-            className="mx-auto h-40 w-auto object-contain"
+            src="/images/logoabi.svg"
+            alt="ABI logo"
+            className="mx-auto h-14 w-auto object-contain"
           />
-          <h1 className="text-2xl font-bold">Connexion</h1>
+          <h1 className="text-2xl mt-4 font-bold">Connexion</h1>
         </div>
 
         {errors.global && (
