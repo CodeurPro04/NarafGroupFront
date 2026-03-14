@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   User,
@@ -16,12 +16,99 @@ import {
 } from "lucide-react";
 import { register } from "../api/axios";
 
+const PasswordStrength = ({ password }) => {
+  if (!password) return null;
+
+  const getStrength = () => {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[!@#$%^&*]/.test(password)) score++;
+
+    if (score <= 2) return { level: "Faible", color: "red", percent: 40 };
+    if (score <= 3) return { level: "Moyen", color: "yellow", percent: 70 };
+    return { level: "Fort", color: "green", percent: 100 };
+  };
+
+  const strength = getStrength();
+
+  return (
+    <div className="mt-2 space-y-2">
+      <div className="flex justify-between text-xs">
+        <span className="text-gray-600">Force du mot de passe</span>
+        <span
+          className={`font-semibold ${
+            strength.color === "red"
+              ? "text-red-600"
+              : strength.color === "yellow"
+              ? "text-yellow-600"
+              : "text-green-600"
+          }`}
+        >
+          {strength.level}
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 h-2">
+        <div
+          className={`h-2 rounded-full transition-all duration-500 ${
+            strength.color === "red"
+              ? "bg-red-500"
+              : strength.color === "yellow"
+              ? "bg-yellow-500"
+              : "bg-green-500"
+          }`}
+          style={{ width: `${strength.percent}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const UserTypeCard = ({ type, isSelected, onSelect }) => (
+  <button
+    type="button"
+    onClick={() => onSelect(type.value)}
+    className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
+      isSelected
+        ? `border-${type.color}-600 bg-${type.color}-50 shadow-lg`
+        : "border-gray-200 hover:border-gray-300 hover:shadow-md"
+    }`}
+  >
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-center justify-between">
+        <div
+          className={`p-3 rounded-xl ${
+            isSelected
+              ? `bg-${type.color}-100 text-${type.color}-600`
+              : "bg-gray-100 text-gray-600"
+          }`}
+        >
+          {type.icon}
+        </div>
+      </div>
+
+      <div>
+        <h3
+          className={`text-lg font-semibold ${
+            isSelected ? `text-${type.color}-900` : "text-gray-900"
+          }`}
+        >
+          {type.label}
+        </h3>
+        <p className="text-sm text-gray-600 mt-1">{type.description}</p>
+      </div>
+    </div>
+  </button>
+);
+
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userType, setUserType] = useState("visitor");
+  const [manualUserType, setManualUserType] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,7 +124,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
+  const queryUserType = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const role = params.get("role");
     const roleToUserType = {
@@ -50,10 +137,10 @@ const Register = () => {
       visitor: "visitor",
     };
 
-    if (roleToUserType[role]) {
-      setUserType(roleToUserType[role]);
-    }
+    return roleToUserType[role] || null;
   }, [location.search]);
+
+  const userType = manualUserType || queryUserType || "visitor";
 
   const userTypes = [
     {
@@ -113,7 +200,7 @@ const Register = () => {
     // Validation téléphone
     if (!formData.phone.trim()) {
       newErrors.phone = "Le téléphone est requis";
-    } else if (!/^[\+]?[0-9\s\-\(\)]{8,}$/.test(formData.phone)) {
+    } else if (!/^[+]?[0-9\s()-]{8,}$/.test(formData.phone)) {
       newErrors.phone = "Format de téléphone invalide";
     }
 
@@ -290,97 +377,6 @@ const Register = () => {
     }
   };
 
-  const PasswordStrength = ({ password }) => {
-    if (!password) return null;
-
-    const getStrength = () => {
-      let score = 0;
-      if (password.length >= 8) score++;
-      if (/[a-z]/.test(password)) score++;
-      if (/[A-Z]/.test(password)) score++;
-      if (/\d/.test(password)) score++;
-      if (/[!@#$%^&*]/.test(password)) score++;
-
-      if (score <= 2) return { level: "Faible", color: "red", percent: 40 };
-      if (score <= 3) return { level: "Moyen", color: "yellow", percent: 70 };
-      return { level: "Fort", color: "green", percent: 100 };
-    };
-
-    const strength = getStrength();
-
-    return (
-      <div className="mt-2 space-y-2">
-        <div className="flex justify-between text-xs">
-          <span className="text-gray-600">Force du mot de passe</span>
-          <span
-            className={`font-semibold ${
-              strength.color === "red"
-                ? "text-red-600"
-                : strength.color === "yellow"
-                ? "text-yellow-600"
-                : "text-green-600"
-            }`}
-          >
-            {strength.level}
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 h-2">
-          <div
-            className={`h-2 rounded-full transition-all duration-500 ${
-              strength.color === "red"
-                ? "bg-red-500"
-                : strength.color === "yellow"
-                ? "bg-yellow-500"
-                : "bg-green-500"
-            }`}
-            style={{ width: `${strength.percent}%` }}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const UserTypeCard = ({ type }) => {
-    const isSelected = userType === type.value;
-
-    return (
-      <button
-        type="button"
-        onClick={() => setUserType(type.value)}
-        className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
-          isSelected
-            ? `border-${type.color}-600 bg-${type.color}-50 shadow-lg`
-            : "border-gray-200 hover:border-gray-300 hover:shadow-md"
-        }`}
-      >
-        <div className="flex flex-col space-y-4">
-          <div className="flex items-center justify-between">
-            <div
-              className={`p-3 rounded-xl ${
-                isSelected
-                  ? `bg-${type.color}-100 text-${type.color}-600`
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              {type.icon}
-            </div>
-          </div>
-
-          <div>
-            <h3
-              className={`text-lg font-semibold ${
-                isSelected ? `text-${type.color}-900` : "text-gray-900"
-              }`}
-            >
-              {type.label}
-            </h3>
-            <p className="text-sm text-gray-600 mt-1">{type.description}</p>
-          </div>
-        </div>
-      </button>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full animate-fade-in">
@@ -420,7 +416,12 @@ const Register = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {userTypes.map((type) => (
-              <UserTypeCard key={type.value} type={type} />
+              <UserTypeCard
+                key={type.value}
+                type={type}
+                isSelected={userType === type.value}
+                onSelect={setManualUserType}
+              />
             ))}
           </div>
         </div>
