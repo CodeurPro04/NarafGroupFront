@@ -22,6 +22,63 @@ import {
   Users,
 } from "lucide-react";
 
+const africanCountries = [
+  { name: "Algerie", flag: "🇩🇿" },
+  { name: "Angola", flag: "🇦🇴" },
+  { name: "Benin", flag: "🇧🇯" },
+  { name: "Botswana", flag: "🇧🇼" },
+  { name: "Burkina Faso", flag: "🇧🇫" },
+  { name: "Burundi", flag: "🇧🇮" },
+  { name: "Cameroun", flag: "🇨🇲" },
+  { name: "Cap-Vert", flag: "🇨🇻" },
+  { name: "Comores", flag: "🇰🇲" },
+  { name: "Congo", flag: "🇨🇬" },
+  { name: "Cote d'Ivoire", flag: "🇨🇮" },
+  { name: "Djibouti", flag: "🇩🇯" },
+  { name: "Egypte", flag: "🇪🇬" },
+  { name: "Erythree", flag: "🇪🇷" },
+  { name: "Eswatini", flag: "🇸🇿" },
+  { name: "Ethiopie", flag: "🇪🇹" },
+  { name: "Gabon", flag: "🇬🇦" },
+  { name: "Gambie", flag: "🇬🇲" },
+  { name: "Ghana", flag: "🇬🇭" },
+  { name: "Guinee", flag: "🇬🇳" },
+  { name: "Guinee-Bissau", flag: "🇬🇼" },
+  { name: "Guinee equatoriale", flag: "🇬🇶" },
+  { name: "Kenya", flag: "🇰🇪" },
+  { name: "Lesotho", flag: "🇱🇸" },
+  { name: "Liberia", flag: "🇱🇷" },
+  { name: "Libye", flag: "🇱🇾" },
+  { name: "Madagascar", flag: "🇲🇬" },
+  { name: "Malawi", flag: "🇲🇼" },
+  { name: "Mali", flag: "🇲🇱" },
+  { name: "Maroc", flag: "🇲🇦" },
+  { name: "Maurice", flag: "🇲🇺" },
+  { name: "Mauritanie", flag: "🇲🇷" },
+  { name: "Mozambique", flag: "🇲🇿" },
+  { name: "Namibie", flag: "🇳🇦" },
+  { name: "Niger", flag: "🇳🇪" },
+  { name: "Nigeria", flag: "🇳🇬" },
+  { name: "Ouganda", flag: "🇺🇬" },
+  { name: "RDC", flag: "🇨🇩" },
+  { name: "Rwanda", flag: "🇷🇼" },
+  { name: "Sao Tome-et-Principe", flag: "🇸🇹" },
+  { name: "Senegal", flag: "🇸🇳" },
+  { name: "Seychelles", flag: "🇸🇨" },
+  { name: "Sierra Leone", flag: "🇸🇱" },
+  { name: "Somalie", flag: "🇸🇴" },
+  { name: "Soudan", flag: "🇸🇩" },
+  { name: "Soudan du Sud", flag: "🇸🇸" },
+  { name: "Tanzanie", flag: "🇹🇿" },
+  { name: "Tchad", flag: "🇹🇩" },
+  { name: "Togo", flag: "🇹🇬" },
+  { name: "Tunisie", flag: "🇹🇳" },
+  { name: "Zambie", flag: "🇿🇲" },
+  { name: "Zimbabwe", flag: "🇿🇼" },
+  { name: "Afrique du Sud", flag: "🇿🇦" },
+  { name: "Republique centrafricaine", flag: "🇨🇫" },
+];
+
 const Home = () => {
   const defaultShowcaseSections = [
     {
@@ -407,6 +464,21 @@ const Home = () => {
   return (
     <div className="bg-white">
       <Hero />
+
+      <section className="w-full overflow-hidden border-y border-slate-200 bg-[#081a3d] py-3 text-white">
+        <div className="flag-marquee flex w-max items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
+          {[...africanCountries, ...africanCountries].map((country, index) => (
+            <span
+              key={`${country.name}-${index}`}
+              className="shrink-0 text-xl leading-none sm:text-2xl"
+              aria-label={country.name}
+              title={country.name}
+            >
+              {country.flag}
+            </span>
+          ))}
+        </div>
+      </section>
 
       {/* Nos Services / Modeles */}
       <section className="py-20 bg-white">

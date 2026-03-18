@@ -14,6 +14,7 @@ import {
   MapPin,
   CheckCircle,
   ExternalLink,
+  Building2,
 } from "lucide-react";
 import { visitorService } from "../services/visitorService";
 import { SkeletonBlock } from "../components/ui/Skeleton";
@@ -444,6 +445,14 @@ const ProfilePage = () => {
                       {profile?.role_name || "Visiteur"}
                     </div>
                   </div>
+                  {profile?.partner_type && (
+                    <div className="bg-white/10 border border-white/20 p-4 backdrop-blur">
+                      <div className="text-xs text-blue-100">Type de partenaire</div>
+                      <div className="text-lg font-semibold">
+                        {profile.partner_type}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -538,6 +547,12 @@ const ProfilePage = () => {
                       <MapPin size={16} className="text-blue-500" />
                       <span>Profil en ligne</span>
                     </div>
+                    {profile?.partner_type && (
+                      <div className="flex items-center gap-2">
+                        <Building2 size={16} className="text-blue-500" />
+                        <span>{profile.partner_type}</span>
+                      </div>
+                    )}
                   </div>
                 </>
               )}{" "}

@@ -23,4 +23,23 @@
   .font-display {
     font-family: "Sora", sans-serif;
   }
+
+  .flag-marquee {
+    animation: flag-marquee 38s linear infinite;
+    will-change: transform;
+  }
+
+  .flag-marquee:hover {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes flag-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }

@@ -12,7 +12,6 @@ import {
   CheckCircle,
   AlertCircle,
   Shield,
-  Handshake,
 } from "lucide-react";
 import { register } from "../api/axios";
 
@@ -131,8 +130,6 @@ const Register = () => {
       proprietaire: "owner",
       owner: "owner",
       agent: "agent",
-      entreprise: "company",
-      company: "company",
       visiteur: "visitor",
       visitor: "visitor",
     };
@@ -163,13 +160,6 @@ const Register = () => {
       icon: <Briefcase size={24} />,
       description: "Professionnel de l'immobilier",
       color: "purple",
-    },
-    {
-      value: "company",
-      label: "Entreprise",
-      icon: <Handshake size={24} />,
-      description: "Soumettre une demande de partenariat",
-      color: "amber",
     },
   ];
 
@@ -256,7 +246,6 @@ const Register = () => {
         visitor: "visiteur",
         owner: "proprietaire",
         agent: "agent",
-        company: "entreprise",
       };
 
       // Préparer les données pour l'API Laravel

@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
+import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
 const InvestmentDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -38,6 +40,7 @@ const InvestmentDetails = () => {
   });
   const [investError, setInvestError] = useState("");
   const [investSuccess, setInvestSuccess] = useState("");
+  const [createdAccount, setCreatedAccount] = useState(null);
   const defaultImage =
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
   const getStorageUrl = (path) => toMediaUrl(path);
@@ -62,6 +65,8 @@ const InvestmentDetails = () => {
     const documents = Array.isArray(raw.documents_path)
       ? raw.documents_path
       : [];
+    const plans = Array.isArray(raw.plans_path) ? raw.plans_path : [];
+    const render3D = Array.isArray(raw.render_3d_path) ? raw.render_3d_path : [];
     const totalInvestment = Number(raw.total_investment || 0);
     const currentFunding = Number(raw.current_funding || 0);
     let funded = null;
@@ -93,6 +98,8 @@ const InvestmentDetails = () => {
       endDate: raw.end_date || null,
       images,
       documents,
+      plans,
+      render3D,
       createdAt: raw.created_at || null,
       raw,
     };
@@ -109,7 +116,7 @@ const InvestmentDetails = () => {
         return;
       }
       setProject(normalized);
-    } catch (err) {
+    } catch {
       setError("Erreur lors du chargement du projet.");
     } finally {
       setLoading(false);
@@ -124,7 +131,7 @@ const InvestmentDetails = () => {
         : [];
       const normalized = filtered.map(normalizeProject).filter(Boolean);
       setRelatedProjects(normalized);
-    } catch (err) {
+    } catch {
       setRelatedProjects([]);
     }
   };
@@ -137,6 +144,8 @@ const InvestmentDetails = () => {
     if (resolved.length === 0) resolved.push(defaultImage);
     return resolved;
   }, [project]);
+  const planVisuals = useMemo(() => (project?.plans || []).map(getStorageUrl).filter(Boolean), [project]);
+  const render3DVisuals = useMemo(() => (project?.render3D || []).map(getStorageUrl).filter(Boolean), [project]);
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
@@ -175,6 +184,7 @@ const InvestmentDetails = () => {
     if (!project?.id) return;
     setInvestError("");
     setInvestSuccess("");
+    setCreatedAccount(null);
     try {
       const amount = Number(investData.amount || 0);
       const header = `Demande investissement: ${project.title}`;
@@ -182,19 +192,30 @@ const InvestmentDetails = () => {
       const combinedMessage = [header, amountLine, investData.message || null]
         .filter(Boolean)
         .join("\n");
-      await api.post("/client-requests", {
+      const response = await api.post("/client-requests", {
         request_type: "investissement",
         investment_uuid: project.id,
         name: investData.name,
-        email: investData.email || null,
+        email: investData.email,
         phone: investData.phone || null,
         message: combinedMessage,
       });
-      setInvestSuccess("Votre demande a ete envoyee.");
+      const account = response.data.account;
+      setInvestSuccess(
+        account
+          ? "Votre demande a ete envoyee. Votre compte visiteur a ete cree."
+          : "Votre demande a ete envoyee.",
+      );
+      if (account?.default_password) {
+        setCreatedAccount({
+          email: account.email,
+          defaultPassword: account.default_password,
+        });
+      }
       const user = getCurrentUser();
       setInvestData({
         name: user
-          ? [user.first_name, user.last_name].filter(Boolean).join("")
+          ? [user.first_name, user.last_name].filter(Boolean).join(" ")
           : "",
         email: user?.email || "",
         phone: user?.phone || "",
@@ -264,62 +285,44 @@ const InvestmentDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {" "}
-      <div className="relative h-[420px] md:h-[520px] overflow-hidden">
-        {" "}
-        <img
-          src={images[currentImageIndex]}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500"
-        />{" "}
-        {images.length > 1 && (
-          <>
-            {" "}
-            <button
-              onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 hover:bg-white transition-all shadow-lg"
-              aria-label="Image precedente"
-            >
-              {" "}
-              <ChevronLeft size={24} className="text-gray-700" />{" "}
-            </button>{" "}
-            <button
-              onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 hover:bg-white transition-all shadow-lg"
-              aria-label="Image suivante"
-            >
-              {" "}
-              <ChevronRight size={24} className="text-gray-700" />{" "}
-            </button>{" "}
-          </>
-        )}{" "}
-        <div className="absolute top-4 right-4 flex gap-2">
-          {" "}
+      <MediaSplitShowcase
+        title={project.title}
+        images={images}
+        currentIndex={currentImageIndex}
+        onPrev={prevImage}
+        onNext={nextImage}
+        onSelect={setCurrentImageIndex}
+        leftBadges={[
+          <span
+            key="status"
+            className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-emerald-500 text-white uppercase tracking-wide"
+          >
+            Disponible
+          </span>,
+          <span
+            key="type"
+            className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-white/90 text-gray-700"
+          >
+            {project.type}
+          </span>,
+        ]}
+        rightActions={[
           <button
+            key="favorite"
             onClick={toggleFavorite}
-            className="p-3 bg-white/90 hover:bg-white transition-all shadow-lg"
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all hover:scale-110 shadow-lg"
             aria-label="Ajouter aux favoris"
           >
-            {" "}
             <Heart
               size={20}
-              className={
-                isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"
-              }
-            />{" "}
-          </button>{" "}
-        </div>{" "}
-        <div className="absolute bottom-6 left-6 flex items-center gap-3">
-          {" "}
-          <span className="px-4 py-2 text-xs font-semibold shadow-lg bg-emerald-500 text-white uppercase tracking-wide">
-            {" "}
-            Disponible{" "}
-          </span>{" "}
-          <span className="px-4 py-2 text-xs font-semibold shadow-lg bg-white/90 text-gray-700">
-            {" "}
-            {project.type}{" "}
-          </span>{" "}
-        </div>{" "}
-      </div>{" "}
+              className={isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"}
+            />
+          </button>,
+        ]}
+        planImage={planVisuals[0] || null}
+        render3DImage={render3DVisuals[0] || null}
+      />
+
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {" "}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -745,6 +748,7 @@ const InvestmentDetails = () => {
                   </label>{" "}
                   <input
                     type="email"
+                    required
                     value={investData.email}
                     onChange={(e) =>
                       setInvestData((prev) => ({
@@ -926,6 +930,12 @@ const InvestmentDetails = () => {
           </div>
         )}{" "}
       </div>{" "}
+      <AccountCredentialsModal
+        account={createdAccount}
+        onClose={() => setCreatedAccount(null)}
+        onLogin={() => navigate("/login")}
+        description="Conservez ce mot de passe temporaire pour suivre votre demande d'investissement et vous reconnecter a votre espace visiteur."
+      />
     </div>
   );
 };

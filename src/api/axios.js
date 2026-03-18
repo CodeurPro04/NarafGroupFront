@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 
 // URL de base de ton API Laravel
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.africabuildinvest.com';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // Instance axios pour l'API
 const api = axios.create({
@@ -129,6 +129,10 @@ export const getCurrentUser = () => {
 };
 
 // Demandes de partenariat
+export const submitPartnershipApplication = (data) => api.post('/partnerships/apply', data, data instanceof FormData
+  ? { headers: { 'Content-Type': 'multipart/form-data' } }
+  : undefined);
+
 export const applyPartnership = (data) => api.post('/partnership/apply', data, data instanceof FormData
   ? { headers: { 'Content-Type': 'multipart/form-data' } }
   : undefined);
@@ -136,9 +140,6 @@ export const applyPartnership = (data) => api.post('/partnership/apply', data, d
 export const updatePartnership = (data) => api.put('/partnership/update', data, data instanceof FormData
   ? { headers: { 'Content-Type': 'multipart/form-data' } }
   : undefined);
-
-
-
 
 export const getMyPartnership = () => api.get('/partnership/my-application');
 

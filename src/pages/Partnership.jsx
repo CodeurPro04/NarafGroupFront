@@ -5,6 +5,7 @@ import {
  getCurrentUser,
  getMyPartnership,
  isAuthenticated,
+ submitPartnershipApplication,
  updatePartnership,
 } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
@@ -12,14 +13,15 @@ import {
  ArrowRight,
  BadgeCheck,
  Building2,
- Globe2,
+ CheckCircle2,
+ Copy,
  Hammer,
  Landmark,
  Mail,
  MapPin,
  Phone,
- ShieldCheck,
  Upload,
+ X,
 } from "lucide-react";
 
 const partnerTypes = {
@@ -115,6 +117,12 @@ const EmptyFormState = () => ({
  certifications: "",
 });
 
+const EmptyAccountState = () => ({
+ email: "",
+ defaultPassword: "",
+ requiresActivation: false,
+});
+
 const Field = ({ label, children, hint }) => (
  <label className="block">
   <span className="text-sm font-medium text-slate-700">{label}</span>
@@ -135,6 +143,8 @@ const Partnership = () => {
  const [application, setApplication] = useState(null);
  const [selectedType, setSelectedType] = useState("");
  const [logoFile, setLogoFile] = useState(null);
+ const [createdAccount, setCreatedAccount] = useState(EmptyAccountState);
+ const [copiedPassword, setCopiedPassword] = useState(false);
  const [formData, setFormData] = useState(EmptyFormState);
 
  const user = getCurrentUser();
@@ -144,7 +154,7 @@ const Partnership = () => {
 
  useEffect(() => {
   const loadApplication = async () => {
-   if (!authenticated) {
+   if (!authenticated || !isCompany) {
     setLoading(false);
     return;
    }
@@ -180,7 +190,7 @@ const Partnership = () => {
   };
 
   loadApplication();
- }, [authenticated]);
+ }, [authenticated, isCompany]);
 
  const currentType = useMemo(
   () => partnerTypes[selectedType] || null,
@@ -201,19 +211,28 @@ const Partnership = () => {
   setFormData((prev) => ({ ...prev, [name]: value }));
  };
 
+ const handleCopyPassword = async () => {
+  if (!createdAccount.defaultPassword) return;
+
+  try {
+   await navigator.clipboard.writeText(createdAccount.defaultPassword);
+   setCopiedPassword(true);
+  } catch (err) {
+   console.error("Erreur copie mot de passe:", err);
+   setCopiedPassword(false);
+  }
+ };
+
  const handleSubmit = async (event) => {
   event.preventDefault();
   setError("");
   setSuccess("");
+  setCreatedAccount(EmptyAccountState());
+  setCopiedPassword(false);
 
-  if (!authenticated) {
-   setError("Veuillez vous connecter pour soumettre votre demande.");
-   return;
-  }
-
-  if (!isCompany) {
+  if (authenticated && !isCompany) {
    setError(
-    "Votre compte doit etre de type entreprise pour soumettre une demande.",
+    "Votre compte connecte n'est pas de type entreprise. Deconnectez-vous pour creer un nouveau compte partenaire ou utilisez un compte entreprise existant.",
    );
    return;
   }
@@ -223,11 +242,17 @@ const Partnership = () => {
    return;
   }
 
+  if (!formData.email.trim()) {
+   setError("L'email professionnel est obligatoire pour creer le compte partenaire.");
+   return;
+  }
+
   setSaving(true);
 
   const payload = new FormData();
   payload.append("company_name", formData.company_name);
   payload.append("company_type", currentType.backendValue);
+  payload.append("email", formData.email.trim());
   if (formData.registration_number) {
    payload.append("registration_number", formData.registration_number);
   }
@@ -235,7 +260,6 @@ const Partnership = () => {
   if (formData.address) payload.append("address", formData.address);
   if (formData.city) payload.append("city", formData.city);
   if (formData.phone) payload.append("phone", formData.phone);
-  if (formData.email) payload.append("email", formData.email);
   if (formData.website) payload.append("website", formData.website);
   if (formData.description) payload.append("description", formData.description);
   parseList(formData.services).forEach((item) => payload.append("services[]", item));
@@ -245,16 +269,32 @@ const Partnership = () => {
   if (logoFile) payload.append("logo", logoFile);
 
   try {
-   if (application?.uuid) {
+   if (authenticated && isCompany && application?.uuid) {
     const response = await updatePartnership(payload);
     const data = response?.data?.data ?? response?.data ?? null;
     setApplication(data || application);
-    setSuccess("Demande mise a jour avec succes.");
-   } else {
+    setSuccess("Demande mise a jour. Votre compte repasse en attente de validation administrateur.");
+   } else if (authenticated && isCompany) {
     const response = await applyPartnership(payload);
     const data = response?.data?.data ?? response?.data ?? null;
     setApplication(data || null);
-    setSuccess("Demande envoyee avec succes.");
+    setSuccess("Demande envoyee avec succes. Elle sera activee apres validation administrateur.");
+   } else {
+    const response = await submitPartnershipApplication(payload);
+    const data = response?.data?.data ?? response?.data ?? null;
+    const account = response?.data?.account ?? null;
+
+    setApplication(data || null);
+    setLogoFile(null);
+    setSuccess("Demande envoyee. Votre compte entreprise a ete cree et reste en attente de validation administrateur.");
+
+    if (account) {
+     setCreatedAccount({
+      email: account.email || formData.email.trim(),
+      defaultPassword: account.default_password || "",
+      requiresActivation: Boolean(account.requires_activation),
+     });
+    }
    }
   } catch (err) {
    console.error("Erreur soumission partenariat:", err);
@@ -362,36 +402,27 @@ const Partnership = () => {
       </h2>
       <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
        {currentType
-        ? `Le formulaire est configure pour un partenaire ${currentType.shortTitle.toLowerCase()} tout en restant compatible avec l'API actuelle.`
+        ? authenticated && isCompany
+          ? `Le formulaire est configure pour un partenaire ${currentType.shortTitle.toLowerCase()} et mettra a jour votre dossier entreprise.`
+          : `Le formulaire est configure pour un partenaire ${currentType.shortTitle.toLowerCase()} et creera automatiquement votre compte entreprise a la soumission.`
         : "Selectionnez d'abord un type de partenaire pour continuer."}
       </p>
      </div>
 
-     {!authenticated ? (
-      <div className="mb-6 border border-[#d4e3ff] bg-[#f7fbff] px-6 py-5 text-center text-sm text-[#0f62c9]">
-       Vous devez etre connecte pour soumettre une candidature.
-       <div className="mt-4 flex flex-wrap justify-center gap-3">
-        <button
-         type="button"
-         onClick={() => navigate("/login")}
-         className=" bg-[#0f62c9] px-5 py-2.5 font-semibold text-white"
-        >
-         Se connecter
-        </button>
-        <button
-         type="button"
-         onClick={() => navigate("/register?role=entreprise")}
-         className=" border border-[#b9d1ff] bg-white px-5 py-2.5 font-semibold text-[#0f62c9]"
-        >
-         Creer un compte entreprise
-        </button>
-       </div>
+     {authenticated && !isCompany ? (
+      <div className="mb-6 border border-amber-200 bg-amber-50 px-6 py-5 text-sm text-amber-700">
+       Vous etes connecte avec un compte non entreprise. Deconnectez-vous si vous souhaitez creer un nouveau compte partenaire depuis ce formulaire.
       </div>
      ) : null}
 
-     {authenticated && !isCompany ? (
-      <div className="mb-6 border border-amber-200 bg-amber-50 px-6 py-5 text-sm text-amber-700">
-       Votre compte doit etre de type entreprise pour deposer une candidature partenaire.
+     {!authenticated ? (
+      <div className="mb-6 border border-[#d4e3ff] bg-[#f7fbff] px-6 py-5 text-center text-sm text-[#0f62c9]">
+       <p className="text-lg font-semibold sm:text-xl">
+        Votre compte entreprise sera cree automatiquement a partir de l'email renseigne dans ce formulaire.
+       </p>
+       <p className="mt-2 text-sm leading-7 text-slate-600">
+        Une fois la demande envoyee, un mot de passe temporaire s'affichera pour votre premiere connexion. L'activation finale reste soumise a la validation de l'administrateur.
+       </p>
       </div>
      ) : null}
 
@@ -438,6 +469,7 @@ const Partnership = () => {
            value={formData.company_name}
            onChange={handleChange}
            className={inputClassName}
+           placeholder="Ex. Africa Build Investment"
            required
           />
          </Field>
@@ -450,6 +482,7 @@ const Partnership = () => {
           value={formData.registration_number}
           onChange={handleChange}
           className={inputClassName}
+          placeholder="Ex. RCCM-ABJ-2026-B-1024"
          />
         </Field>
 
@@ -460,6 +493,7 @@ const Partnership = () => {
           value={formData.tax_number}
           onChange={handleChange}
           className={inputClassName}
+          placeholder="Ex. IFU / NIF / Identifiant fiscal"
          />
         </Field>
 
@@ -472,6 +506,7 @@ const Partnership = () => {
            value={formData.city}
            onChange={handleChange}
            className={`${inputClassName} pl-11`}
+           placeholder="Ex. Abidjan, Dakar ou Casablanca"
           />
          </div>
         </Field>
@@ -485,6 +520,7 @@ const Partnership = () => {
            value={formData.phone}
            onChange={handleChange}
            className={`${inputClassName} pl-11`}
+           placeholder="Ex. +225 07 00 00 00 00"
           />
          </div>
         </Field>
@@ -498,6 +534,8 @@ const Partnership = () => {
            value={formData.email}
            onChange={handleChange}
            className={`${inputClassName} pl-11`}
+           placeholder="Ex. contact@entreprise.com"
+           required
           />
          </div>
         </Field>
@@ -509,6 +547,7 @@ const Partnership = () => {
           value={formData.website}
           onChange={handleChange}
           className={inputClassName}
+          placeholder="Ex. https://www.entreprise.com"
          />
         </Field>
 
@@ -520,6 +559,7 @@ const Partnership = () => {
            value={formData.address}
            onChange={handleChange}
            className={inputClassName}
+           placeholder="Ex. Zone 4, Rue du Commerce, Abidjan"
           />
          </Field>
         </div>
@@ -593,14 +633,28 @@ const Partnership = () => {
 
        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-[#e4e8ef] pt-6 sm:flex-row">
         <p className="text-center text-xs leading-6 text-slate-500 sm:text-left">
-         ABI transmet votre candidature avec le type <span className="font-semibold text-slate-700">{currentType.backendValue}</span>.
+         {authenticated && isCompany ? (
+          <>
+           ABI transmet votre candidature avec le type <span className="font-semibold text-slate-700">{currentType.backendValue}</span>.
+          </>
+         ) : (
+          <>
+           ABI creera votre compte entreprise a partir de l'email <span className="font-semibold text-slate-700">{formData.email || "professionnel"}</span>, puis soumettra votre dossier a validation administrateur.
+          </>
+         )}
         </p>
         <button
          type="submit"
-         disabled={saving || loading || !authenticated || !isCompany}
+         disabled={saving || loading || (authenticated && !isCompany)}
          className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5] disabled:cursor-not-allowed disabled:opacity-60"
         >
-         {saving ? "Envoi en cours..." : application ? "Mettre a jour la demande" : "Envoyer la demande"}
+         {saving
+          ? "Envoi en cours..."
+          : authenticated && isCompany
+            ? application
+              ? "Mettre a jour la demande"
+              : "Envoyer la demande"
+            : "Creer mon compte partenaire"}
          <ArrowRight size={16} />
         </button>
        </div>
@@ -608,6 +662,95 @@ const Partnership = () => {
      )}
     </div>
    </section>
+   {createdAccount.defaultPassword ? (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/55 px-4 py-8">
+     <div className="w-full max-w-xl border border-[#d8dfeb] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.22)] sm:p-8">
+      <div className="flex items-start justify-between gap-4 border-b border-[#e4e8ef] pb-5">
+       <div className="flex items-start gap-4">
+        <div className="flex h-12 w-12 items-center justify-center bg-[#e9f2ff] text-[#0f62c9]">
+         <CheckCircle2 size={22} />
+        </div>
+        <div>
+         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0f62c9]">
+          Compte cree
+         </p>
+         <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
+          Votre compte entreprise est pret.
+         </h3>
+         <p className="mt-3 text-sm leading-7 text-slate-600">
+          Conservez ce mot de passe temporaire. Il vous permettra de vous connecter pendant que votre compte reste en attente de validation administrateur.
+         </p>
+        </div>
+       </div>
+       <button
+        type="button"
+        onClick={() => {
+         setCreatedAccount(EmptyAccountState());
+         setCopiedPassword(false);
+        }}
+        className="flex h-10 w-10 items-center justify-center border border-[#d8dfeb] bg-white text-slate-500 transition hover:text-slate-950"
+        aria-label="Fermer"
+       >
+        <X size={18} />
+       </button>
+      </div>
+
+      <div className="mt-6 space-y-4">
+       <div className="border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+         Email de connexion
+        </p>
+        <p className="mt-2 text-base font-semibold text-slate-950">{createdAccount.email}</p>
+       </div>
+
+       <div className="border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+         Mot de passe temporaire
+        </p>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+         <code className="break-all bg-white px-3 py-3 text-base font-semibold text-slate-950">
+          {createdAccount.defaultPassword}
+         </code>
+         <button
+          type="button"
+          onClick={handleCopyPassword}
+          className="inline-flex items-center justify-center gap-2 border border-[#d8dfeb] bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f62c9] hover:text-[#0f62c9]"
+         >
+          <Copy size={16} />
+          {copiedPassword ? "Copie effectuee" : "Copier le mot de passe"}
+         </button>
+        </div>
+       </div>
+
+       {createdAccount.requiresActivation ? (
+        <div className="border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">
+         Votre compte entreprise peut deja se connecter, mais il restera inactif tant qu'un administrateur n'aura pas valide votre candidature partenaire.
+        </div>
+       ) : null}
+      </div>
+
+      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+       <button
+        type="button"
+        onClick={() => {
+         setCreatedAccount(EmptyAccountState());
+         setCopiedPassword(false);
+        }}
+        className="border border-[#d8dfeb] bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-950"
+       >
+        Fermer
+       </button>
+       <button
+        type="button"
+        onClick={() => navigate('/login')}
+        className="bg-[#0f62c9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+       >
+        Aller a la connexion
+       </button>
+      </div>
+     </div>
+    </div>
+   ) : null}
   </div>
  );
 };

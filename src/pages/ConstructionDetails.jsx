@@ -14,10 +14,12 @@ import {
 } from "lucide-react";
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
+import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toMediaUrl } from "../utils/media";
+import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
 const ConstructionDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -36,6 +38,7 @@ const ConstructionDetails = () => {
   });
   const [planNotice, setPlanNotice] = useState({ type: "", message: "" });
   const [isPlanSubmitting, setIsPlanSubmitting] = useState(false);
+  const [createdAccount, setCreatedAccount] = useState(null);
   const [plansUnlocked, setPlansUnlocked] = useState(false);
   const [activePlan, setActivePlan] = useState(null);
   const defaultImage =
@@ -71,7 +74,7 @@ const ConstructionDetails = () => {
         return;
       }
       setProject(payload);
-    } catch (err) {
+    } catch {
       setError("Erreur lors du chargement du projet.");
     } finally {
       setLoading(false);
@@ -86,7 +89,7 @@ const ConstructionDetails = () => {
         ? items.filter((item) => item.uuid !== uuid).slice(0, 3)
         : [];
       setRelatedProjects(filtered);
-    } catch (err) {
+    } catch {
       setRelatedProjects([]);
     }
   };
@@ -130,6 +133,7 @@ const ConstructionDetails = () => {
   const handlePlanSubmit = async (e) => {
     e.preventDefault();
     setPlanNotice({ type: "", message: "" });
+    setCreatedAccount(null);
     if (!planForm.consent) {
       setPlanNotice({
         type: "error",
@@ -140,7 +144,10 @@ const ConstructionDetails = () => {
     try {
       setIsPlanSubmitting(true);
       const message = `Demande de plan de construction\nSecteur: ${planForm.sector}\nDepartement: ${planForm.department}\nProjet: ${planForm.project_description}`;
-      const name = planForm.email || "Client";
+      const user = getCurrentUser();
+      const name = user
+        ? [user.first_name, user.last_name].filter(Boolean).join(" ")
+        : planForm.email.split("@")[0] || "Client";
       const response = await api.post("/client-requests", {
         request_type: "construction",
         construction_uuid: project?.uuid,
@@ -154,10 +161,19 @@ const ConstructionDetails = () => {
         consent: planForm.consent,
       });
       if (response.data.success) {
+        const account = response.data.account;
         setPlanNotice({
           type: "success",
-          message: "Merci ! Vous pouvez consulter le plan.",
+          message: account
+            ? "Merci ! Vous pouvez consulter le plan. Votre compte visiteur a ete cree."
+            : "Merci ! Vous pouvez consulter le plan.",
         });
+        if (account?.default_password) {
+          setCreatedAccount({
+            email: account.email,
+            defaultPassword: account.default_password,
+          });
+        }
         setPlansUnlocked(true);
       }
     } catch (err) {
@@ -224,59 +240,33 @@ const ConstructionDetails = () => {
   const images = getProjectImages();
   const plans = Array.isArray(project.plans_path) ? project.plans_path : [];
   const resolvedPlans = plans.map(getStorageUrl).filter(Boolean);
+  const render3D = Array.isArray(project.render_3d_path) ? project.render_3d_path : [];
+  const resolvedRender3D = render3D.map(getStorageUrl).filter(Boolean);
   const formattedDate = project.created_at
     ? format(new Date(project.created_at), "dd MMMM yyyy", { locale: fr })
     : "Non specifiee";
   return (
     <div className="min-h-screen bg-gray-50">
       {" "}
-      <div className="relative h-[400px] md:h-[520px] overflow-hidden">
-        {" "}
-        <img
-          src={images[currentImageIndex]}
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500"
-        />{" "}
-        {images.length > 1 && (
-          <>
-            {" "}
-            <button
-              onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 hover:bg-white transition-all shadow-lg"
-              aria-label="Image precedente"
-            >
-              {" "}
-              <ChevronLeft size={24} className="text-gray-700" />{" "}
-            </button>{" "}
-            <button
-              onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 p-3 hover:bg-white transition-all shadow-lg"
-              aria-label="Image suivante"
-            >
-              {" "}
-              <ChevronRight size={24} className="text-gray-700" />{" "}
-            </button>{" "}
-          </>
-        )}{" "}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
-          {" "}
-          {images.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`w-2 h-2 transition-all duration-300 ${index === currentImageIndex ? "bg-white w-6" : "bg-white/60 hover:bg-white/80"}`}
-              aria-label={`Aller a l'image ${index + 1}`}
-            />
-          ))}{" "}
-        </div>{" "}
-        <div className="absolute top-4 left-4">
-          {" "}
-          <span className="px-4 py-2 text-sm font-semibold shadow-lg bg-green-600 text-white">
-            {" "}
-            Projet publie{" "}
-          </span>{" "}
-        </div>{" "}
-      </div>{" "}
+      <MediaSplitShowcase
+        title={project.title}
+        images={images}
+        currentIndex={currentImageIndex}
+        onPrev={prevImage}
+        onNext={nextImage}
+        onSelect={setCurrentImageIndex}
+        leftBadges={[
+          <span
+            key="status"
+            className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-green-600 text-white"
+          >
+            Projet publie
+          </span>,
+        ]}
+        planImage={resolvedPlans[0] || null}
+        render3DImage={resolvedRender3D[0] || null}
+      />
+
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {" "}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -786,6 +776,12 @@ const ConstructionDetails = () => {
           </div>{" "}
         </div>
       )}{" "}
+      <AccountCredentialsModal
+        account={createdAccount}
+        onClose={() => setCreatedAccount(null)}
+        onLogin={() => navigate("/login")}
+        description="Conservez ce mot de passe temporaire pour retrouver votre demande de plan et acceder a votre espace visiteur."
+      />
     </div>
   );
 };

@@ -108,13 +108,13 @@ const Header = () => {
           },
           {
             path: "/abi/nos-intervenants",
-            label: "Nos intervenants",
+            label: "Club ABI Diaspora",
             description: "Identifiez les acteurs et experts mobilises autour de vos projets.",
             icon: UserRound,
           },
           {
             path: "/abi/nos-agences",
-            label: "Nos agences",
+            label: "Club Pro",
             description: "Retrouvez notre reseau et nos points de presence.",
             icon: Landmark,
           },
@@ -393,13 +393,13 @@ const Header = () => {
 
       {activeDesktopGroup && (
         <div
-          className="hidden lg:block absolute left-0 right-0 top-full border-t border-[#e5e7eb] bg-white shadow-[0_18px_44px_rgba(15,23,42,0.12)]"
+          className="hidden lg:block absolute left-0 right-0 top-full bg-white shadow-[0_18px_44px_rgba(15,23,42,0.12)]"
           onMouseEnter={() => setOpenDesktopMenu(activeDesktopGroup.key)}
           onMouseLeave={() => setOpenDesktopMenu(null)}
         >
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="rounded-[8px] border border-[#e5e7eb] bg-white px-10 py-8">
-              <div className="grid min-h-[360px] grid-cols-[300px_minmax(0,1fr)] gap-[72px] items-start">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="rounded-[8px] bg-white px-10 py-5">
+              <div className="grid min-h-[270px] grid-cols-[300px_minmax(0,1fr)] gap-[48px] items-start">
                 <div className="pt-2">
                   <h2 className="text-[18px] font-medium text-[#111111]">
                     {activeDesktopGroup.label}
@@ -416,7 +416,7 @@ const Header = () => {
                       <div key={child.label} className="min-w-0">
                         <Link to={child.path} className="group block">
                           <div className="flex items-start gap-4">
-                            <span className="mt-[2px] inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[6px] border border-[#bfc3c9] bg-[#f7f7f8] text-[#141414]">
+                            <span className="mt-[2px] inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[6px] bg-[#f7f7f8] text-[#141414]">
                               <Icon className="h-[16px] w-[16px]" />
                             </span>
                             <div className="min-w-0">
