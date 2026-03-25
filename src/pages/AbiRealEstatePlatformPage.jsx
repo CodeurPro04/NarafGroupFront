@@ -99,17 +99,15 @@ const overviewCards = [
   },
 ];
 
-const LineAccordion = ({ title, items, defaultOpen = false }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
+const LineAccordion = ({ title, items, isOpen = false, onToggle }) => {
   return (
     <div className="border-b border-slate-300/90">
       <button
         type="button"
-        onClick={() => setIsOpen((value) => !value)}
+        onClick={onToggle}
         className="flex w-full items-center justify-between gap-4 py-6 text-left"
       >
-        <span className="text-[1.85rem] font-medium tracking-[-0.03em] text-slate-950 sm:text-[2rem]">
+        <span className="text-lg font-semibold tracking-[-0.02em] text-slate-950 sm:text-xl">
           {title}
         </span>
         <ChevronDown
@@ -127,7 +125,7 @@ const LineAccordion = ({ title, items, defaultOpen = false }) => {
       >
         <div className="min-h-0 overflow-hidden">
           <div
-            className={`space-y-4 pb-7 text-lg leading-8 text-slate-500 transition-all duration-500 ease-out ${
+            className={`space-y-4 pb-7 text-sm leading-7 text-slate-600 transition-all duration-500 ease-out sm:text-base ${
               isOpen ? "translate-y-0" : "-translate-y-2"
             }`}
           >
@@ -146,12 +144,16 @@ const LineAccordion = ({ title, items, defaultOpen = false }) => {
 
 const AbiRealEstatePlatformPage = () => {
   const navigate = useNavigate();
+  const [openServiceIndex, setOpenServiceIndex] = useState(0);
 
   return (
     <div className="bg-[linear-gradient(180deg,#f4f6fb_0%,#f1eee8_36%,#ffffff_100%)] text-slate-950">
       <PropertiesHero
         onPrimaryAction={() => navigate("/properties")}
-        onSecondaryAction={() => navigate("/partnership")}
+        onSecondaryAction={() => {
+          window.location.href =
+            "mailto:contact@africabuildinvest.com?subject=Conseil%20plateforme%20immobiliere";
+        }}
         primaryLabel="Explorer les biens"
         secondaryLabel="Parler a un conseiller"
         eyebrow=""
@@ -165,13 +167,35 @@ const AbiRealEstatePlatformPage = () => {
 
       <section className="border-y border-white/80 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-18">
-          <div className="max-w-[760px]">
-            <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-[2.7rem] sm:leading-[0.98]">
-              La plateforme immobiliere panafricaine qui relie offre, projets et investissement.
-            </h1>
-            <p className="mt-6 max-w-[700px] text-lg leading-8 text-slate-600">
-              ABI est une plateforme de mise en relation des particuliers, promoteurs et investisseurs pour la vente de biens immobiliers et la presentation de projets de construction : neuf, promotion, lotissements et operations de requalification.
-            </p>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-start">
+            <div className="max-w-[760px]">
+              <h1 className="text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-slate-950 sm:text-[2.35rem]">
+                La plateforme immobiliere panafricaine qui relie offre, projets et investissement.
+              </h1>
+              <p className="mt-5 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
+                ABI est une plateforme de mise en relation des particuliers, promoteurs et investisseurs pour la vente de biens immobiliers et la presentation de projets de construction: neuf, promotion, lotissements et operations de requalification.
+              </p>
+              <p className="mt-4 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
+                L'objectif est de rassembler dans une meme experience la lecture des biens, la decouverte des projets, l'acces a l'information utile et l'accompagnement jusqu'a la decision.
+              </p>
+            </div>
+
+            <aside className="grid gap-3 border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7f9fc_100%)] p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
+              <p className="text-base font-semibold leading-7 text-slate-950">
+                Une interface pensee pour rendre les parcours immobiliers plus lisibles et les projets plus faciles a comparer.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Biens existants et projets neufs dans un meme cadre de lecture.</p>
+                </div>
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Mise en relation entre particuliers, promoteurs, partenaires et investisseurs.</p>
+                </div>
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Informations et outils pour mieux preparer la transaction ou l'investissement.</p>
+                </div>
+              </div>
+            </aside>
           </div>
 
           <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -182,10 +206,10 @@ const AbiRealEstatePlatformPage = () => {
                   key={item.title}
                   className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7fafe_100%)] px-6 py-6 shadow-[0_14px_30px_rgba(15,23,42,0.04)]"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0f62c9] text-white">
+                  <div className="flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white">
                     <Icon size={18} />
                   </div>
-                  <h2 className="mt-5 text-lg font-semibold text-slate-950">{item.title}</h2>
+                  <h2 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">{item.title}</h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
                 </article>
               );
@@ -197,10 +221,10 @@ const AbiRealEstatePlatformPage = () => {
       <section className="bg-[#ecebea]">
         <div className="mx-auto grid max-w-[1180px] gap-12 px-6 py-14 sm:px-10 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-20">
           <div className="max-w-[620px]">
-            <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-[2.7rem] sm:leading-[1]">
+            <h2 className="mt-4 text-2xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-[2rem]">
               Les services qui structurent votre parcours immobilier.
             </h2>
-            <p className="mt-6 text-lg leading-8 text-slate-500">
+            <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
               Retrouvez une lecture simple des services disponibles, avec un affichage progressif plus proche du modele editorial du lien de reference.
             </p>
 
@@ -210,7 +234,12 @@ const AbiRealEstatePlatformPage = () => {
                   key={item.title}
                   title={item.title}
                   items={item.points}
-                  defaultOpen={index === 0}
+                  isOpen={openServiceIndex === index}
+                  onToggle={() =>
+                    setOpenServiceIndex((currentIndex) =>
+                      currentIndex === index ? -1 : index
+                    )
+                  }
                 />
               ))}
             </div>
@@ -246,7 +275,7 @@ const AbiRealEstatePlatformPage = () => {
           </div>
 
           <div className="max-w-[560px] justify-self-end">
-            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-[2.7rem]">
+            <h2 className="mt-4 text-2xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-[2rem]">
               Des outils concrets pour comparer, verifier et decider plus vite.
             </h2>
             <div className="mt-8 space-y-4">
@@ -286,7 +315,7 @@ const AbiRealEstatePlatformPage = () => {
 
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-18">
           <div className="max-w-[620px]">
-            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-[2.7rem]">
+            <h2 className="mt-4 text-2xl font-semibold leading-tight tracking-[-0.03em] sm:text-[2rem]">
               Une experience mieux documentee pour reduire la friction et le risque decisionnel.
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -296,14 +325,13 @@ const AbiRealEstatePlatformPage = () => {
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={() => navigate("/partnership")}
+            <a
+              href="mailto:contact@africabuildinvest.com?subject=Echange%20avec%20notre%20equipe"
               className="mt-10 inline-flex items-center gap-2 border border-white/25 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
             >
               Echanger avec notre equipe
               <ArrowRight size={16} />
-            </button>
+            </a>
           </div>
         </div>
       </section>

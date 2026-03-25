@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -117,7 +117,7 @@ const AccordionCard = ({
   children,
   className = "",
   iconWrapperClassName = "bg-[#f3f7fd] text-[#0f62c9]",
-  titleClassName = "text-2xl font-semibold text-slate-950",
+  titleClassName = "text-lg font-semibold text-slate-950 sm:text-xl",
   buttonClassName = "flex w-full items-center justify-between gap-4 py-5 text-left",
   contentClassName = "grid gap-3 pb-5 text-sm leading-6 text-slate-600",
   defaultOpen = false,
@@ -175,7 +175,7 @@ const AccordionCard = ({
             {items?.map((item) => (
               <div key={item} className={listItemClass}>
                 <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                <p className="text-xl leading-6 text-slate-600">{item}</p>
+                <p className="text-sm leading-6 text-slate-600 sm:text-base">{item}</p>
               </div>
             ))}
             {children}
@@ -195,11 +195,14 @@ const AbiAboutPage = () => {
   return (
     <div className="bg-[linear-gradient(180deg,#f5f8fd_0%,#f9f4ec_42%,#ffffff_100%)] text-slate-900">
       <PropertiesHero
-        onPrimaryAction={() => navigate("/partnership")}
+        onPrimaryAction={() => {
+          window.location.href =
+            "mailto:contact@africabuildinvest.com?subject=Contact%20ABI";
+        }}
         onSecondaryAction={() => navigate("/abi/plateforme-immobiliere")}
         primaryLabel="Contacter ABI"
         secondaryLabel="Voir la plateforme"
-        eyebrow=""
+        primaryIcon={Mail}
         title="Une plateforme panafricaine pour structurer, financer."
         descriptionLines={[
           "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires publics.",
@@ -212,34 +215,55 @@ const AbiAboutPage = () => {
       <section className="relative overflow-hidden border-y border-white/70 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,#d8e9ff_0%,rgba(216,233,255,0)_72%)]" />
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-20">
-          <div className="max-w-[820px]">
-            <h1 className="mt-4 max-w-[780px] text-4xl font-semibold leading-tight text-slate-950 sm:text-[2.7rem] sm:leading-[1.02]">
-              Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
-            </h1>
-            <p className="mt-6 max-w-[700px] text-base leading-7 text-slate-600 sm:text-lg">
-              Africa Build Investment est une plateforme panafricaine dediee a soutenir,
-              financer et accompagner des projets d'immobilier, de construction et
-              d'infrastructure durable a travers le continent.
-            </p>
-            <p className="mt-4 max-w-[700px] text-base leading-7 text-slate-600 sm:text-lg">
-              Nous reunissons investisseurs, promoteurs, experts techniques et partenaires
-              publics pour catalyser des initiatives a fort impact socio-economique.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link
-                to="/partnership"
-                className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-              >
-                Parler a notre equipe
-                <ArrowRight size={16} />
-              </Link>
-              <a
-                href="mailto:contact@africabuildinvestment.com"
-                className="inline-flex items-center gap-2 border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
-              >
-                contact@africabuildinvestment.com
-              </a>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-start">
+            <div className="max-w-[760px]">
+              <h1 className="max-w-[720px] text-3xl font-semibold leading-[1.08] text-slate-950 sm:text-[2.35rem]">
+                Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
+              </h1>
+              <p className="mt-5 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
+                Africa Build Investment est une plateforme panafricaine dediee a soutenir,
+                financer et accompagner des projets d'immobilier, de construction et
+                d'infrastructure durable a travers le continent.
+              </p>
+              <p className="mt-4 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
+                Nous reunissons investisseurs, promoteurs, experts techniques et partenaires
+                publics pour catalyser des initiatives a fort impact socio-economique.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <a
+                  href="tel:+2250778252525"
+                  className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+                >
+                  Parler a notre equipe
+                  <ArrowRight size={16} />
+                </a>
+                <a
+                  href="mailto:contact@africabuildinvest.com"
+                  className="inline-flex items-center gap-2 border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
+                >
+                  contact@africabuildinvest.com
+                </a>
+              </div>
             </div>
+
+            <aside className="grid gap-4 border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7f9fc_100%)] p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
+              <div>
+                <p className="text-base font-semibold leading-7 text-slate-950">
+                  Une plateforme qui relie financement, execution terrain et accompagnement des projets.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Immobilier, construction et infrastructures durables.</p>
+                </div>
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Coordonner experts, investisseurs, agences et partenaires publics.</p>
+                </div>
+                <div className="border border-slate-200 bg-white px-4 py-4">
+                  <p className="text-sm leading-6 text-slate-700">Rendre les projets plus lisibles, plus solides et mieux executes.</p>
+                </div>
+              </div>
+            </aside>
           </div>
 
           <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -250,10 +274,10 @@ const AbiAboutPage = () => {
                   key={item.title}
                   className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f6f9fd_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.05)]"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center bg-[#0f62c9] text-white shadow-md">
+                  <div className="flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white shadow-md">
                     <Icon size={18} />
                   </div>
-                  <h2 className="mt-5 text-lg font-semibold text-slate-950">{item.title}</h2>
+                  <h2 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">{item.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{item.text}</p>
                 </article>
               );
@@ -265,7 +289,7 @@ const AbiAboutPage = () => {
       <section className="bg-[#d8b4118d]">
         <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
           <div className="max-w-[560px]">
-            <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
+            <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
               Faciliter l'acces au financement et aux competences pour des projets durables.
             </h2>
             <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
@@ -311,7 +335,7 @@ const AbiAboutPage = () => {
         <div className="relative mx-auto grid max-w-[1180px] gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-16">
           <div />
           <div className="max-w-[620px] justify-self-end">
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.1rem]">
+            <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-[2rem]">
               Un continent ou des infrastructures resilientes et inclusives soutiennent une croissance equitable.
             </h2>
             <p className="mt-5 text-sm leading-7 text-white/82 sm:text-base">
@@ -340,7 +364,7 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
+              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
                 Une presence regionale pour accompagner les projets au plus pres du terrain.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
@@ -416,7 +440,7 @@ const AbiAboutPage = () => {
 
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
+              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
                 Un reseau exclusif pour accelerer les projets, les partenariats et les investissements.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
@@ -513,7 +537,7 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 sm:text-[2.1rem]">
+              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
                 Investir collectivement dans des projets a impact en Afrique.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
@@ -586,21 +610,21 @@ const AbiAboutPage = () => {
               >
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-2xl leading-7 text-slate-600">
+                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
                     Profil d'investisseur : resident de la diaspora ou soutien avere au developpement local.
                   </p>
                 </div>
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-2xl leading-7 text-slate-600">
+                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
                     Processus de KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.
                   </p>
                 </div>
                 <div className={listItemClass}>
                   <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
                   <div>
-                    <p className="text-2xl font-semibold text-slate-950">Pourquoi rejoindre</p>
-                    <p className="mt-2 text-2xl leading-7 text-slate-600">
+                    <p className="text-base font-semibold text-slate-950 sm:text-lg">Pourquoi rejoindre</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-600 sm:text-base">
                       Permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.
                     </p>
                   </div>
@@ -625,29 +649,29 @@ const AbiAboutPage = () => {
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
           <div className="grid gap-6 border border-slate-200 bg-white px-6 py-8 shadow-[0_16px_36px_rgba(15,23,42,0.04)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
             <div className="max-w-[720px]">
-              <h2 className="mt-3 text-[2rem] font-semibold leading-tight text-slate-950">
+              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
                 Besoin de connaitre l'agence la plus proche ou de prendre rendez-vous ?
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                Contactez notre equipe via le formulaire sur le site ou par email a contact@africabuildinvestment.com pour etre oriente vers le bon interlocuteur.
+                Contactez notre equipe via le formulaire sur le site ou par email a contact@africabuildinvest.com pour etre oriente vers le bon interlocuteur.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
               <a
-                href="mailto:contact@africabuildinvestment.com"
+                href="sms:+2250778252525"
                 className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
               >
                 <Mail size={16} />
                 Nous ecrire
               </a>
-              <Link
-                to="/partnership"
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous"
                 className="inline-flex items-center gap-2 border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
               >
                 Prendre rendez-vous
                 <ArrowRight size={16} />
-              </Link>
+              </a>
             </div>
           </div>
         </div>

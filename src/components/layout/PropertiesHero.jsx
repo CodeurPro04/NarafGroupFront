@@ -1,12 +1,12 @@
-import { Building2, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 const PropertiesHero = ({
   onPrimaryAction,
   onSecondaryAction,
   primaryLabel = "Rechercher un bien",
   secondaryLabel = "Faire une annonce",
-  eyebrow = "Immobilier",
-  eyebrowIcon: EyebrowIcon = Building2,
+  primaryIcon: PrimaryIcon = Search,
+  secondaryIcon: SecondaryIcon = Plus,
   title = "Des biens fiables, pas des promesses",
   descriptionLines = [
     "Tu veux investir au pays ou en Afrique francophone, mais tu veux du serieux",
@@ -29,13 +29,6 @@ const PropertiesHero = ({
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
         <div className="max-w-3xl">
-          {eyebrow ? (
-            <div className="mb-6 inline-flex items-center space-x-2 bg-white/15 px-4 py-2 text-white backdrop-blur-sm">
-              <EyebrowIcon size={20} />
-              <span className="font-semibold">{eyebrow}</span>
-            </div>
-          ) : null}
-
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight py-6">
             {title}
           </h1>
@@ -57,7 +50,7 @@ const PropertiesHero = ({
               onClick={onPrimaryAction}
               className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-blue-50 transition-colors shadow-lg"
             >
-              <Search size={20} />
+              <PrimaryIcon size={20} />
               <span>{primaryLabel}</span>
             </button>
             <button
@@ -65,7 +58,7 @@ const PropertiesHero = ({
               onClick={onSecondaryAction}
               className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors"
             >
-              <Plus size={20} />
+              <SecondaryIcon size={20} />
               <span>{secondaryLabel}</span>
             </button>
           </div>

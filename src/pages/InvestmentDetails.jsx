@@ -866,7 +866,11 @@ const InvestmentDetails = () => {
               <h2 className="text-2xl font-bold text-gray-900">
                 Autres projets
               </h2>{" "}
-              <Button variant="outline" onClick={() => navigate("/investment")}>
+              <Button
+                variant="primary"
+                onClick={() => navigate("/investment")}
+                className="shadow-none"
+              >
                 {" "}
                 Voir tous les projets{" "}
               </Button>{" "}

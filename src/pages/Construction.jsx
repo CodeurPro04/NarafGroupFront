@@ -448,7 +448,7 @@ const Construction = () => {
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
             <div>
               <h1 className="max-w-2xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.35rem]">
-                Construire sans stress,
+                Construire sans stress
                 <span className="block">meme depuis la diaspora</span>
               </h1>
               <p className="mt-5 max-w-xl text-sm leading-6 text-white sm:text-base">
@@ -456,13 +456,16 @@ const Construction = () => {
                 ici, tout est clair, suivi et prouve. Tu avances en confiance, meme a distance.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <button className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#b11d28] shadow-lg transition hover:bg-[#fff2f2]">
-                  <Phone size={18} />
+                <a
+                  href="mailto:contact@africabuildinvest.com?subject=Demande%20de%20devis"
+                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#b11d28] shadow-lg transition hover:bg-[#fff2f2]"
+                >
+                  <Mail size={18} />
                   <span>Demande de devis</span>
-                </button>
+                </a>
                 <button
                   onClick={handleClientSpace}
-                  className="inline-flex items-center justify-center gap-2 bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
+                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
                 >
                   <Play size={18} />
                   <span>Espace client</span>
@@ -473,21 +476,21 @@ const Construction = () => {
         </div>
       </section>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-8 sm:px-6 lg:-mt-12 lg:px-8">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 sm:gap-6">
           {constructionTabs.map((tab) => (
             <Link
               key={tab.title}
               to={tab.to}
-              className="group bg-white/95 backdrop-blur-sm shadow-2xl p-5 sm:p-6 border border-gray-100 hover:border-red-200 transition-all"
+              className="group border border-gray-100 bg-white/95 p-5 shadow-xl backdrop-blur-sm transition-all hover:-translate-y-1 hover:border-red-200 hover:shadow-2xl sm:p-6"
             >
               <div className="flex items-start gap-4">
                 <span className="text-red-600 mt-1">{tab.icon}</span>
                 <div className="min-w-0">
-                  <h3 className="text-2xl font-bold text-slate-700 leading-tight">
+                  <h3 className="text-xl font-bold leading-tight text-slate-800 sm:text-2xl">
                     {tab.title}
                   </h3>
-                  <p className="mt-1 text-lg text-slate-900 flex items-center gap-2">
+                  <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-600 sm:text-base">
                     {tab.subtitle}
                     <ArrowRight
                       size={16}
@@ -501,13 +504,13 @@ const Construction = () => {
         </div>
       </div>
 
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 sm:mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
               Faites construire votre maison partous en afrique même au village
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg">
               Notre IA vous aides a Choisir votre future maison sans stress.
             </p>
             {isLoading && (
@@ -520,13 +523,13 @@ const Construction = () => {
             )}
           </div>
 
-          <div className="bg-white shadow-md p-4 sm:p-6 mb-10 sm:mb-12 border border-gray-100">
-            <div className="space-y-5">
+          <div className="mb-10 border border-gray-100 bg-slate-50 p-4 shadow-sm sm:mb-12 sm:p-6 lg:p-7">
+            <div className="space-y-6">
               <div>
-                <p className="text-sm font-semibold text-gray-800 mb-3">
+                <p className="mb-3 text-sm font-semibold text-gray-800">
                   De quoi avez-vous besoin ?
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {[
                     { key: "terrain", label: "Terrain" },
                     { key: "maison-terrain", label: "Maison + terrain" },
@@ -536,10 +539,10 @@ const Construction = () => {
                       key={tab.key}
                       type="button"
                       onClick={() => setNeedTab(tab.key)}
-                      className={`px-4 py-2.5 text-sm font-semibold border transition-colors ${
+                      className={`border px-4 py-2.5 text-sm font-semibold transition-colors ${
                         needTab === tab.key
-                          ? "bg-green-600 text-white border-green-600"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-green-300"
+                          ? "border-red-600 bg-red-600 text-white"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-red-300"
                       }`}
                     >
                       {tab.label}
@@ -548,7 +551,7 @@ const Construction = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
                 {(needTab === "terrain" || needTab === "maison-terrain") && (
                   <div>
                     <label className="text-xs font-semibold text-gray-500">
@@ -561,7 +564,7 @@ const Construction = () => {
                         setLocalisationInput(event.target.value)
                       }
                       placeholder="Ville, commune, quartier..."
-                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     />
                   </div>
                 )}
@@ -574,7 +577,7 @@ const Construction = () => {
                     <select
                       value={cityInput}
                       onChange={(event) => setCityInput(event.target.value)}
-                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     >
                       <option value="tous">Toutes les villes</option>
                       {cities.map((city) => (
@@ -596,7 +599,7 @@ const Construction = () => {
                     value={surfaceMinInput}
                     onChange={(event) => setSurfaceMinInput(event.target.value)}
                     placeholder="Ex: 120"
-                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                   />
                 </div>
 
@@ -610,7 +613,7 @@ const Construction = () => {
                     value={priceMaxInput}
                     onChange={(event) => setPriceMaxInput(event.target.value)}
                     placeholder="Ex: 50000000"
-                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                   />
                 </div>
 
@@ -624,7 +627,7 @@ const Construction = () => {
                       onChange={(event) =>
                         setProjectTypeInput(event.target.value.toLowerCase())
                       }
-                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     >
                       <option value="tous">Tous les types</option>
                       {constructionTypes.map((type) => (
@@ -644,7 +647,7 @@ const Construction = () => {
                     <select
                       value={roomsInput}
                       onChange={(event) => setRoomsInput(event.target.value)}
-                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                      className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                     >
                       {roomsOptions.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -662,7 +665,7 @@ const Construction = () => {
                   <select
                     value={sortOrder}
                     onChange={(event) => setSortOrder(event.target.value)}
-                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none"
+                    className="mt-2 w-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100"
                   >
                     <option value="recent">Plus recents</option>
                     <option value="prix-asc">Prix croissant</option>
@@ -676,7 +679,7 @@ const Construction = () => {
                 <button
                   type="button"
                   onClick={applySearchFilters}
-                  className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 text-sm font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
                 >
                   <Search size={16} />
                   Rechercher
@@ -685,13 +688,13 @@ const Construction = () => {
             </div>
           </div>
 
-          <div className="mb-10 sm:mb-12 border border-gray-200 bg-slate-50 p-5 sm:p-7">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-3xl font-bold text-slate-700 leading-tight mb-4">
+          <div className="mb-12 border border-gray-200 bg-white p-5 sm:p-7 lg:p-8">
+            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.2fr_1.8fr] xl:items-start">
+              <div className="max-w-xl">
+                <h3 className="mb-4 text-3xl font-bold leading-tight text-slate-800">
                   Ici, ton projet passe avant tout.
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-base leading-7 text-gray-600">
                   Parce que chaque famille a son histoire, on t’accompagne du
                   premier plan à la remise des clés. On s’engage sur la qualité,
                   les délais et la transparence. Chaque détail est pensé pour
@@ -699,43 +702,45 @@ const Construction = () => {
                 </p>
               </div>
 
-              <div>
-                <div className="text-green-600 mb-3">
-                  <Clock size={34} />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <Clock size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
+                    Delais
+                  </h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Avec AFRICA, tu sais où tu vas. Livraison garantie, délais
+                    respectés, suivi carré. Pas de surprise, pas de retard caché.
+                  </p>
                 </div>
-                <h4 className="text-4xl font-bold text-slate-800 mb-2">
-                  Delais
-                </h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Avec AFRICA, tu sais où tu vas. Livraison garantie, délais
-                  respectés, suivi carré. Pas de surprise, pas de retard caché.
-                </p>
-              </div>
 
-              <div>
-                <div className="text-green-600 mb-3">
-                  <TrendingUp size={34} />
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <TrendingUp size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">Prix</h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Des maisons accessibles grâce à des partenaires fiables et une
+                    vraie maîtrise des coûts. Tu payes le juste prix, pour une
+                    qualité qui dure.
+                  </p>
                 </div>
-                <h4 className="text-4xl font-bold text-slate-800 mb-2">Prix</h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Des maisons accessibles grâce à des partenaires fiables et une
-                  vraie maîtrise des coûts. Tu payes le juste prix, pour une
-                  qualité qui dure.
-                </p>
-              </div>
 
-              <div>
-                <div className="text-green-600 mb-3">
-                  <Award size={34} />
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <Award size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
+                    Qualite
+                  </h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Des projets conçus selon des standards exigeants. Matériaux
+                    solides, équipements modernes, finitions propres. Un logement
+                    pensé pour durer, pas pour impressionner deux minutes
+                  </p>
                 </div>
-                <h4 className="text-4xl font-bold text-slate-800 mb-2">
-                  Qualite
-                </h4>
-                <p className="text-gray-600 leading-relaxed">
-                  Des projets conçus selon des standards exigeants. Matériaux
-                  solides, équipements modernes, finitions propres. Un logement
-                  pensé pour durer, pas pour impressionner deux minutes
-                </p>
               </div>
             </div>
           </div>
@@ -747,11 +752,11 @@ const Construction = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 sm:gap-8">
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="group bg-white shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                  className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                 >
                   <div className="relative h-56 overflow-hidden">
                     <img
@@ -761,7 +766,7 @@ const Construction = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute top-4 left-4 flex items-center space-x-2">
-                      <span className="bg-emerald-500 text-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                      <span className="bg-red-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
                         Disponible
                       </span>
                     </div>
@@ -780,13 +785,13 @@ const Construction = () => {
                       <div className="mb-4">
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-gray-600">Avancement</span>
-                          <span className="font-semibold text-green-600">
+                          <span className="font-semibold text-red-600">
                             {project.progress}%
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 h-2">
                           <div
-                            className="bg-green-600 h-2 transition-all duration-500"
+                            className="bg-red-600 h-2 transition-all duration-500"
                             style={{ width: `${project.progress}%` }}
                           ></div>
                         </div>
@@ -797,7 +802,7 @@ const Construction = () => {
                         {project.features.map((feature, idx) => (
                           <span
                             key={idx}
-                            className="flex items-center text-xs bg-green-50 text-green-700 px-2 py-1"
+                            className="flex items-center bg-red-50 px-2 py-1 text-xs text-red-700"
                           >
                             <CheckCircle size={12} className="mr-1" />
                             {feature}
@@ -810,13 +815,13 @@ const Construction = () => {
                         <div className="text-xs text-gray-500 mb-1">
                           A partir de
                         </div>
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-2xl font-bold text-red-600">
                           {formatPrice(project.priceFrom)}
                         </div>
                       </div>
                       <button
                         onClick={() => navigate(`/construction/${project.id}`)}
-                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold transition-colors"
+                        className="bg-red-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700"
                       >
                         Details
                       </button>
@@ -836,21 +841,24 @@ const Construction = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-14 sm:mb-16">
-            <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-green-800 mb-4">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="mb-4 text-3xl font-bold text-slate-900 sm:text-4xl">
                 {spotlightContent.title}
               </h2>
-              <p className="text-base sm:text-lg text-gray-600">
+              <p className="text-base text-gray-600 sm:text-lg">
                 {spotlightContent.description}
               </p>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
               {spotlightVideos.map((video, index) => (
-                <article key={`${video.url}-${index}`} className="border border-gray-200 bg-slate-50 p-3">
+                <article
+                  key={`${video.url}-${index}`}
+                  className="border border-gray-200 bg-white p-3"
+                >
                   <div className="aspect-video bg-black">
                     <iframe
                       className="w-full h-full"
@@ -882,13 +890,13 @@ const Construction = () => {
               Des avantages exclusifs pour votre projet de construction
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 sm:gap-8">
             {advantages.map((adv, index) => (
               <div
                 key={index}
-                className="group text-center p-6 sm:p-7 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                className="group border border-gray-100 bg-white p-6 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-green-100 text-green-600 mb-4 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                <div className="mb-4 inline-flex h-14 w-14 items-center justify-center bg-red-50 text-red-600 transition-colors group-hover:bg-red-600 group-hover:text-white sm:h-16 sm:w-16">
                   {adv.icon}
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
@@ -901,8 +909,8 @@ const Construction = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Notre processus de construction
@@ -911,11 +919,11 @@ const Construction = () => {
               Un accompagnement sur-mesure du debut a la fin de votre projet
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {process.map((step, index) => (
               <div key={index} className="relative">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-600 to-green-700 text-white text-2xl sm:text-3xl font-bold mb-6 shadow-lg">
+                  <div className="mb-6 inline-flex h-16 w-16 items-center justify-center bg-gradient-to-br from-red-600 to-red-700 text-2xl font-bold text-white shadow-lg sm:h-20 sm:w-20 sm:text-3xl">
                     {step.number}
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
@@ -924,7 +932,7 @@ const Construction = () => {
                   <p className="text-gray-600">{step.description}</p>
                 </div>
                 {index < process.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-green-600 to-transparent -translate-x-1/2" />
+                  <div className="absolute left-full top-10 hidden h-0.5 w-full -translate-x-1/2 bg-gradient-to-r from-red-600 to-transparent lg:block" />
                 )}
               </div>
             ))}
@@ -932,7 +940,7 @@ const Construction = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-white relative overflow-hidden">
+      <section className="relative overflow-hidden bg-gradient-to-br from-red-900 via-red-800 to-red-900 py-16 text-white sm:py-20">
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -943,25 +951,31 @@ const Construction = () => {
             }}
           />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="mb-6 text-3xl font-bold sm:text-4xl md:text-5xl">
               Pret a lancer votre projet ?
             </h2>
-            <p className="text-base sm:text-xl text-green-100 mb-10 leading-relaxed">
+            <p className="mb-10 text-base leading-relaxed text-red-100 sm:text-xl">
               Nos experts vous accompagnent gratuitement dans l'elaboration de
               votre projet de construction. Demandez votre devis personnalise
               des aujourd'hui.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button className="inline-flex items-center justify-center gap-3 bg-white text-green-900 px-8 sm:px-10 py-3.5 sm:py-4 font-semibold hover:bg-green-50 transition-colors shadow-lg">
+            <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
+              <a
+                href="tel:+2250778252525"
+                className="inline-flex items-center justify-center gap-3 bg-white px-8 py-3.5 font-semibold text-red-900 shadow-lg transition-colors hover:bg-red-50 sm:px-10 sm:py-4"
+              >
                 <Phone size={20} />
-                <span>+225 XX XX XX XX XX</span>
-              </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-8 sm:px-10 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors">
+                <span>+225 07 78 25 25 25</span>
+              </a>
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Demande%20de%20devis"
+                className="inline-flex items-center justify-center gap-3 border-2 border-white bg-transparent px-8 py-3.5 font-semibold text-white transition-colors hover:bg-white/10 sm:px-10 sm:py-4"
+              >
                 <Mail size={20} />
                 <span>Demander un devis</span>
-              </button>
+              </a>
             </div>
           </div>
         </div>

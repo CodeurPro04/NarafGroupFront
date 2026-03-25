@@ -612,13 +612,82 @@ const Properties = () => {
       {/* Properties Section */}
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <section className="mb-10 border border-[#cfe0ef] bg-[#d9e8f4] px-5 py-5 shadow-[0_12px_28px_rgba(15,23,42,0.06)] sm:px-6 sm:py-6">
+            <div className="space-y-4">
+              <h2 className="mx-auto max-w-3xl text-center text-2xl font-semibold leading-tight text-slate-950 sm:text-[1.9rem]">
+                Plus de 650 000 particuliers et professionnels ont deja choisi ABI pour leur acquisition de bien immobilier.
+              </h2>
+
+              <div className="grid gap-4 border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] sm:grid-cols-[150px_1fr] sm:gap-5">
+                <div className="h-[140px] overflow-hidden border border-slate-200 bg-slate-200 sm:h-[150px]">
+                  <img
+                    src={testimonials[activeTestimonial].image}
+                    alt={testimonials[activeTestimonial].meta}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                <div className="flex min-h-[140px] flex-col justify-between border border-slate-200 bg-[#fbfdff] px-5 py-4 sm:min-h-[150px] sm:px-6">
+                  <div>
+                    <p className="max-w-md text-sm leading-6 text-slate-700 sm:text-base">
+                      {testimonials[activeTestimonial].quote}
+                    </p>
+                    <p className="mt-3 text-sm font-semibold text-slate-900">
+                      {testimonials[activeTestimonial].author}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {testimonials[activeTestimonial].meta}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={previousTestimonial}
+                      aria-label="Temoignage precedent"
+                      className="text-sky-600 transition hover:text-sky-800"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <div className="flex items-center gap-1.5">
+                      {testimonials.map((_, index) => (
+                        <button
+                          key={`testimonial-dot-${index}`}
+                          type="button"
+                          aria-label={`Temoignage ${index + 1}`}
+                          onClick={() => setActiveTestimonial(index)}
+                          className={`h-1.5 rounded-full transition-all ${
+                            index === activeTestimonial
+                              ? "w-4 bg-sky-600"
+                              : "w-1.5 bg-sky-200 hover:bg-sky-400"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={nextTestimonial}
+                      aria-label="Temoignage suivant"
+                      className="text-sky-600 transition hover:text-sky-800"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <div className="mb-10 sm:mb-12">
             <div className="text-center mb-8 sm:mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
                 Trouvez le bien qui vous ressemble
               </h2>
+              <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
+                ABI vous aide a filtrer plus vite, comparer plus clairement et avancer sur des biens mieux documentes.
+              </p>
             </div>
-            <div className="mt-8 sm:mt-10 bg-white border border-gray-200 shadow-md p-4 sm:p-6">
+            <div className="mt-8 sm:mt-10 border border-gray-200 bg-white p-4 shadow-md sm:p-6">
               <div className="flex flex-col xl:flex-row gap-4">
                 <div className="flex-1 relative">
                   <Search
@@ -626,6 +695,7 @@ const Properties = () => {
                     size={20}
                   />
                   <input
+                    id="property-search"
                     type="text"
                     placeholder="Rechercher par ville, quartier ou type de bien..."
                     value={filters.search}
@@ -840,89 +910,13 @@ const Properties = () => {
               )}
             </div>
 
-            <div className="mt-10 sm:mt-12">
-              <section className="mx-auto mb-10 max-w-5xl bg-[#d9e8f4] px-4 py-5 sm:px-6 sm:py-6">
-                <div className="space-y-4">
-                  <h2 className="max-w-4xl text-2xl font-bold leading-tight text-slate-950 sm:text-[2.05rem]">
-                    Plus de 650 000 particuliers et professionnels ont deja
-                    choisi ABI pour leur acquisition de bien immobilier.
-                  </h2>
-
-                  <div className="mx-auto grid max-w-[720px] grid-cols-1 overflow-hidden bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)] sm:grid-cols-[150px_1fr]">
-                    <div className="h-[140px] bg-slate-200 sm:h-[150px]">
-                      <img
-                        src={testimonials[activeTestimonial].image}
-                        alt={testimonials[activeTestimonial].meta}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-
-                    <div className="flex min-h-[140px] flex-col justify-between px-5 py-4 sm:min-h-[150px] sm:px-8">
-                      <div>
-                        <p className="max-w-md text-[15px] leading-6 text-slate-700 sm:text-base">
-                          {testimonials[activeTestimonial].quote}
-                        </p>
-                        <p className="mt-3 text-sm font-semibold text-slate-900">
-                          {testimonials[activeTestimonial].author}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-400">
-                          {testimonials[activeTestimonial].meta}
-                        </p>
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-center gap-3">
-                        <button
-                          type="button"
-                          onClick={previousTestimonial}
-                          aria-label="Temoignage precedent"
-                          className="text-sky-600 transition hover:text-sky-800"
-                        >
-                          <ChevronLeft size={16} />
-                        </button>
-                        <div className="flex items-center gap-1.5">
-                          {testimonials.map((_, index) => (
-                            <button
-                              key={`testimonial-dot-${index}`}
-                              type="button"
-                              aria-label={`Temoignage ${index + 1}`}
-                              onClick={() => setActiveTestimonial(index)}
-                              className={`h-1.5 rounded-full transition-all ${
-                                index === activeTestimonial
-                                  ? "w-4 bg-sky-600"
-                                  : "w-1.5 bg-sky-200 hover:bg-sky-400"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={nextTestimonial}
-                          aria-label="Temoignage suivant"
-                          className="text-sky-600 transition hover:text-sky-800"
-                        >
-                          <ChevronRight size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              {/* nombre de propriete 
-              <p className="text-xl text-gray-600">
-                {loading
-                  ? "Chargement..."
-                  : `${filteredProperties.length} ${
-                      filteredProperties.length === 1
-                        ? "bien disponible"
-                        : "biens disponibles"
-                    }`}
-              </p> */}
-            </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12 overflow-x-auto pb-2">
+          <div
+            id="property-catalog"
+            className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12 overflow-x-auto pb-2"
+          >
             {getTabs().map((tab) => {
               const propertyType = propertyTypes.find((t) => t.slug === tab);
               return (
@@ -953,9 +947,12 @@ const Properties = () => {
                   {filteredProperties.map((property) => (
                     <div
                       key={property.id}
-                      className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:border-[#5ea8ff] hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]"
+                      className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]"
                     >
-                      <div className="relative h-[240px] overflow-hidden bg-[#eef3f7]">
+                      <Link
+                        to={`/property/${property.id}`}
+                        className="relative block h-[240px] overflow-hidden bg-[#eef3f7]"
+                      >
                         <img
                           src={property.images[0]}
                           alt={property.title}
@@ -969,7 +966,7 @@ const Properties = () => {
                           <CheckCircle size={13} className="text-[#5f85f5]" />
                           <span>Verified</span>
                         </div>
-                      </div>
+                      </Link>
 
                       <div className="p-4 sm:p-5">
                         <div className="text-[2rem] font-extrabold leading-none text-[#12a150]">
@@ -1021,7 +1018,10 @@ const Properties = () => {
                       className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
                     >
                       <div className="flex flex-col md:flex-row">
-                        <div className="md:w-1/3 relative h-64 md:h-auto">
+                        <Link
+                          to={`/property/${property.id}`}
+                          className="relative h-64 md:h-auto md:w-1/3"
+                        >
                           <img
                             src={property.images[0]}
                             alt={property.title}
@@ -1031,7 +1031,7 @@ const Properties = () => {
                                 "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
                             }}
                           />
-                        </div>
+                        </Link>
                         <div className="md:w-2/3 p-6">
                           <div className="flex justify-between items-start mb-4">
                             <div>
@@ -1207,14 +1207,20 @@ const Properties = () => {
             On t’accompagne du choix jusqu’à la remise des clés.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+            <a
+              href="#property-search"
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
+            >
               <Home size={20} />
               <span>Trouver mon bien</span>
-            </button>
-            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
+            </a>
+            <a
+              href="tel:+2250778252525"
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
+            >
               <Phone size={20} />
               <span>Parler à un conseiller</span>
-            </button>
+            </a>
           </div>
         </div>
       </section>

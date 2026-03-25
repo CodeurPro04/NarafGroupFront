@@ -83,7 +83,7 @@ const Home = () => {
   const defaultShowcaseSections = [
     {
       title: "Besoin d'un bien",
-      button_label: "Voir tous les articles",
+      button_label: "Voir tous les biens",
       button_link: "/properties",
       items: [],
     },
@@ -365,7 +365,7 @@ const Home = () => {
           setShowcaseSections([
             {
               title: "Besoin d'un bien",
-              button_label: "Voir tous les articles",
+              button_label: "Voir tous les biens",
               button_link: "/properties",
               items: pickRandomItems(propertiesList, 4).map(normalizePropertyItem),
             },
@@ -691,7 +691,7 @@ const Home = () => {
                     <div className="mt-6">
                       <Link
                         to={section.button_link || "#"}
-                        className="inline-flex items-center rounded-md bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                        className="inline-flex items-center border-0 bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                       >
                         {section.button_label}
                       </Link>
@@ -827,12 +827,13 @@ const Home = () => {
               {[0, 1, 2, 3].map((item) => (
                 <div
                   key={`partner-skeleton-${item}`}
-                  className="bg-white rounded-2xl p-6 shadow-sm"
+                  className="bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
                 >
-                  <SkeletonBlock className="h-16 w-16 rounded-2xl" />
-                  <SkeletonBlock className="h-6 w-3/4 mt-4" />
-                  <SkeletonBlock className="h-4 w-1/2 mt-2" />
-                  <SkeletonBlock className="h-4 w-2/3 mt-3" />
+                  <SkeletonBlock className="h-24 w-full" />
+                  <SkeletonBlock className="mt-5 h-5 w-20" />
+                  <SkeletonBlock className="mt-3 h-6 w-3/4" />
+                  <SkeletonBlock className="mt-3 h-4 w-1/2" />
+                  <SkeletonBlock className="mt-6 h-4 w-24" />
                 </div>
               ))}
             </div>
@@ -857,28 +858,31 @@ const Home = () => {
                   <Link
                     key={partner.uuid}
                     to={`/partners/${partner.uuid}`}
-                    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition block"
+                    className="group block bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.1)]"
                   >
-                    <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden">
+                    <div className="flex h-24 items-center justify-center bg-[linear-gradient(180deg,#f8fafc_0%,#eef3f8_100%)] px-6">
                       {partnerLogo ? (
                         <img
                           src={partnerLogo}
                           alt={partner.company_name}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                         />
                       ) : (
-                        <span className="text-sm font-semibold text-slate-500">
+                        <span className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
                           Logo
                         </span>
                       )}
                     </div>
-                    <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                    <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+                      Partenaire ABI
+                    </p>
+                    <h3 className="mt-3 text-xl font-semibold leading-snug text-slate-900 transition-colors group-hover:text-blue-700">
                       {partner.company_name}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="mt-2 text-sm font-medium text-slate-600">
                       {partner.company_type || "Entreprise"}
                     </p>
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="mt-3 text-xs uppercase tracking-[0.16em] text-slate-400">
                       {partner.city || "Localisation a definir"}
                     </p>
                   </Link>
@@ -900,14 +904,20 @@ const Home = () => {
             veux.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+            <a
+              href="tel:+2250778252525"
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
+            >
               <Phone size={20} />
-              <span>+225 XX XX XX XX XX</span>
-            </button>
-            <button className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
+              <span>+225 07 78 25 25 25</span>
+            </a>
+            <a
+              href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous"
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
+            >
               <Mail size={20} />
               <span>Prendre rendez-vous</span>
-            </button>
+            </a>
           </div>
         </div>
       </section>

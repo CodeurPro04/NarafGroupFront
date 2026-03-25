@@ -75,6 +75,14 @@ const Footer = () => {
               </li>
               <li>
                 <Link
+                  to="/abi/club-abi"
+                  className="text-gray-400 transition-colors hover:text-white"
+                >
+                  Club Pro
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/register?role=agent"
                   className="text-gray-400 transition-colors hover:text-white"
                 >
@@ -111,14 +119,24 @@ const Footer = () => {
                 <Phone size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Telephone</p>
-                  <p className="text-gray-400">+225 07 78 25 25 25</p>
+                  <a
+                    href="tel:+2250778252525"
+                    className="text-gray-400 transition-colors hover:text-white"
+                  >
+                    +225 07 78 25 25 25
+                  </a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Mail size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-gray-400">contact@africabuildinvest.com</p>
+                  <a
+                    href="mailto:contact@africabuildinvest.com"
+                    className="text-gray-400 transition-colors hover:text-white"
+                  >
+                    contact@africabuildinvest.com
+                  </a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">

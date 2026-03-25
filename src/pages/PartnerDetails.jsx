@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Building2, Globe, Mail, MapPin, Phone, Package, ShieldCheck } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { Building2, Package, ShieldCheck } from "lucide-react";
 import { getPartnerById } from "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
@@ -70,31 +70,49 @@ const PartnerDetails = () => {
     .find(Boolean);
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <section className="pt-24 pb-12 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f4f7fb_0%,#eef2f7_38%,#ffffff_100%)]">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-slate-950 pt-24 text-white">
+        <div className="absolute inset-0">
+          {coverImage ? (
+            <img
+              src={coverImage}
+              alt={partner?.company_name || "Partenaire"}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-slate-900">
+              <Building2 className="h-16 w-16 text-white/30" />
+            </div>
+          )}
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.78)_0%,rgba(15,23,42,0.84)_48%,rgba(15,23,42,0.92)_100%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 pb-14 sm:px-6 lg:px-8 lg:pb-16">
           {loading ? (
-            <div className="mt-5 space-y-3">
+            <div className="mt-6 space-y-3">
               <SkeletonBlock className="h-10 w-80" />
               <SkeletonBlock className="h-5 w-[28rem]" />
             </div>
           ) : (
-            <div className="mt-4">
-              <h1 className="text-3xl sm:text-5xl font-bold text-slate-900">{partner?.company_name || "Partenaire"}</h1>
-              <p className="mt-3 text-slate-600 text-lg">{partner?.company_type || "Entreprise partenaire"}</p>
+            <div className="mt-4 max-w-4xl">
+              <h1 className="text-3xl font-bold leading-tight sm:text-5xl">
+                {partner?.company_name || "Partenaire"}
+              </h1>
+              <p className="mt-4 max-w-3xl text-base leading-7 text-white/82 sm:text-lg">
+                {partner?.company_type || "Entreprise partenaire"}
+              </p>
             </div>
           )}
         </div>
       </section>
 
       <section className="py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {error && <p className="text-red-600">{error}</p>}
 
           {!error && loading && (
             <div className="space-y-8">
-              <div className="bg-white border border-slate-200 p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-8">
-                <SkeletonBlock className="h-[320px] sm:h-[460px] w-full" />
+              <div className="grid grid-cols-1 gap-8 bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.06)] sm:p-6 lg:grid-cols-[1.15fr_1fr]">
+                <SkeletonBlock className="h-[320px] w-full sm:h-[460px]" />
                 <div className="space-y-4">
                   <SkeletonBlock className="h-10 w-4/5" />
                   <SkeletonBlock className="h-6 w-full" />
@@ -113,80 +131,83 @@ const PartnerDetails = () => {
 
           {!error && !loading && partner && (
             <div className="space-y-8">
-              <div className="bg-white border border-slate-200 p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-8">
-                <div>
+              <div className="grid grid-cols-1 gap-8 bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.06)] sm:p-6 lg:grid-cols-[1.2fr_0.8fr]">
+                <div className="relative overflow-hidden bg-slate-100">
                   {coverImage ? (
                     <img
                       src={coverImage}
                       alt={partner.company_name}
-                      className="w-full h-[320px] sm:h-[460px] object-cover"
+                      className="h-[320px] w-full object-cover sm:h-[460px]"
                     />
                   ) : (
-                    <div className="w-full h-[320px] sm:h-[460px] bg-slate-100 flex items-center justify-center">
+                    <div className="flex h-[320px] w-full items-center justify-center bg-slate-100 sm:h-[460px]">
                       <Building2 className="h-10 w-10 text-slate-400" />
                     </div>
                   )}
+                  <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950/60 to-transparent" />
                 </div>
 
-                <div className="space-y-5">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-slate-900">{heroTitle}</h2>
-                  <p className="text-slate-700 text-lg leading-relaxed whitespace-pre-line">{heroDescription}</p>
+                <div className="flex flex-col justify-between gap-8">
+                  <div>
+                    <div className="inline-flex items-center bg-slate-100 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                      Profil partenaire
+                    </div>
+                    <h2 className="mt-5 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-[2.6rem]">
+                      {heroTitle}
+                    </h2>
+                    <p className="mt-5 text-sm font-semibold uppercase tracking-[0.18em] text-slate-400">
+                      {partner?.company_type || "Entreprise partenaire"}
+                    </p>
+                    <p className="mt-6 whitespace-pre-line text-base leading-7 text-slate-600 sm:text-lg">
+                      {heroDescription}
+                    </p>
+                  </div>
 
-                  {/*<div className="space-y-2 text-sm text-slate-600">
-                    <p className="inline-flex items-center gap-2">
-                      <MapPin size={16} className="text-blue-600" />{' '}
-                      {[partner.address, partner.city].filter(Boolean).join(", ") || "Adresse non renseignee"}
-                    </p>
-                    <p className="inline-flex items-center gap-2">
-                      <Phone size={16} className="text-blue-600" />{' '}
-                      {partner.phone || "Telephone non renseigne"}
-                    </p>
-                    <p className="inline-flex items-center gap-2">
-                      <Mail size={16} className="text-blue-600" />
-                      {partner.email || "Email non renseigne"}
-                    </p>
-                    site web 
-                    <p className="inline-flex items-center gap-2">
-                      <Globe size={16} className="text-blue-600" />
-                      {partner.website || "Site web non renseigne"}
-                    </p> 
-                  </div> */}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white border border-slate-200 p-6">
-                  <h3 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-7">
+                  <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
                     <ShieldCheck size={22} className="text-blue-600" />
                     Services proposes
                   </h3>
                   {serviceOffers.length === 0 ? (
                     <p className="mt-4 text-slate-600">Aucun service detaille pour le moment.</p>
                   ) : (
-                    <ul className="mt-4 space-y-3 text-slate-700">
+                    <div className="mt-5 grid gap-3 text-slate-700">
                       {serviceOffers.map((service, index) => (
-                        <li key={`${service}-${index}`} className="flex gap-2">
-                          <span className="mt-1 h-2 w-2 bg-blue-600 rounded-full" />
-                          <span>{service}</span>
-                        </li>
+                        <div
+                          key={`${service}-${index}`}
+                          className="bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition-colors hover:bg-slate-100"
+                        >
+                          {service}
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   )}
                 </div>
 
-                <div className="bg-white border border-slate-200 p-6">
-                  <h3 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                <div className="bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-7">
+                  <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
                     <Package size={22} className="text-blue-600" />
                     Produits
                   </h3>
                   {productShowcase.length === 0 ? (
                     <p className="mt-4 text-slate-600">Aucun produit detaille pour le moment.</p>
                   ) : (
-                    <div className="mt-4 space-y-4">
+                    <div className="mt-5 grid gap-4">
                       {productShowcase.map((product, index) => (
-                        <div key={`${product.title}-${index}`} className="p-4 bg-slate-50 border border-slate-200">
-                          <p className="font-semibold text-slate-900">{product.title || `Produit ${index + 1}`}</p>
-                          <p className="mt-2 text-sm text-slate-600">{product.description || "Description indisponible."}</p>
+                        <div
+                          key={`${product.title}-${index}`}
+                          className="bg-slate-50 px-4 py-4 transition-colors hover:bg-slate-100"
+                        >
+                          <p className="text-base font-semibold leading-7 text-slate-900">
+                            {product.title || `Produit ${index + 1}`}
+                          </p>
+                          <p className="mt-2 text-sm leading-7 text-slate-600">
+                            {product.description || "Description indisponible."}
+                          </p>
                         </div>
                       ))}
                     </div>

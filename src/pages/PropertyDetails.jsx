@@ -671,7 +671,7 @@ const PropertyDetails = () => {
  </div>
  <div>
  <div className="text-sm text-gray-500">Service client</div>
- <div className="font-medium">+225 XX XX XX XX XX</div>
+ <a href="tel:+2250778252525" className="font-medium hover:underline">+225 07 78 25 25 25</a>
  </div>
  </div>
  <div className="flex items-center space-x-3">
@@ -680,7 +680,7 @@ const PropertyDetails = () => {
  </div>
  <div>
  <div className="text-sm text-gray-500">Email</div>
- <div className="font-medium">contact@naraf-immo.ci</div>
+ <a href="mailto:contact@africabuildinvest.com" className="font-medium hover:underline">contact@africabuildinvest.com</a>
  </div>
  </div>
  </div>

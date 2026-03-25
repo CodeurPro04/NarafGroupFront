@@ -33,7 +33,7 @@ export const submenuPages = [
       "Des contenus relies aux vrais parcours du site public et pas a une simple vitrine d'information.",
   },
   {
-    path: "/abi/nos-intervenants",
+    path: "/abi/club-abi-diaspora",
     category: "abi",
     title: "Nos intervenants",
     topic: "les intervenants et les expertises mobilisees",
@@ -52,7 +52,7 @@ export const submenuPages = [
       "Une chaine d'expertise plus claire pour mieux piloter l'acquisition, la construction et l'investissement.",
   },
   {
-    path: "/abi/nos-agences",
+    path: "/abi/club-abi",
     category: "abi",
     title: "Nos agences",
     topic: "le reseau d'agences ABI",

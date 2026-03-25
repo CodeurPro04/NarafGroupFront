@@ -10,10 +10,8 @@ import {
   Award,
   ChevronRight,
   MapPin,
-  CheckCircle,
   Filter,
   Search,
-  Phone,
   Eye,
   Heart,
   Zap,
@@ -302,31 +300,35 @@ const Investment = () => {
 
 
   const OfferAccordion = ({ title, details, isOpen, onToggle }) => (
-    <div className="border-b border-slate-300/90">
+    <div
+      className="border-b border-slate-300/90 bg-transparent py-1"
+      style={{ overflowAnchor: "none" }}
+    >
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 py-5 text-left transition-colors duration-200 hover:text-[#0f62c9]"
+        className="flex w-full items-center justify-between gap-4 py-5 text-left"
       >
-        <span className="text-[1.2rem] font-medium tracking-[-0.02em] text-slate-950 sm:text-[1.35rem]">
+        <h3 className="text-lg font-semibold text-slate-950 sm:text-xl">
           {title}
-        </span>
+        </h3>
         <ChevronDown
           size={18}
-          className={`shrink-0 text-slate-500 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`shrink-0 text-slate-400 transition-transform duration-300 ease-out ${
             isOpen ? "rotate-180" : "rotate-0"
           }`}
         />
       </button>
+
       <div
-        className={`grid overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`grid overflow-hidden transition-all duration-500 ease-out ${
           isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
         <div className="min-h-0 overflow-hidden">
           <div
-            className={`origin-top pb-5 text-base leading-7 text-slate-600 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              isOpen ? "translate-y-0 scale-y-100" : "-translate-y-2 scale-y-95"
+            className={`pb-5 text-sm leading-6 text-slate-600 transition-all duration-500 ease-out sm:text-base ${
+              isOpen ? "translate-y-0" : "-translate-y-2"
             }`}
           >
             <p>{details}</p>
@@ -473,6 +475,19 @@ const Investment = () => {
     ),
   ];
 
+  const handleOfferToggle = (index) => {
+    const currentScrollY = window.scrollY;
+
+    setOpenOfferIndex((currentIndex) => (currentIndex === index ? -1 : index));
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: currentScrollY });
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: currentScrollY });
+      });
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <section
@@ -516,7 +531,7 @@ const Investment = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/login")}
-                  className="inline-flex items-center justify-center gap-2 bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
+                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
                 >
                   <Briefcase size={18} />
                   <span>Espace client</span>
@@ -527,7 +542,7 @@ const Investment = () => {
         </div>
       </section>
 
-      <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-10 sm:px-6 lg:-mt-10 lg:px-8">
+      <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-8 sm:px-6 lg:-mt-10 lg:px-8">
         <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
           <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
             {heroTabs.map((tab) => {
@@ -540,7 +555,7 @@ const Investment = () => {
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveHeroTab(tab.key)}
-                  className={`rounded-lg border px-3 py-3 text-left transition-all duration-200 ${
+                  className={`border px-3 py-3 text-left transition-all duration-200 ${
                     isActive
                       ? tabStyle.active
                       : `bg-[#f6f6f6] border-gray-200 text-slate-800 ${tabStyle.hover} hover:shadow-sm`
@@ -557,7 +572,7 @@ const Investment = () => {
                     }`}
                   />
                   <p
-                    className={`text-[1.2rem] leading-tight ${
+                    className={`text-base font-medium leading-tight sm:text-lg ${
                       isActive ? "text-white" : ""
                     }`}
                   >
@@ -571,37 +586,33 @@ const Investment = () => {
       </div>
 
       <section id="investment-catalog" className="bg-[#f4f3ef] py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-stretch">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
             <div>
-              <h2 className="mt-4 text-4xl sm:text-[2.7rem] font-bold tracking-[-0.04em] text-slate-950 leading-[0.98]">
+              <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.7rem]">
                 Nos offres d'investissement.
               </h2>
-              <p className="mt-6 max-w-[680px] text-lg leading-8 text-slate-600">
+              <p className="mt-5 max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
                 ABI structure plusieurs formats d'entree pour adapter l'investissement au type de projet, au niveau de risque et au profil de l'investisseur.
               </p>
-              <div className="mt-10">
+              <div className="mt-8">
                 {offerFamilies.map((offer, index) => (
                   <OfferAccordion
                     key={offer.title}
                     title={offer.title}
                     details={offer.details}
                     isOpen={openOfferIndex === index}
-                    onToggle={() =>
-                      setOpenOfferIndex((currentIndex) =>
-                        currentIndex === index ? -1 : index
-                      )
-                    }
+                    onToggle={() => handleOfferToggle(index)}
                   />
                 ))}
               </div>
-              <button
-                type="button"
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Brochure%20investissement"
                 className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
               >
                 <Mail size={16} />
                 Recevoir la brochure detaillee
-              </button>
+              </a>
             </div>
 
             <div className="self-stretch overflow-hidden bg-[#ddd5ca] shadow-[0_24px_50px_rgba(15,23,42,0.08)]">
@@ -616,49 +627,50 @@ const Investment = () => {
       </section>
 
       <section className="bg-white py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-[760px]">
-            <h3 className="mt-3 text-3xl sm:text-[2.7rem] font-bold tracking-[-0.03em] text-slate-950 leading-tight">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[760px] text-center">
+            <h3 className="mt-3 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.5rem]">
               Un cadre d'offre plus flexible et plus lisible.
             </h3>
           </div>
-          <div className="mt-8 max-w-[760px] mx-auto">
+          <div className="mx-auto mt-8 max-w-[760px]">
             {offerHighlights.map((item) => (
-              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.04)] text-center">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#f2f7fd] text-[#0f62c9]">
+              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 text-center shadow-[0_14px_28px_rgba(15,23,42,0.04)]">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#f2f7fd] text-[#0f62c9]">
                   {item.icon}
                 </div>
-                <h3 className="mt-4 text-sm font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
+                <h3 className="mt-4 text-base font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-10">
-            <div>
-              <h2 className="text-3xl sm:text-[2.7rem] font-bold text-gray-900 mb-3">
+      <section id="investment-opportunities" className="bg-white py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-10">
+            <div className="text-center">
+              <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-[2.5rem]">
                 Opportunites d'investissement
               </h2>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600 sm:text-base">
                 {filteredProjects.length} projet
                 {filteredProjects.length !== 1 ? "s" : ""} disponible
                 {filteredProjects.length !== 1 ? "s" : ""}
               </p>
               {isLoading && (
-                <div className="mt-2">
+                <div className="mt-2 flex justify-center">
                   <SkeletonBlock className="h-4 w-32" />
                 </div>
               )}
               {loadError && (
-                <p className="text-sm text-red-600 mt-2">{loadError}</p>
+                <p className="mt-2 text-sm text-red-600">{loadError}</p>
               )}
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full xl:w-auto">
-              <div className="relative flex-1 xl:flex-none">
+
+            <div className="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr]">
+              <div className="relative md:col-span-2 xl:col-span-1">
                 <Search
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                   size={20}
@@ -668,14 +680,14 @@ const Investment = () => {
                   placeholder="Rechercher un projet..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full xl:w-72 pl-12 pr-4 py-3 bg-white border-2 border-gray-200 focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none"
+                  className="w-full border border-gray-200 bg-white py-3 pl-12 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 />
               </div>
               <div className="relative">
                 <select
                   value={budgetFilter}
                   onChange={(e) => setBudgetFilter(e.target.value)}
-                  className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-medium w-full sm:w-auto"
+                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="tous">Tous les budgets</option>
                   <option value="0-5000000">0 - 5M XOF</option>
@@ -692,7 +704,7 @@ const Investment = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-medium w-full sm:w-auto"
+                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="roi_desc">Rendement decroissant</option>
                   <option value="roi_asc">Rendement croissant</option>
@@ -707,7 +719,7 @@ const Investment = () => {
             </div>
           </div>
 
-          <div className="flex overflow-x-auto gap-2 mb-8 pb-4">
+          <div className="mb-8 flex gap-2 overflow-x-auto pb-4">
             {filterOptions.map((filter) => (
               <button
                 key={filter}
@@ -724,7 +736,7 @@ const Investment = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 sm:gap-8">
               {Array.from({ length: 6 }).map((_, idx) => (
                 <PropertyCardSkeleton key={`investment-skeleton-${idx}`} />
               ))}
@@ -743,7 +755,7 @@ const Investment = () => {
                 return (
                   <div
                     key={project.id}
-                    className="group bg-white shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100"
+                    className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
                   >
                     <div className="relative h-56 overflow-hidden">
                       <img
@@ -801,7 +813,7 @@ const Investment = () => {
                       )}
                     </div>
                     <div className="p-5 sm:p-6">
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors mb-2">
+                      <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-blue-700">
                         {project.title}
                       </h3>
                       <div className="flex items-center text-gray-600 mb-4">
@@ -812,7 +824,7 @@ const Investment = () => {
                         {getExcerpt(project.description)}
                       </p>
                       <div className="space-y-4">
-                        <div className="text-center p-3 bg-gray-50">
+                        <div className="bg-gray-50 p-3 text-center">
                           <div className="text-sm text-gray-600 mb-1">
                             Rendement annuel estime
                           </div>
@@ -820,7 +832,7 @@ const Investment = () => {
                             {project.roi}
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           <button
                             onClick={() =>
                               navigate(`/investment/${project.id}`)
@@ -871,19 +883,19 @@ const Investment = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 items-center bg-white border border-gray-200 p-5 sm:p-8">
+      <section className="bg-slate-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 items-center gap-8 border border-gray-200 bg-white p-5 sm:p-8 lg:grid-cols-[1.05fr_1fr]">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
+              <h2 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
                 Investir dans la renovation
               </h2>
-              <p className="mt-4 text-base sm:text-lg text-gray-600 leading-relaxed">
+              <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg">
                 Profite d’opportunités à fort potentiel, avec un accompagnement
                 sérieux du début à la fin. On analyse, on exécute, on suit, on
                 optimise. Tu avances en confiance, même à distance.
               </p>
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
                   <h3 className="font-bold">Ticket d'entree flexible</h3>
                   <p>Pour investir selon ton budget, sans pression.</p>
@@ -913,67 +925,77 @@ const Investment = () => {
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+      <section className="bg-gray-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center sm:mb-16">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
               Pourquoi investir avec
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
                 AFRICA Build Investment ?
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="mx-auto max-w-3xl text-base text-gray-600 sm:text-lg">
               Une approche rigoureuse, transparente et pensée pour protéger ton argent.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 sm:gap-8">
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="group text-center p-6 sm:p-7 bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                className="group border border-gray-100 bg-white p-6 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 mb-6 group-hover:scale-110 transition-transform">
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center bg-blue-50 transition-transform group-hover:scale-110 sm:h-16 sm:w-16">
                   <div className="text-blue-600">{benefit.icon}</div>
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
                   {benefit.title}
                 </h3>
-                <p className="text-gray-600 mb-4">{benefit.description}</p>
-                <ul className="space-y-2 group text-center p-6 sm:p-7">
+                <p className="mb-4 text-gray-600">{benefit.description}</p>
+                <div className="space-y-2">
                   {benefit.features.map((feature, idx) => (
-                    <li
+                    <div
                       key={idx}
-                      className="flex items-center text-sm text-gray-500"
+                      className="text-sm text-gray-500"
                     >
-                      <CheckCircle
-                        size={14}
-                        className="text-emerald-500 mr-2"
-                      />
                       {feature}
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 bg-gradient-to-r from-slate-950 via-blue-900 to-blue-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
+      <section className="bg-gradient-to-r from-slate-950 via-blue-900 to-blue-950 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="mb-6 text-3xl font-bold text-white sm:text-4xl md:text-5xl">
               Prêt à donner plus de valeur à votre épargne ?
             </h2>
-            <p className="text-base sm:text-xl text-blue-100 mb-10 leading-relaxed">
+            <p className="mb-10 text-base leading-relaxed text-blue-100 sm:text-xl">
               Accédez à des opportunités sélectionnées et à un accompagnement premium tout au long de votre investissement.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
-                <Phone size={22} />
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20contact%20investissement"
+                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl"
+              >
+                <Mail size={22} />
                 <span>Parler a un expert</span>
-              </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
+              </a>
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("investment-opportunities")
+                    ?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    })
+                }
+                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl"
+              >
                 <FileText size={22} />
                 <span>Découvrir les opportunités</span>
               </button>

@@ -109,13 +109,13 @@ const Header = () => {
             icon: Building2,
           },
           {
-            path: "/abi/nos-intervenants",
+            path: "/abi/club-abi-diaspora",
             label: "Club ABI Diaspora",
             description: "Identifiez les acteurs et experts mobilises autour de vos projets.",
             icon: UserRound,
           },
           {
-            path: "/abi/nos-agences",
+            path: "/abi/club-abi",
             label: "Club Pro",
             description: "Retrouvez notre reseau et nos points de presence.",
             icon: Landmark,
@@ -570,6 +570,15 @@ const Header = () => {
                 )}
               </div>
             ))}
+
+            <Link
+              to="/partnership"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:bg-gray-50"
+            >
+              <Handshake size={18} />
+              Devenir partenaire
+            </Link>
 
             {!isAuthenticated ? (
               <button

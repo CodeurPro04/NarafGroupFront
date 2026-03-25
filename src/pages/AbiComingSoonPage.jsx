@@ -1,4 +1,4 @@
-import { ArrowRight, Clock3, Sparkles } from "lucide-react";
+import { ArrowRight, Clock3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AbiComingSoonPage = ({
@@ -34,11 +34,7 @@ const AbiComingSoonPage = ({
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/15 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-              <Sparkles size={16} />
-              <span>{eyebrow}</span>
-            </div>
-            <h1 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
               {title}
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
@@ -67,7 +63,7 @@ const AbiComingSoonPage = ({
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                to="/abi/qui-sommes-nous"
+                to="/"
                 className={`inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white transition ${theme.button}`}
               >
                 Retour a ABI
