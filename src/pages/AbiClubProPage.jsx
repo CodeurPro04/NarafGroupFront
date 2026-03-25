@@ -2,15 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
-  BriefcaseBusiness,
   CalendarRange,
   Check,
   ChevronDown,
   CreditCard,
-  FileSignature,
+  FileBadge2,
   Mail,
   Network,
+  Settings2,
   ShieldCheck,
+  Sparkles,
+  X,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
@@ -47,6 +49,24 @@ const membershipItems = [
   "Pourquoi rejoindre : accelerer l'acces a des deals de qualite, partager l'expertise et s'inscrire dans un reseau plus structure.",
 ];
 
+const membershipCards = [
+  {
+    title: "Conditions",
+    text: "profil lie aux secteurs de la construction, des infrastructures, de l'investissement, du developpement ou a un interet fort pour l'ecosysteme ABI.",
+    icon: FileBadge2,
+  },
+  {
+    title: "Modalites",
+    text: "inscription via la plateforme, evaluation par l'equipe ABI et orientation selon le format d'adhesion le plus adapte.",
+    icon: Settings2,
+  },
+  {
+    title: "Pourquoi rejoindre",
+    text: "accelerer l'acces a des deals de qualite, partager l'expertise et s'inscrire dans un reseau plus structure.",
+    icon: Sparkles,
+  },
+];
+
 const highlights = [
   {
     value: "Reseau",
@@ -67,9 +87,8 @@ const highlights = [
 ];
 
 const subscriptionPlans = {
-  particuliers: {
-    label: "Particuliers",
-    price: "75 000 FCFA / an",
+  investisseur: {
+    label: "Investisseur",
     image:
       "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=1400&q=80",
     items: [
@@ -81,8 +100,7 @@ const subscriptionPlans = {
     ],
   },
   entreprises: {
-    label: "Entreprises",
-    price: "250 000 FCFA / an",
+    label: "Entreprise",
     image:
       "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&q=80",
     items: [
@@ -94,6 +112,66 @@ const subscriptionPlans = {
     ],
   },
 };
+
+const africanCountries = [
+  "Afrique du Sud",
+  "Algerie",
+  "Angola",
+  "Benin",
+  "Botswana",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Cameroun",
+  "Comores",
+  "Congo",
+  "Cote d'Ivoire",
+  "Djibouti",
+  "Egypte",
+  "Erythree",
+  "Eswatini",
+  "Ethiopie",
+  "Gabon",
+  "Gambie",
+  "Ghana",
+  "Guinee",
+  "Guinee-Bissau",
+  "Guinee equatoriale",
+  "Kenya",
+  "Lesotho",
+  "Liberia",
+  "Libye",
+  "Madagascar",
+  "Malawi",
+  "Mali",
+  "Maroc",
+  "Maurice",
+  "Mauritanie",
+  "Mozambique",
+  "Namibie",
+  "Niger",
+  "Nigeria",
+  "Ouganda",
+  "Republique centrafricaine",
+  "Republique democratique du Congo",
+  "Rwanda",
+  "Sao Tome-et-Principe",
+  "Senegal",
+  "Seychelles",
+  "Sierra Leone",
+  "Somalie",
+  "Soudan",
+  "Soudan du Sud",
+  "Tanzanie",
+  "Tchad",
+  "Togo",
+  "Tunisie",
+  "Zambie",
+  "Zimbabwe",
+];
+
+const inputClassName =
+  "mt-2 w-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#0f62c9] focus:ring-4 focus:ring-[#0f62c9]/10";
 
 const ClubAccordion = ({ title, icon: Icon, items, isOpen, onToggle }) => (
   <div className="border-b border-slate-200 bg-transparent py-1">
@@ -148,12 +226,55 @@ const ClubAccordion = ({ title, icon: Icon, items, isOpen, onToggle }) => (
 const AbiClubProPage = () => {
   const navigate = useNavigate();
   const [openSection, setOpenSection] = useState(0);
-  const [activePlan, setActivePlan] = useState("particuliers");
+  const [activePlan, setActivePlan] = useState("investisseur");
+  const [isMembershipModalOpen, setIsMembershipModalOpen] = useState(false);
+  const initialMembershipForm = {
+    fullName: "",
+    email: "",
+    phone: "",
+    company: "",
+    role: "",
+    country: "",
+    message: "",
+  };
+  const [membershipForm, setMembershipForm] = useState(initialMembershipForm);
 
   const currentPlan = subscriptionPlans[activePlan];
 
   const handleAccordionToggle = (index) => {
     setOpenSection((currentIndex) => (currentIndex === index ? -1 : index));
+  };
+
+  const handleMembershipFormChange = (event) => {
+    const { name, value } = event.target;
+    setMembershipForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleCloseMembershipModal = () => {
+    setIsMembershipModalOpen(false);
+    setMembershipForm(initialMembershipForm);
+  };
+
+  const handleMembershipSubmit = (event) => {
+    event.preventDefault();
+
+    const subject = `Demande d'adhesion Club Pro - ${currentPlan.label}`;
+    const body = [
+      `Profil : ${currentPlan.label}`,
+      `Nom complet : ${membershipForm.fullName}`,
+      `Email : ${membershipForm.email}`,
+      `Telephone : ${membershipForm.phone || "Non renseigne"}`,
+      `Entreprise : ${membershipForm.company || "Non renseignee"}`,
+      `Fonction : ${membershipForm.role || "Non renseignee"}`,
+      `Pays : ${membershipForm.country || "Non renseigne"}`,
+      "",
+      "Message :",
+      membershipForm.message || "Aucun message complementaire.",
+    ].join("\n");
+
+    window.location.href = `mailto:contact@africabuildinvest.com?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -249,14 +370,37 @@ const AbiClubProPage = () => {
               isOpen={openSection === 2}
               onToggle={() => handleAccordionToggle(2)}
             />
+          </div>
+        </div>
+      </section>
 
-            <ClubAccordion
-              title="Adhesion"
-              icon={FileSignature}
-              items={membershipItems}
-              isOpen={openSection === 3}
-              onToggle={() => handleAccordionToggle(3)}
-            />
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-14">
+          <div className="mx-auto max-w-[920px]">
+            <h2 className="text-center text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
+              Adhesion
+            </h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {membershipCards.map((item) => {
+                const Icon = item.icon;
+                return (
+                <div
+                  key={item.title}
+                  className="bg-[linear-gradient(180deg,#ffffff_0%,#f7fafe_100%)] px-5 py-5 text-center shadow-[0_14px_30px_rgba(15,23,42,0.04)]"
+                >
+                  <div className="mx-auto flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
+                    {item.text}
+                  </p>
+                </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -302,12 +446,7 @@ const AbiClubProPage = () => {
               </div>
 
               <div>
-                <div className="inline-flex bg-[#0f62c9] px-5 py-3 text-white shadow-[0_12px_24px_rgba(15,98,201,0.18)]">
-                  <p className="text-lg font-semibold tracking-[0.04em] sm:text-[1.45rem]">
-                    {currentPlan.price}
-                  </p>
-                </div>
-                <div className="mt-8 divide-y divide-slate-300/80 border-y border-slate-300/80">
+                <div className="divide-y divide-slate-300/80 border-y border-slate-300/80">
                   {currentPlan.items.map((item) => (
                     <div key={item} className="flex items-start gap-4 py-5">
                       <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-[#0f62c9]">
@@ -323,10 +462,11 @@ const AbiClubProPage = () => {
                 <div className="mt-8">
                   <button
                     type="button"
+                    onClick={() => setIsMembershipModalOpen(true)}
                     className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
                   >
                     <CreditCard size={16} />
-                    Souscrire a l'offre {currentPlan.label}
+                    Adhérer
                   </button>
                 </div>
               </div>
@@ -334,6 +474,165 @@ const AbiClubProPage = () => {
           </div>
         </div>
       </section>
+
+      {isMembershipModalOpen ? (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/60 px-4 py-6 backdrop-blur-sm">
+          <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto bg-white shadow-[0_30px_80px_rgba(15,23,42,0.32)]">
+            <button
+              type="button"
+              onClick={handleCloseMembershipModal}
+              className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center border border-slate-200 bg-white text-slate-500 transition hover:text-slate-900"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="bg-[linear-gradient(180deg,#0f62c9_0%,#084896_100%)] px-6 py-8 text-white sm:px-8">
+                <h2 className="text-3xl font-semibold leading-tight">
+                  Formulaire d'adhésion {currentPlan.label.toLowerCase()}.
+                </h2>
+                <p className="mt-4 text-sm leading-7 text-white/82 sm:text-base">
+                  Renseignez vos informations pour transmettre une demande d'adhésion claire et structurée à l'équipe ABI.
+                </p>
+                <div className="mt-8 space-y-3 border-t border-white/15 pt-6">
+                  {currentPlan.items.slice(0, 3).map((item) => (
+                    <div key={item} className="flex items-start gap-3">
+                      <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center text-white">
+                        <Check size={16} strokeWidth={2.4} />
+                      </div>
+                      <p className="text-sm leading-6 text-white/85">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <form onSubmit={handleMembershipSubmit} className="bg-[#f7f9fc] px-6 py-8 sm:px-8">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">Nom complet</span>
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={membershipForm.fullName}
+                      onChange={handleMembershipFormChange}
+                      className={inputClassName}
+                      placeholder="Votre nom complet"
+                      required
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">Email</span>
+                    <input
+                      type="email"
+                      name="email"
+                      value={membershipForm.email}
+                      onChange={handleMembershipFormChange}
+                      className={inputClassName}
+                      placeholder="vous@exemple.com"
+                      required
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">Telephone</span>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={membershipForm.phone}
+                      onChange={handleMembershipFormChange}
+                      className={inputClassName}
+                      placeholder="+33 07 51 52 10 63"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">Pays</span>
+                    <input
+                      type="text"
+                      name="country"
+                      value={membershipForm.country}
+                      onChange={handleMembershipFormChange}
+                      list="african-countries"
+                      className={inputClassName}
+                      placeholder="Recherchez puis sélectionnez votre pays"
+                    />
+                    <datalist id="african-countries">
+                      {africanCountries.map((country) => (
+                        <option key={country} value={country} />
+                      ))}
+                    </datalist>
+                  </label>
+                </div>
+
+                <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">
+                      {activePlan === "entreprises" ? "Entreprise" : "Structure d'investissement"}
+                    </span>
+                    <input
+                      type="text"
+                      name="company"
+                      value={membershipForm.company}
+                      onChange={handleMembershipFormChange}
+                      className={inputClassName}
+                      placeholder={
+                        activePlan === "entreprises"
+                          ? "Nom de votre entreprise"
+                          : "Nom de votre structure"
+                      }
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="text-sm font-medium text-slate-700">Fonction</span>
+                    <input
+                      type="text"
+                      name="role"
+                      value={membershipForm.role}
+                      onChange={handleMembershipFormChange}
+                      className={inputClassName}
+                      placeholder="Votre fonction"
+                    />
+                  </label>
+                </div>
+
+                <label className="mt-5 block">
+                  <span className="text-sm font-medium text-slate-700">Message</span>
+                  <textarea
+                    name="message"
+                    value={membershipForm.message}
+                    onChange={handleMembershipFormChange}
+                    rows={5}
+                    className={`${inputClassName} resize-none`}
+                    placeholder="Precisez votre profil, votre interet pour le club et ce que vous recherchez."
+                  />
+                </label>
+
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+                  >
+                    <Mail size={16} />
+                    Envoyer la demande
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCloseMembershipModal}
+                    className="inline-flex items-center justify-center border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Fermer
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <section className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">

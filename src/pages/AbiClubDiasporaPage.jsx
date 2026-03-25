@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
-  BadgeCheck,
   ChevronDown,
+  FileBadge2,
   Globe2,
   Mail,
+  Settings2,
+  Sparkles,
   Users,
   Workflow,
 } from "lucide-react";
@@ -42,6 +44,24 @@ const membershipItems = [
   "Profil d'investisseur : resident de la diaspora ou soutien avere au developpement local.",
   "Processus de KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.",
   "Pourquoi rejoindre : permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.",
+];
+
+const membershipCards = [
+  {
+    title: "Profil d'investisseur",
+    text: "resident de la diaspora ou soutien avere au developpement local.",
+    icon: FileBadge2,
+  },
+  {
+    title: "Processus",
+    text: "KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.",
+    icon: Settings2,
+  },
+  {
+    title: "Pourquoi rejoindre",
+    text: "permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.",
+    icon: Sparkles,
+  },
 ];
 
 const highlights = [
@@ -128,7 +148,7 @@ const AbiClubDiasporaPage = () => {
         primaryLabel="Voir les opportunites"
         secondaryLabel="Contacter ABI"
         secondaryIcon={Mail}
-        title="Club ABI Diaspora, une facon plus claire d'investir ensemble dans des projets a impact."
+        title="Trouver des opportunites et de reels avantages."
         descriptionLines={[
           "Africa Build Investment aide la diaspora a acceder a des projets structures, a comprendre les vehicules d'investissement et a se positionner dans un cadre collectif plus lisible.",
           "Le Club ABI Diaspora rapproche epargne, expertise et execution terrain pour transformer l'intention d'investir en action mieux cadree.",
@@ -216,16 +236,37 @@ const AbiClubDiasporaPage = () => {
                 setOpenSection((currentIndex) => (currentIndex === 2 ? -1 : 2))
               }
             />
+          </div>
+        </div>
+      </section>
 
-            <DiasporaAccordion
-              title="Conditions d'adhesion"
-              icon={BadgeCheck}
-              items={membershipItems}
-              isOpen={openSection === 3}
-              onToggle={() =>
-                setOpenSection((currentIndex) => (currentIndex === 3 ? -1 : 3))
-              }
-            />
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-14">
+          <div className="mx-auto max-w-[920px]">
+            <h2 className="text-center text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
+              Conditions d'adhesion
+            </h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {membershipCards.map((item) => {
+                const Icon = item.icon;
+                return (
+                <div
+                  key={item.title}
+                  className="bg-[linear-gradient(180deg,#ffffff_0%,#f7fafe_100%)] px-5 py-5 text-center shadow-[0_14px_30px_rgba(15,23,42,0.04)]"
+                >
+                  <div className="mx-auto flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white">
+                    <Icon size={18} />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
+                    {item.text}
+                  </p>
+                </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
