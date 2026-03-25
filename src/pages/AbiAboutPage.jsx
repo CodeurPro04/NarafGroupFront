@@ -5,19 +5,11 @@ import {
   BriefcaseBusiness,
   Building2,
   ChevronDown,
-  Globe2,
   Handshake,
   Landmark,
   Leaf,
   Mail,
   MapPinned,
-  Network,
-  ShieldCheck,
-  Users,
-  CalendarRange,
-  FileSignature,
-  Workflow,
-  BadgeCheck,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
@@ -63,52 +55,8 @@ const agencyServices = [
   "Point de contact pour investisseurs et partenaires.",
 ];
 
-const proClubObjectives = [
-  "Faciliter l'acces a des opportunites d'investissement qualifiees.",
-  "Stimuler les partenariats public-prive et les co-investissements.",
-  "Promouvoir les bonnes pratiques en matiere d'eco-construction et d'impact social.",
-  "Renforcer les capacites et le reseautage des membres.",
-];
-
-const proClubBenefits = [
-  "Acces prioritaire aux projets et due diligences preselectionnees.",
-  "Sessions de matchmaking cible avec porteurs de projets et co-investisseurs.",
-  "Invitations exclusives a des evenements, masterclasses et visites de sites.",
-  "Bulletins d'opportunites et analyses de marche periodiques.",
-  "Acces a un repertoire d'experts : technique, juridique, financier, ESG.",
-];
-
-const proClubActivities = [
-  "Rencontres trimestrielles, physiques et virtuelles, et forums thematiques.",
-  "Programmes de mentoring et d'acceleration de projets.",
-  "Ateliers de formation et partenariats academiques.",
-  "Missions d'etude et visites de projets sur le terrain.",
-];
-
-const diasporaObjectives = [
-  "Canaliser l'epargne de la diaspora vers des projets viables et transparents.",
-  "Structurer des vehicules d'investissement : fonds ou SPV adaptes aux besoins locaux.",
-  "Favoriser le transfert de competences, de reseaux et de technologies.",
-  "Assurer un suivi rigoureux des retours financiers et de l'impact social.",
-];
-
-const diasporaBenefits = [
-  "Acces a des deals preselectionnes et co-investissements securises.",
-  "Due diligence consolidee et conseil en structuration financiere.",
-  "Gouvernance claire et reporting regulier sur performance et impact.",
-  "Reduction des risques via syndication et partenariats locaux.",
-  "Evenements dedies, webinaires et rencontres de networking.",
-];
-
-const diasporaOperations = [
-  "Selection et preselection de projets par l'equipe Africa Build Investment.",
-  "Mise en place de structures juridiques et financieres pour chaque deal.",
-  "Gouvernance participative avec comite d'investissement et reporting trimestriel.",
-  "Options d'investissement flexibles : ticket individuel, co-investissement, fonds.",
-];
-
 const listItemClass =
-  "flex gap-3 border-b border-slate-200 pb-3 last:border-b-0 last:pb-0";
+  "border-b border-slate-200 pb-3 last:border-b-0 last:pb-0";
 
 const AccordionCard = ({
   title,
@@ -174,7 +122,6 @@ const AccordionCard = ({
           >
             {items?.map((item) => (
               <div key={item} className={listItemClass}>
-                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
                 <p className="text-sm leading-6 text-slate-600 sm:text-base">{item}</p>
               </div>
             ))}
@@ -189,8 +136,6 @@ const AccordionCard = ({
 const AbiAboutPage = () => {
   const navigate = useNavigate();
   const [openAgencyAccordion, setOpenAgencyAccordion] = useState(0);
-  const [openProClubAccordion, setOpenProClubAccordion] = useState(0);
-  const [openDiasporaAccordion, setOpenDiasporaAccordion] = useState(0);
 
   return (
     <div className="bg-[linear-gradient(180deg,#f5f8fd_0%,#f9f4ec_42%,#ffffff_100%)] text-slate-900">
@@ -231,7 +176,7 @@ const AbiAboutPage = () => {
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <a
-                  href="tel:+2250778252525"
+                  href="tel:+330751521063"
                   className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
                 >
                   Parler a notre equipe
@@ -425,226 +370,6 @@ const AbiAboutPage = () => {
           </div>
         </div>
       </section>
-      <section className="relative overflow-hidden border-t border-slate-200 bg-[#f7f9fc]">
-        <div className="absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,#d6e7fb_0%,rgba(214,231,251,0)_72%)]" />
-        <div className="relative mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-16 xl:gap-14">
-          <div className="self-stretch">
-            <div className="h-full overflow-hidden bg-[#d9e8fb] shadow-[0_18px_38px_rgba(15,23,42,0.06)]">
-              <img
-                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1400&q=80"
-                alt="Reseau d'investisseurs et de promoteurs"
-                className="h-full min-h-[320px] w-full object-cover object-center sm:min-h-[420px]"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-6 self-stretch">
-            <div className="max-w-[620px]">
-              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
-                Un reseau exclusif pour accelerer les projets, les partenariats et les investissements.
-              </h2>
-              <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
-                Le Club Africa Build Investment reunit investisseurs, promoteurs,
-                professionnels de la construction, experts ESG et decideurs publics engages
-                dans la transformation des infrastructures et de l'immobilier en Afrique.
-              </p>
-              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                Le Club favorise le partage d'opportunites, l'acceleration de projets et la co-construction de solutions durables.
-              </p>
-            </div>
-
-            <div className="grid gap-2">
-              <AccordionCard
-                title="Objectifs"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={Network}
-                items={proClubObjectives}
-                iconWrapperClassName="bg-[#0f62c9] text-white"
-                isOpen={openProClubAccordion === 0}
-                onToggle={() =>
-                  setOpenProClubAccordion((currentIndex) =>
-                    currentIndex === 0 ? -1 : 0
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Avantages pour les membres"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={ShieldCheck}
-                items={proClubBenefits}
-                isOpen={openProClubAccordion === 1}
-                onToggle={() =>
-                  setOpenProClubAccordion((currentIndex) =>
-                    currentIndex === 1 ? -1 : 1
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Activites principales"
-                icon={CalendarRange}
-                items={proClubActivities}
-                isOpen={openProClubAccordion === 2}
-                onToggle={() =>
-                  setOpenProClubAccordion((currentIndex) =>
-                    currentIndex === 2 ? -1 : 2
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Adhesion"
-                icon={FileSignature}
-                isOpen={openProClubAccordion === 3}
-                onToggle={() =>
-                  setOpenProClubAccordion((currentIndex) =>
-                    currentIndex === 3 ? -1 : 3
-                  )
-                }
-              >
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600">
-                    Conditions : profil professionnel lie aux secteurs de la construction,
-                    des infrastructures, de l'investissement ou du developpement.
-                  </p>
-                </div>
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600">
-                    Modalites : inscription via la plateforme, evaluation par le comite du Club
-                    et versement d'une cotisation annuelle. Les tarifs et niveaux d'adhesion sont disponibles sur demande.
-                  </p>
-                </div>
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <div>
-                    <p className="text-sm font-semibold text-slate-950">Pourquoi rejoindre</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
-                      Accelerer l'acces a des deals de qualite, partager l'expertise, co-construire des projets a impact et s'inscrire durablement dans l'ecosysteme africain de la construction et de l'investissement.
-                    </p>
-                  </div>
-                </div>
-              </AccordionCard>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="bg-[#d8b4118d]">
-        <div className="mx-auto grid max-w-[1180px] items-stretch gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-16 xl:gap-14">
-          <div className="grid gap-6 self-stretch">
-            <div className="max-w-[620px]">
-              <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
-                Investir collectivement dans des projets a impact en Afrique.
-              </h2>
-              <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
-                Le Club Deal Diaspora reunit des membres de la diaspora africaine souhaitant investir ensemble dans des projets d'infrastructure, d'immobilier et de developpement local en Afrique.
-              </p>
-            </div>
-
-            <div className="grid gap-0">
-              <AccordionCard
-                title="Objectifs"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={Globe2}
-                items={diasporaObjectives}
-                className="border-black/8"
-                titleClassName="text-base font-semibold text-slate-950"
-                isOpen={openDiasporaAccordion === 0}
-                onToggle={() =>
-                  setOpenDiasporaAccordion((currentIndex) =>
-                    currentIndex === 0 ? -1 : 0
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Avantages pour les membres"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={Users}
-                items={diasporaBenefits}
-                className="border-black/8"
-                titleClassName="text-base font-semibold text-slate-950"
-                isOpen={openDiasporaAccordion === 1}
-                onToggle={() =>
-                  setOpenDiasporaAccordion((currentIndex) =>
-                    currentIndex === 1 ? -1 : 1
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Fonctionnement"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={Workflow}
-                items={diasporaOperations}
-                className="border-black/8"
-                titleClassName="text-base font-semibold text-slate-950"
-                isOpen={openDiasporaAccordion === 2}
-                onToggle={() =>
-                  setOpenDiasporaAccordion((currentIndex) =>
-                    currentIndex === 2 ? -1 : 2
-                  )
-                }
-              />
-
-              <AccordionCard
-                title="Conditions d'adhesion"
-                buttonClassName="flex w-full items-center justify-between gap-4 py-3 text-left"
-                contentClassName="grid gap-2 pb-3 text-sm leading-6 text-slate-600"
-                icon={BadgeCheck}
-                className="border-black/8"
-                titleClassName="text-base font-semibold text-slate-950"
-                isOpen={openDiasporaAccordion === 3}
-                onToggle={() =>
-                  setOpenDiasporaAccordion((currentIndex) =>
-                    currentIndex === 3 ? -1 : 3
-                  )
-                }
-              >
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
-                    Profil d'investisseur : resident de la diaspora ou soutien avere au developpement local.
-                  </p>
-                </div>
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <p className="text-sm leading-7 text-slate-600 sm:text-base">
-                    Processus de KYC/AML, validation par le comite et engagement financier minimal par deal selon l'opportunite.
-                  </p>
-                </div>
-                <div className={listItemClass}>
-                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#0f62c9]" />
-                  <div>
-                    <p className="text-base font-semibold text-slate-950 sm:text-lg">Pourquoi rejoindre</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600 sm:text-base">
-                      Permettre a la diaspora d'investir de maniere collective, securisee et impactante tout en contribuant au developpement durable des territoires d'origine.
-                    </p>
-                  </div>
-                </div>
-              </AccordionCard>
-            </div>
-          </div>
-
-          <div className="self-stretch">
-            <div className="h-full overflow-hidden bg-[#d7c1a0] shadow-[0_20px_42px_rgba(15,23,42,0.08)]">
-              <img
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&q=80"
-                alt="Club Deal Diaspora"
-                className="h-full min-h-[320px] w-full object-cover object-center sm:min-h-[420px]"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="border-t border-slate-200 bg-[#f7f9fc]">
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
           <div className="grid gap-6 border border-slate-200 bg-white px-6 py-8 shadow-[0_16px_36px_rgba(15,23,42,0.04)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
@@ -659,7 +384,7 @@ const AbiAboutPage = () => {
 
             <div className="flex flex-wrap items-center gap-4">
               <a
-                href="sms:+2250778252525"
+                href="sms:+330751521063"
                 className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
               >
                 <Mail size={16} />

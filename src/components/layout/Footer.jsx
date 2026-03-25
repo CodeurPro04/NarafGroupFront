@@ -120,10 +120,10 @@ const Footer = () => {
                 <div>
                   <p className="font-medium">Telephone</p>
                   <a
-                    href="tel:+2250778252525"
+                    href="tel:+330751521063"
                     className="text-gray-400 transition-colors hover:text-white"
                   >
-                    +225 07 78 25 25 25
+                    +33 07 51 52 10 63
                   </a>
                 </div>
               </div>
@@ -155,7 +155,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
-          <p>© {currentYear} NARAF GROUPE SARL. Tous droits reserves.
+          <p>© {currentYear} E-nova digital business. Tous droits reserves.
           </p>
           <p className="mt-2 text-sm">
             <Link to="/legal" className="transition-colors hover:text-gray-400">

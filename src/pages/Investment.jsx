@@ -501,7 +501,7 @@ const Investment = () => {
         <div
           className="absolute inset-0 opacity-0"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,120,54,0.88),rgba(18,166,87,0.82))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,190,104,0.84),rgba(12,190,104,0.72))]" />
         <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:px-8">
           <div className="relative z-10 flex max-w-4xl items-center py-[6.75rem] lg:py-32">
             <div>

@@ -652,7 +652,7 @@ const ConstructionDetails = () => {
                     <div className="text-sm text-gray-500">
                       Service client
                     </div>{" "}
-                    <a href="tel:+2250778252525" className="font-medium hover:underline">+225 07 78 25 25 25</a>{" "}
+                    <a href="tel:+330751521063" className="font-medium hover:underline">+33 07 51 52 10 63</a>{" "}
                   </div>{" "}
                 </div>{" "}
                 <div className="flex items-center space-x-3">

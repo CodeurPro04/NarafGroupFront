@@ -443,7 +443,7 @@ const Construction = () => {
             backgroundRepeat: "no-repeat, no-repeat",
           }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(195,27,34,0.82),rgba(239,60,66,0.76))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,26,26,0.84),rgba(255,26,26,0.72))]" />
         <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:px-8">
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
             <div>
@@ -963,11 +963,11 @@ const Construction = () => {
             </p>
             <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
               <a
-                href="tel:+2250778252525"
+                href="tel:+330751521063"
                 className="inline-flex items-center justify-center gap-3 bg-white px-8 py-3.5 font-semibold text-red-900 shadow-lg transition-colors hover:bg-red-50 sm:px-10 sm:py-4"
               >
                 <Phone size={20} />
-                <span>+225 07 78 25 25 25</span>
+                <span>+33 07 51 52 10 63</span>
               </a>
               <a
                 href="mailto:contact@africabuildinvest.com?subject=Demande%20de%20devis"

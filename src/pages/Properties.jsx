@@ -573,7 +573,7 @@ const Properties = () => {
           backgroundPosition: "center 22%",
         }}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_34%),linear-gradient(90deg,rgba(7,94,63,0.8),rgba(31,143,99,0.72))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_34%),linear-gradient(90deg,rgba(7,139,208,0.82),rgba(7,139,208,0.68))]" />
         <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:grid-cols-[minmax(0,1fr)_420px] lg:px-8">
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
             <div>
@@ -1215,7 +1215,7 @@ const Properties = () => {
               <span>Trouver mon bien</span>
             </a>
             <a
-              href="tel:+2250778252525"
+              href="tel:+330751521063"
               className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
             >
               <Phone size={20} />

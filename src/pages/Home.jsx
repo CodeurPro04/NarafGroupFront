@@ -23,60 +23,60 @@ import {
 } from "lucide-react";
 
 const africanCountries = [
-  { name: "Algerie", flag: "🇩🇿" },
-  { name: "Angola", flag: "🇦🇴" },
-  { name: "Benin", flag: "🇧🇯" },
-  { name: "Botswana", flag: "🇧🇼" },
-  { name: "Burkina Faso", flag: "🇧🇫" },
-  { name: "Burundi", flag: "🇧🇮" },
-  { name: "Cameroun", flag: "🇨🇲" },
-  { name: "Cap-Vert", flag: "🇨🇻" },
-  { name: "Comores", flag: "🇰🇲" },
-  { name: "Congo", flag: "🇨🇬" },
-  { name: "Cote d'Ivoire", flag: "🇨🇮" },
-  { name: "Djibouti", flag: "🇩🇯" },
-  { name: "Egypte", flag: "🇪🇬" },
-  { name: "Erythree", flag: "🇪🇷" },
-  { name: "Eswatini", flag: "🇸🇿" },
-  { name: "Ethiopie", flag: "🇪🇹" },
-  { name: "Gabon", flag: "🇬🇦" },
-  { name: "Gambie", flag: "🇬🇲" },
-  { name: "Ghana", flag: "🇬🇭" },
-  { name: "Guinee", flag: "🇬🇳" },
-  { name: "Guinee-Bissau", flag: "🇬🇼" },
-  { name: "Guinee equatoriale", flag: "🇬🇶" },
-  { name: "Kenya", flag: "🇰🇪" },
-  { name: "Lesotho", flag: "🇱🇸" },
-  { name: "Liberia", flag: "🇱🇷" },
-  { name: "Libye", flag: "🇱🇾" },
-  { name: "Madagascar", flag: "🇲🇬" },
-  { name: "Malawi", flag: "🇲🇼" },
-  { name: "Mali", flag: "🇲🇱" },
-  { name: "Maroc", flag: "🇲🇦" },
-  { name: "Maurice", flag: "🇲🇺" },
-  { name: "Mauritanie", flag: "🇲🇷" },
-  { name: "Mozambique", flag: "🇲🇿" },
-  { name: "Namibie", flag: "🇳🇦" },
-  { name: "Niger", flag: "🇳🇪" },
-  { name: "Nigeria", flag: "🇳🇬" },
-  { name: "Ouganda", flag: "🇺🇬" },
-  { name: "RDC", flag: "🇨🇩" },
-  { name: "Rwanda", flag: "🇷🇼" },
-  { name: "Sao Tome-et-Principe", flag: "🇸🇹" },
-  { name: "Senegal", flag: "🇸🇳" },
-  { name: "Seychelles", flag: "🇸🇨" },
-  { name: "Sierra Leone", flag: "🇸🇱" },
-  { name: "Somalie", flag: "🇸🇴" },
-  { name: "Soudan", flag: "🇸🇩" },
-  { name: "Soudan du Sud", flag: "🇸🇸" },
-  { name: "Tanzanie", flag: "🇹🇿" },
-  { name: "Tchad", flag: "🇹🇩" },
-  { name: "Togo", flag: "🇹🇬" },
-  { name: "Tunisie", flag: "🇹🇳" },
-  { name: "Zambie", flag: "🇿🇲" },
-  { name: "Zimbabwe", flag: "🇿🇼" },
-  { name: "Afrique du Sud", flag: "🇿🇦" },
-  { name: "Republique centrafricaine", flag: "🇨🇫" },
+  { name: "Algerie", code: "dz" },
+  { name: "Angola", code: "ao" },
+  { name: "Benin", code: "bj" },
+  { name: "Botswana", code: "bw" },
+  { name: "Burkina Faso", code: "bf" },
+  { name: "Burundi", code: "bi" },
+  { name: "Cameroun", code: "cm" },
+  { name: "Cap-Vert", code: "cv" },
+  { name: "Comores", code: "km" },
+  { name: "Congo", code: "cg" },
+  { name: "Cote d'Ivoire", code: "ci" },
+  { name: "Djibouti", code: "dj" },
+  { name: "Egypte", code: "eg" },
+  { name: "Erythree", code: "er" },
+  { name: "Eswatini", code: "sz" },
+  { name: "Ethiopie", code: "et" },
+  { name: "Gabon", code: "ga" },
+  { name: "Gambie", code: "gm" },
+  { name: "Ghana", code: "gh" },
+  { name: "Guinee", code: "gn" },
+  { name: "Guinee-Bissau", code: "gw" },
+  { name: "Guinee equatoriale", code: "gq" },
+  { name: "Kenya", code: "ke" },
+  { name: "Lesotho", code: "ls" },
+  { name: "Liberia", code: "lr" },
+  { name: "Libye", code: "ly" },
+  { name: "Madagascar", code: "mg" },
+  { name: "Malawi", code: "mw" },
+  { name: "Mali", code: "ml" },
+  { name: "Maroc", code: "ma" },
+  { name: "Maurice", code: "mu" },
+  { name: "Mauritanie", code: "mr" },
+  { name: "Mozambique", code: "mz" },
+  { name: "Namibie", code: "na" },
+  { name: "Niger", code: "ne" },
+  { name: "Nigeria", code: "ng" },
+  { name: "Ouganda", code: "ug" },
+  { name: "RDC", code: "cd" },
+  { name: "Rwanda", code: "rw" },
+  { name: "Sao Tome-et-Principe", code: "st" },
+  { name: "Senegal", code: "sn" },
+  { name: "Seychelles", code: "sc" },
+  { name: "Sierra Leone", code: "sl" },
+  { name: "Somalie", code: "so" },
+  { name: "Soudan", code: "sd" },
+  { name: "Soudan du Sud", code: "ss" },
+  { name: "Tanzanie", code: "tz" },
+  { name: "Tchad", code: "td" },
+  { name: "Togo", code: "tg" },
+  { name: "Tunisie", code: "tn" },
+  { name: "Zambie", code: "zm" },
+  { name: "Zimbabwe", code: "zw" },
+  { name: "Afrique du Sud", code: "za" },
+  { name: "Republique centrafricaine", code: "cf" },
 ];
 
 const Home = () => {
@@ -468,14 +468,14 @@ const Home = () => {
       <section className="w-full overflow-hidden border-y border-slate-200 bg-slate-100 py-3 text-slate-900">
         <div className="flag-marquee flex w-max items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
           {[...africanCountries, ...africanCountries].map((country, index) => (
-            <span
+            <img
               key={`${country.name}-${index}`}
-              className="shrink-0 text-2xl leading-none sm:text-3xl lg:text-[2.2rem]"
-              aria-label={country.name}
+              src={`https://flagcdn.com/w80/${country.code}.png`}
+              alt={country.name}
               title={country.name}
-            >
-              {country.flag}
-            </span>
+              className="h-6 w-9 shrink-0 object-cover sm:h-7 sm:w-10 lg:h-8 lg:w-12"
+              loading="lazy"
+            />
           ))}
         </div>
       </section>
@@ -905,11 +905,11 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+2250778252525"
+              href="tel:+330751521063"
               className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
             >
               <Phone size={20} />
-              <span>+225 07 78 25 25 25</span>
+              <span>+33 07 51 52 10 63</span>
             </a>
             <a
               href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous"

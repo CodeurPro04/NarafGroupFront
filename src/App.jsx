@@ -26,6 +26,8 @@ import AbiRealEstatePlatformPage from './pages/AbiRealEstatePlatformPage';
 import AbiInvestPage from './pages/AbiInvestPage';
 import AbiFirstInvestmentPage from './pages/AbiFirstInvestmentPage';
 import AbiCustomConstructionPage from './pages/AbiCustomConstructionPage';
+import AbiClubProPage from './pages/AbiClubProPage';
+import AbiClubDiasporaPage from './pages/AbiClubDiasporaPage';
 import AbiComingSoonPage from './pages/AbiComingSoonPage';
 import AbiSubmenuPage from './pages/AbiSubmenuPage';
 import ShowcaseArticlesList from './pages/ShowcaseArticlesList';
@@ -203,25 +205,11 @@ function App() {
             <Route path="/abi/qui-sommes-nous" element={<AbiAboutPage />} />
             <Route
               path="/abi/club-abi-diaspora"
-              element={
-                <AbiComingSoonPage
-                  eyebrow="Club ABI Diaspora"
-                  title="Club ABI Diaspora arrive bientot"
-                  description="Cette rubrique dediee a la diaspora ABI est actuellement en mise en veille le temps de finaliser une experience plus claire et plus utile."
-                  accent="blue"
-                />
-              }
+              element={<AbiClubDiasporaPage />}
             />
             <Route
               path="/abi/club-abi"
-              element={
-                <AbiComingSoonPage
-                  eyebrow="Club Pro"
-                  title="Club Pro sera disponible bientot"
-                  description="La page Club Pro est en mise en veille pendant la preparation d'un contenu plus structure et mieux aligne sur les besoins des professionnels."
-                  accent="sand"
-                />
-              }
+              element={<AbiClubProPage />}
             />
             <Route
               path="/abi/nos-actualites"
