@@ -29,7 +29,7 @@ import {
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { toMediaUrl } from "../utils/media";
-import PropertiesHero from "../components/layout/PropertiesHero";
+import heroImobi from "../assets/heroimobi.jpg";
 
 const Properties = () => {
   const location = useLocation();
@@ -565,93 +565,59 @@ const Properties = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <PropertiesHero
-        onPrimaryAction={() => {
-          const searchBar = document.querySelector('input[type="text"]');
-          if (searchBar) searchBar.focus();
-        }}
-        onSecondaryAction={handleAnnouncementClick}
-      />
-      {/*
-      <div
-        className="relative min-h-[560px] lg:min-h-[620px]"
+      <section
+        className="relative overflow-hidden bg-[#1f8f63]"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80')",
+          backgroundImage: `url(${heroImobi})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center 22%",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/90 via-blue-900/85 to-blue-900/80" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 text-white mb-6">
-              <Building2 size={20} />
-              <span className="font-semibold">Immobilier</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Des biens fiables, pas des promesses
-            </h1>
-
-            <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-2 leading-relaxed">
-              Tu veux investir au pays ou en Afrique francophone, mais tu veux
-              du sérieux
-            </p>
-            <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 leading-relaxed">
-              Ici, chaque bien est vérifié, documenté et prêt pour toi.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button
-                onClick={() => {
-                  const searchBar =
-                    document.querySelector('input[type="text"]');
-                  if (searchBar) searchBar.focus();
-                }}
-                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-blue-50 transition-colors shadow-lg"
-              >
-                <Search size={20} />
-                <span>Rechercher un bien</span>
-              </button>
-              <button
-                onClick={handleAnnouncementClick}
-                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors"
-              >
-                <Plus size={20} />
-                <span>Faire une annonce</span>
-              </button>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_34%),linear-gradient(90deg,rgba(7,94,63,0.8),rgba(31,143,99,0.72))]" />
+        <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:grid-cols-[minmax(0,1fr)_420px] lg:px-8">
+          <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
+            <div>
+              <h1 className="max-w-2xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.35rem]">
+                Des biens fiables,
+                <span className="block">pas des promesses</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-sm leading-6 text-white sm:text-base">
+                Tu veux investir au pays ou en Afrique francophone, mais tu veux du serieux:
+                ici, chaque bien est verifie, documente et pret pour toi.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => {
+                    const searchBar = document.querySelector('input[type="text"]');
+                    if (searchBar) searchBar.focus();
+                  }}
+                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#12506f] shadow-lg transition hover:bg-[#f3f8fc]"
+                >
+                  <Search size={18} />
+                  <span>Voir les opportunites</span>
+                </button>
+                <button
+                  onClick={handleAnnouncementClick}
+                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
+                >
+                  <Plus size={18} />
+                  <span>Espace client</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      */}
-      {/*
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-2xl p-5 sm:p-6 text-center border border-gray-100"
-            >
-              <div className="text-blue-600 mb-3 flex justify-center">
-                {stat.icon}
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </div> */}
+      </section>
 
       {/* Properties Section */}
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 sm:mb-12">
+          <div className="mb-10 sm:mb-12">
+            <div className="text-center mb-8 sm:mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+                Trouvez le bien qui vous ressemble
+              </h2>
+            </div>
             <div className="mt-8 sm:mt-10 bg-white border border-gray-200 shadow-md p-4 sm:p-6">
               <div className="flex flex-col xl:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -942,10 +908,6 @@ const Properties = () => {
                 </div>
               </section>
 
-              <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                Trouvez le bien qui vous ressemble
-              </h2>
               {/* nombre de propriete 
               <p className="text-xl text-gray-600">
                 {loading
@@ -956,7 +918,6 @@ const Properties = () => {
                         : "biens disponibles"
                     }`}
               </p> */}
-              </div>
             </div>
           </div>
 
@@ -992,142 +953,59 @@ const Properties = () => {
                   {filteredProperties.map((property) => (
                     <div
                       key={property.id}
-                      className="group bg-white shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
+                      className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:border-[#5ea8ff] hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]"
                     >
-                      <div className="relative h-64 overflow-hidden">
+                      <div className="relative h-[240px] overflow-hidden bg-[#eef3f7]">
                         <img
                           src={property.images[0]}
                           alt={property.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                           onError={(e) => {
                             e.target.src =
                               "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
                           }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                        {property.tag && (
-                          <div className="absolute top-4 left-4">
-                            <span className="bg-blue-500 text-white px-3 py-1 text-sm font-semibold">
-                              {property.tag}
-                            </span>
-                          </div>
-                        )}
-
-                        <button
-                          onClick={() => toggleFavorite(property.id)}
-                          className={`absolute top-4 right-4 p-2.5 backdrop-blur-sm transition-all ${favorites.includes(property.id) ? "bg-rose-500 text-white" : "bg-white/90 text-gray-700 hover:bg-white"}`}
-                        >
-                          <Heart
-                            size={18}
-                            fill={
-                              favorites.includes(property.id)
-                                ? "currentColor"
-                                : "none"
-                            }
-                          />
-                        </button>
-
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <h3 className="text-2xl font-bold text-white mb-1 line-clamp-1">
-                            {property.title}
-                          </h3>
-                          <div className="flex items-center text-white/90 text-sm">
-                            <MapPin size={14} className="mr-1 flex-shrink-0" />
-                            <span className="truncate">
-                              {property.location}
-                            </span>
-                          </div>
+                        <div className="absolute right-3 top-3 flex items-center gap-1 border border-[#d8e5ff] bg-white px-3 py-1 text-[11px] font-semibold text-[#4f72c8] shadow-sm">
+                          <CheckCircle size={13} className="text-[#5f85f5]" />
+                          <span>Verified</span>
                         </div>
                       </div>
 
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-1">
-                            <Star
-                              size={16}
-                              className="fill-amber-400 text-amber-400"
-                            />
-                            <span className="font-semibold text-gray-900">
-                              {property.rating}
-                            </span>
-                          </div>
-                          <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700">
-                            {property.transaction_type === "vente"
-                              ? "À vendre"
-                              : "À louer"}
-                          </span>
+                      <div className="p-4 sm:p-5">
+                        <div className="text-[2rem] font-extrabold leading-none text-[#12a150]">
+                          {formatPrice(property.price)}
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200">
-                          <div className="text-center">
-                            <Bed
-                              className="text-blue-600 mx-auto mb-2"
-                              size={20}
-                            />
-                            <div className="text-xs text-gray-500 mb-1">
-                              Chambres
-                            </div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {property.bedrooms}
-                            </div>
+                        <div className="mt-3 flex items-center gap-2 text-sm text-[#6b7788]">
+                          <MapPin size={14} className="shrink-0 text-[#8a94a4]" />
+                          <span className="truncate">{property.location}</span>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#5e6878]">
+                          <div className="flex items-center gap-1.5">
+                            <Bed size={16} className="text-[#7b8797]" />
+                            <span>{property.bedrooms}</span>
                           </div>
-                          <div className="text-center">
-                            <Bath
-                              className="text-blue-600 mx-auto mb-2"
-                              size={20}
-                            />
-                            <div className="text-xs text-gray-500 mb-1">
-                              Bains
-                            </div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {property.bathrooms}
-                            </div>
+                          <div className="flex items-center gap-1.5">
+                            <Bath size={16} className="text-[#7b8797]" />
+                            <span>{property.bathrooms}</span>
                           </div>
-                          <div className="text-center">
-                            <Maximize
-                              className="text-blue-600 mx-auto mb-2"
-                              size={20}
-                            />
-                            <div className="text-xs text-gray-500 mb-1">
-                              Surface
-                            </div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {property.area} m²
-                            </div>
+                          <div className="flex items-center gap-1.5">
+                            <Maximize size={16} className="text-[#7b8797]" />
+                            <span>{property.area}m²</span>
                           </div>
                         </div>
 
-                        <div className="space-y-2 mb-6">
-                          <div className="flex flex-wrap gap-2">
-                            {property.features
-                              ?.slice(0, 3)
-                              .map((feature, idx) => (
-                                <span
-                                  key={idx}
-                                  className="flex items-center text-xs bg-blue-50 text-blue-700 px-2 py-1"
-                                >
-                                  <CheckCircle size={12} className="mr-1" />
-                                  {feature}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
+                        <h3 className="mt-3 min-h-[48px] text-lg font-semibold leading-6 text-[#16202a] line-clamp-2">
+                          {property.title}
+                        </h3>
 
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-xs text-gray-500 mb-1">
-                              Prix
-                            </div>
-                            <div className="text-2xl font-bold text-blue-600">
-                              {formatPrice(property.price)}
-                            </div>
-                          </div>
+                        <div className="mt-5">
                           <Link
                             to={`/property/${property.id}`}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+                            className="flex w-full items-center justify-center bg-[#ff9808] px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-[#f08b00]"
                           >
-                            Voir détails
+                            Voir les Détails
                           </Link>
                         </div>
                       </div>

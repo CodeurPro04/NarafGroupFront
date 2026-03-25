@@ -28,6 +28,8 @@ import {
 import { logout } from "../../api/axios";
 
 const Header = () => {
+  const topBannerMessage =
+    "Construisez, investissez et trouvez votre bien avec un accompagnement ABI de bout en bout.";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [openDesktopMenu, setOpenDesktopMenu] = useState(null);
@@ -271,6 +273,12 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#e5e7eb] bg-white shadow-[0_2px_14px_rgba(15,23,42,0.05)]">
+      <div className="border-b border-[#e5e7eb] bg-[#f3f4f6]">
+        <div className="mx-auto flex min-h-[36px] max-w-7xl items-center justify-center px-4 text-center text-[12px] font-medium tracking-[0.02em] text-[#4b5563] sm:px-6 lg:px-8">
+          <p>{topBannerMessage}</p>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[86px]">
           <Link to="/" className="flex items-center gap-3 min-w-[260px] shrink-0">

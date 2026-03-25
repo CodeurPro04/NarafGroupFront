@@ -465,12 +465,12 @@ const Home = () => {
     <div className="bg-white">
       <Hero />
 
-      <section className="w-full overflow-hidden border-y border-slate-200 bg-[#081a3d] py-3 text-white">
+      <section className="w-full overflow-hidden border-y border-slate-200 bg-slate-100 py-3 text-slate-900">
         <div className="flag-marquee flex w-max items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
           {[...africanCountries, ...africanCountries].map((country, index) => (
             <span
               key={`${country.name}-${index}`}
-              className="shrink-0 text-xl leading-none sm:text-2xl"
+              className="shrink-0 text-2xl leading-none sm:text-3xl lg:text-[2.2rem]"
               aria-label={country.name}
               title={country.name}
             >

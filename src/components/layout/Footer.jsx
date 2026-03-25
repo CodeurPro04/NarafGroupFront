@@ -111,14 +111,14 @@ const Footer = () => {
                 <Phone size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Telephone</p>
-                  <p className="text-gray-400">+225 XX XX XX XX XX</p>
+                  <p className="text-gray-400">+225 07 78 25 25 25</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Mail size={20} className="mt-1 text-blue-400" />
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-gray-400">contact@naraf-immobilier.fr</p>
+                  <p className="text-gray-400">contact@africabuildinvest.com</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">

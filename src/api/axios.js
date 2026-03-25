@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 
 // URL de base de ton API Laravel
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.africabuildinvest.com';
 
 // Instance axios pour l'API
 const api = axios.create({

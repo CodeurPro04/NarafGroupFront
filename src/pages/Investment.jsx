@@ -30,6 +30,7 @@ import api from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import heroInvest from "../assets/heroinvest.jpg";
 
 const Investment = () => {
   const [activeFilter, setActiveFilter] = useState("tous");
@@ -474,43 +475,57 @@ const Investment = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div
-        className="relative min-h-[560px] lg:min-h-[620px]"
+      <section
+        className="relative overflow-hidden bg-[#12a657]"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1920&q=80')",
+          backgroundImage: `url(${heroInvest})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center 69%",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-blue-950/85 to-blue-900/80" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Investir en Afrique, intelligemment
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-100"></span>
-            </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-8 leading-relaxed">
-              On sélectionne uniquement des programmes solides, portés par des
-              promoteurs sérieux. Tu sais où tu mets ton argent, comment il
-              travaille, et ce que tu gagnes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-6 sm:px-8 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl group">
-                <span>Decouvrir les opportunites</span>
-                <ChevronRight
-                  className="group-hover:translate-x-1 transition-transform"
-                  size={20}
-                />
-              </button>
-              <button className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-bold hover:bg-white/10 transition-all">
-                <Phone size={20} />
-                <span>Parler a un expert</span>
-              </button>
+        <div
+          className="absolute inset-0 opacity-0"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,120,54,0.88),rgba(18,166,87,0.82))]" />
+        <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:px-8">
+          <div className="relative z-10 flex max-w-4xl items-center py-[6.75rem] lg:py-32">
+            <div>
+              <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.15rem]">
+                Investir avec une plateforme qui
+                <span className="block">structure mieux les opportunites africaines.</span>
+              </h1>
+              <p className="mt-5 max-w-2xl text-sm leading-6 text-white sm:text-base">
+                Africa Build Investment connecte sourcing local, structuration des deals et execution terrain
+                dans une meme experience. Vous gagnez en lisibilite sur les projets, en maitrise du risque
+                et en capacite d'action sur des dossiers a fort potentiel.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.getElementById("investment-catalog")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    })
+                  }
+                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#0c7d44] shadow-lg transition hover:bg-[#f4fff9]"
+                >
+                  <Search size={18} />
+                  <span>Voir les opportunites</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/login")}
+                  className="inline-flex items-center justify-center gap-2 bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
+                >
+                  <Briefcase size={18} />
+                  <span>Espace client</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-10 sm:px-6 lg:-mt-10 lg:px-8">
         <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
@@ -555,7 +570,7 @@ const Investment = () => {
         </div>
       </div>
 
-      <section className="bg-[#f4f3ef] py-16 sm:py-20">
+      <section id="investment-catalog" className="bg-[#f4f3ef] py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_0.98fr] gap-10 lg:gap-14 items-stretch">
             <div>

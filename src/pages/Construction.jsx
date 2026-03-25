@@ -20,6 +20,8 @@ import { isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import heroConstru1 from "../assets/heroconstru1.jpg";
+import heroConstru2 from "../assets/heroconstru2.jpg";
 
 const Construction = () => {
   const [constructionProjects, setConstructionProjects] = useState([]);
@@ -431,45 +433,45 @@ const Construction = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div
-        className="relative min-h-[560px] lg:min-h-[620px]"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-green-950/90 via-green-900/85 to-emerald-900/80" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-          <div className="max-w-3xl">
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Construire sans stress, même depuis le diaspora
-            </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-emerald-100 leading-relaxed">
-              Tu veux bâtir au pays, mais tu refuses les mauvaises surprises.
-            </p>
-            <p className="text-base sm:text-lg lg:text-xl text-emerald-100 mb-8 leading-relaxed">
-              Ici, tout est clair, suivi, prouvé. Tu avances en confiance, même
-              à distance
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button className="inline-flex items-center justify-center gap-3 bg-white text-green-900 px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-green-50 transition-colors shadow-lg">
-                <Phone size={20} />
-                <span>Demander un devis</span>
-              </button>
-              <button
-                onClick={handleClientSpace}
-                className="inline-flex items-center justify-center gap-3 bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3.5 sm:py-4 font-semibold hover:bg-white/10 transition-colors"
-              >
-                <Play size={20} />
-                <span>Espace client</span>
-              </button>
+      <section className="relative overflow-hidden bg-[#ef3c42]">
+        <div
+          className="absolute inset-0 opacity-32"
+          style={{
+            backgroundImage: `url(${heroConstru1}), url(${heroConstru2})`,
+            backgroundSize: "50% 100%, 50% 100%",
+            backgroundPosition: "left center, right center",
+            backgroundRepeat: "no-repeat, no-repeat",
+          }}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(195,27,34,0.82),rgba(239,60,66,0.76))]" />
+        <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:px-8">
+          <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
+            <div>
+              <h1 className="max-w-2xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.35rem]">
+                Construire sans stress,
+                <span className="block">meme depuis la diaspora</span>
+              </h1>
+              <p className="mt-5 max-w-xl text-sm leading-6 text-white sm:text-base">
+                Tu veux batir au pays, mais tu refuses les mauvaises surprises:
+                ici, tout est clair, suivi et prouve. Tu avances en confiance, meme a distance.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <button className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#b11d28] shadow-lg transition hover:bg-[#fff2f2]">
+                  <Phone size={18} />
+                  <span>Demande de devis</span>
+                </button>
+                <button
+                  onClick={handleClientSpace}
+                  className="inline-flex items-center justify-center gap-2 bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
+                >
+                  <Play size={18} />
+                  <span>Espace client</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-10 lg:-mt-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
@@ -477,10 +479,10 @@ const Construction = () => {
             <Link
               key={tab.title}
               to={tab.to}
-              className="group bg-white/95 backdrop-blur-sm shadow-2xl p-5 sm:p-6 border border-gray-100 hover:border-green-200 transition-all"
+              className="group bg-white/95 backdrop-blur-sm shadow-2xl p-5 sm:p-6 border border-gray-100 hover:border-red-200 transition-all"
             >
               <div className="flex items-start gap-4">
-                <span className="text-green-600 mt-1">{tab.icon}</span>
+                <span className="text-red-600 mt-1">{tab.icon}</span>
                 <div className="min-w-0">
                   <h3 className="text-2xl font-bold text-slate-700 leading-tight">
                     {tab.title}
@@ -489,7 +491,7 @@ const Construction = () => {
                     {tab.subtitle}
                     <ArrowRight
                       size={16}
-                      className="text-green-600 transition-transform group-hover:translate-x-1"
+                      className="text-red-600 transition-transform group-hover:translate-x-1"
                     />
                   </p>
                 </div>

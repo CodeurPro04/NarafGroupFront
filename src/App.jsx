@@ -55,7 +55,7 @@ function App() {
       <div className="app min-h-screen flex flex-col">
         <ScrollToTop />
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow pt-[108px]">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/properties" element={<Properties />} />
