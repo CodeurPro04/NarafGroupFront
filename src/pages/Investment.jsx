@@ -853,7 +853,7 @@ const Investment = () => {
 
             <div className="self-stretch overflow-hidden bg-[#ddd5ca] shadow-[0_24px_50px_rgba(15,23,42,0.08)]">
               <img
-                src="/src/assets/invest1.jpg"
+                src="/images/invest1.jpg"
                 alt="Offres d'investissement ABI"
                 className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]"
               />
