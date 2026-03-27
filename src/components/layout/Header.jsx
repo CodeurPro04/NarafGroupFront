@@ -90,12 +90,6 @@ const Header = () => {
           "Decouvrez l'univers ABI, sa vision, ses agences et l'ecosysteme qui accompagne tous vos projets immobiliers, construction et investissement.",
         children: [
           {
-            path: "/",
-            label: "Page d'accueil",
-            description: "Retrouvez la vitrine principale et les points forts de la plateforme.",
-            icon: Home,
-          },
-          {
             path: "/abi/plateforme-immobiliere",
             label: "Plateforme immobiliere",
             description: "Explorez l'offre globale et les parcours disponibles.",
@@ -119,12 +113,6 @@ const Header = () => {
             label: "Club Pro",
             description: "Retrouvez notre reseau et nos points de presence.",
             icon: Landmark,
-          },
-          {
-            path: "/abi/nos-actualites",
-            label: "Nos actualites",
-            description: "Suivez les nouveautes, annonces et informations importantes.",
-            icon: Newspaper,
           },
         ],
       },
@@ -273,7 +261,7 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#e5e7eb] bg-white shadow-[0_2px_14px_rgba(15,23,42,0.05)]">
-      <div className="border-b border-[#e7d7a6] bg-[#f4e3a1]">
+      <div className="border-b border-[#b9daf5] bg-[#dff1ff]">
         <div className="mx-auto flex min-h-[36px] max-w-7xl items-center justify-center px-4 text-center text-[12px] font-medium tracking-[0.02em] text-[#4b5563] sm:px-6 lg:px-8">
           <p>{topBannerMessage}</p>
         </div>

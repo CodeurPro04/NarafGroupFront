@@ -229,64 +229,29 @@ const Investment = () => {
 
   const offerFamilies = [
     {
-      title: "Co-investissements",
+      title: "Investir a petit budget",
       details:
-        "participation directe aux projets preselectionnes en syndication avec ABI et des co-investisseurs institutionnels.",
+        "Pour 100 EUR vous devenez co-propriétaire d'un portefeuille immobilier grâce a ABI. Un placement accessible qui democratise l'investissement immobilier.",
     },
     {
-      title: "Fonds sectoriels",
+      title: "Diversifier votre patrimoine",
       details:
-        "acces a des fonds thematiques sur le logement abordable, l'energie renouvelable, l'eau et assainissement et les infrastructures urbaines.",
+        "Vous réduisez les risques en investissant dans différents biens, secteur géographique et types de patrimoines.",
     },
     {
-      title: "SPV / Vehicules dedies",
+      title: "Optimiser vos rendements",
       details:
-        "creation de societes ad hoc pour structurer un projet unique et isoler les risques.",
-    },
-    {
-      title: "Equity direct",
-      details:
-        "prises de participation au capital pour accompagner la croissance d'operateurs et de promoteurs locaux.",
-    },
-    {
-      title: "Dette amortissable et prets relais",
-      details:
-        "financements senior pour la construction, le levier de fonds propres et la stabilisation post-achevement.",
-    },
-    {
-      title: "Dette mezzanine et quasi-equity",
-      details:
-        "solutions hybrides pour combler le gap entre equity et dette senior.",
-    },
-    {
-      title: "Blended finance et subventions catalytiques",
-      details:
-        "combinaisons de capitaux concessionnels et commerciaux pour rendre viables les projets a fort impact.",
-    },
-    {
-      title: "Garanties et risk-sharing",
-      details:
-        "instruments de couverture pour reduire le risque investisseur, avec garanties partielles de credit et assurances political risk.",
-    },
-    {
-      title: "Project bonds et titrisation",
-      details:
-        "structuration de dettes long terme et acces aux marches de capitaux pour des projets matures.",
-    },
-    {
-      title: "Fonds d'impact / ESG-linked",
-      details:
-        "placements mesurant et remunerant la performance environnementale et sociale.",
-    },
-    {
-      title: "Mandats de gestion et fonds dedies",
-      details:
-        "gestion discretionnaire d'un portefeuille d'actifs infrastructurels pour investisseurs institutionnels.",
+        "Vous bénéficier de revenus régulier et potentiel sous forme de dividende sur chaque euro investi. Un complément de revenu qui sécurise votre épargne.",
     },
     {
       title: "Services d'accompagnement",
       details:
-        "due diligence financiere, etudes de faisabilite, structuration juridique, conformite KYC/AML et suivi ESG.",
+        "Une équipe d'experts reconnus et expérimentées en investissement  accompagne chaque projet ABI dans l'études de faisabilité, structuration juridique et conformité.",
+    },
+    {
+      title: "100% digital, 100% sécurisé",
+      details:
+        "Investissez en 5 minutes, ou que vous soyez. Votre souscription est sécurisée par des titres obligataires visés par l'Autorité des Marchés Financiers.",
     },
   ];
 
@@ -341,8 +306,8 @@ const Investment = () => {
   const benefits = [
     {
       icon: <Shield size={32} />,
-      title: "Sécurité maximale",
-      description: "Une sélection rigoureuse pour protéger ton investissement.",
+      title: "Construire son patrimoine",
+      description: "Les meilleures opportunités du marché.",
       features: [
         "Due diligence",
         "Garanties bancaires",
@@ -351,8 +316,8 @@ const Investment = () => {
     },
     {
       icon: <BarChart3 size={32} />,
-      title: "Rendement optimisé",
-      description: "Des performances maîtrisées, basées sur des analyses réelles.",
+      title: "Préparer sa retraite",
+      description: "Investissez dans vos revenus de demain.",
       features: [
         "Études de marché",
         "Optimisation fiscale",
@@ -361,14 +326,14 @@ const Investment = () => {
     },
     {
       icon: <Target size={32} />,
-      title: "Accompagnement",
-      description: "Un suivi humain, clair et constant.",
+      title: "Participer au développement",
+      description: "L’investissement n’est pas seulement une question de revenu. C’est un moteur de transformation dont vous êtes le levier.",
       features: ["Conseiller dédié", "Reporting régulier", "Support 7j/7"],
     },
     {
       icon: <Zap size={32} />,
-      title: "Process simplifié",
-      description: "Investir devient simple, même depuis l’étranger.",
+      title: "Jouir de son investissement",
+      description: "Investir dans l'immobilier aujourd'hui est une rente tout les mois pendant plusieurs années.",
       features: [
         "Plateforme digitale",
         "Documentation claire",
@@ -506,13 +471,11 @@ const Investment = () => {
           <div className="relative z-10 flex max-w-4xl items-center py-[6.75rem] lg:py-32">
             <div>
               <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.15rem]">
-                Investir avec une plateforme qui
-                <span className="block">structure mieux les opportunites africaines.</span>
+                la plateforme N°1 pour 
+                <span className="block">l’investissement immobilier  en Afrique.</span>
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-6 text-white sm:text-base">
-                Africa Build Investment connecte sourcing local, structuration des deals et execution terrain
-                dans une meme experience. Vous gagnez en lisibilite sur les projets, en maitrise du risque
-                et en capacite d'action sur des dossiers a fort potentiel.
+                Trouver les meilleurs placements pour son épargne pour mieux investir et développer son patrimoine.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
@@ -530,11 +493,14 @@ const Investment = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate("/login")}
+                  onClick={() => {
+                    window.location.href =
+                      "mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous%20investissement";
+                  }}
                   className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
                 >
                   <Briefcase size={18} />
-                  <span>Espace client</span>
+                  <span>Prendre un rendez-vous</span>
                 </button>
               </div>
             </div>
@@ -542,6 +508,7 @@ const Investment = () => {
         </div>
       </section>
 
+      {/*
       <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-8 sm:px-6 lg:-mt-10 lg:px-8">
         <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
           <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
@@ -584,68 +551,7 @@ const Investment = () => {
           </div>
         </div>
       </div>
-
-      <section id="investment-catalog" className="bg-[#f4f3ef] py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
-            <div>
-              <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.7rem]">
-                Nos offres d'investissement.
-              </h2>
-              <p className="mt-5 max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
-                ABI structure plusieurs formats d'entree pour adapter l'investissement au type de projet, au niveau de risque et au profil de l'investisseur.
-              </p>
-              <div className="mt-8">
-                {offerFamilies.map((offer, index) => (
-                  <OfferAccordion
-                    key={offer.title}
-                    title={offer.title}
-                    details={offer.details}
-                    isOpen={openOfferIndex === index}
-                    onToggle={() => handleOfferToggle(index)}
-                  />
-                ))}
-              </div>
-              <a
-                href="mailto:contact@africabuildinvest.com?subject=Brochure%20investissement"
-                className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-              >
-                <Mail size={16} />
-                Recevoir la brochure detaillee
-              </a>
-            </div>
-
-            <div className="self-stretch overflow-hidden bg-[#ddd5ca] shadow-[0_24px_50px_rgba(15,23,42,0.08)]">
-              <img
-                src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1400&q=80"
-                alt="Offres d'investissement ABI"
-                className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-[760px] text-center">
-            <h3 className="mt-3 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.5rem]">
-              Un cadre d'offre plus flexible et plus lisible.
-            </h3>
-          </div>
-          <div className="mx-auto mt-8 max-w-[760px]">
-            {offerHighlights.map((item) => (
-              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 text-center shadow-[0_14px_28px_rgba(15,23,42,0.04)]">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#f2f7fd] text-[#0f62c9]">
-                  {item.icon}
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-slate-950">{item.title}</h3>
-                <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      */}
 
       <section id="investment-opportunities" className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -883,34 +789,105 @@ const Investment = () => {
         </div>
       </section>
 
+      <section className="bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[760px] text-center">
+            <h3 className="mt-3 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.5rem]">
+              Prêt à analyser votre prochain placement immobilier ?
+            </h3>
+            <p className="mx-auto mt-4 max-w-[640px] text-base leading-7 text-slate-600 sm:text-lg">
+              Rejoignez les investisseurs immobiliers qui maîtrisent leur patrimoine immobilier, Simulez le rendement de votre investissement en un clic.
+            </p>
+          </div>
+          <div className="mx-auto mt-8 max-w-[760px]">
+            {offerHighlights.map((item) => (
+              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 text-center shadow-[0_14px_28px_rgba(15,23,42,0.04)]">
+                <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#f2f7fd] text-[#0f62c9]">
+                  {item.icon}
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-slate-950">{item.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
+              </div>
+            ))}
+            <div className="mt-6 flex justify-center">
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Rejoindre%20ABI%20Investissement"
+                className="inline-flex items-center justify-center bg-[#0f62c9] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+              >
+                Rejoignez-nous
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="investment-catalog" className="bg-[#f4f3ef] py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
+            <div>
+              <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.7rem]">
+                Cinq bonne raison pour investir chez ABI.
+              </h2>
+              <p className="mt-5 max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg">
+                 Devenez copropriétaire d’un portefeuille de biens gérés par une société (achat, gestion, location) et percevez des revenus potentiels. Investissez en achetant des parts maintenant !
+              </p>
+              <div className="mt-8">
+                {offerFamilies.map((offer, index) => (
+                  <OfferAccordion
+                    key={offer.title}
+                    title={offer.title}
+                    details={offer.details}
+                    isOpen={openOfferIndex === index}
+                    onToggle={() => handleOfferToggle(index)}
+                  />
+                ))}
+              </div>
+              <a
+                href="mailto:contact@africabuildinvest.com?subject=Brochure%20investissement"
+                className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+              >
+                <Mail size={16} />
+                Recevoir la brochure detaillee
+              </a>
+            </div>
+
+            <div className="self-stretch overflow-hidden bg-[#ddd5ca] shadow-[0_24px_50px_rgba(15,23,42,0.08)]">
+              <img
+                src="/src/assets/invest1.jpg"
+                alt="Offres d'investissement ABI"
+                className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-slate-50 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-8 border border-gray-200 bg-white p-5 sm:p-8 lg:grid-cols-[1.05fr_1fr]">
             <div>
               <h2 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-                Investir dans la renovation
+                Nous investissons dans des projets d'extension ou de renovation.
               </h2>
               <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg">
-                Profite d’opportunités à fort potentiel, avec un accompagnement
-                sérieux du début à la fin. On analyse, on exécute, on suit, on
-                optimise. Tu avances en confiance, même à distance.
+                Plus de choix, des prix plus bas et une meilleure fiscalité, investir dans un bien à rénover, offre  de vastes opportunités.
               </p>
               <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  <h3 className="font-bold">Ticket d'entree flexible</h3>
-                  <p>Pour investir selon ton budget, sans pression.</p>
+                  <h3 className="font-bold">Des prix abordables</h3>
+                  <p>Un bien renové coûte moins cher au mètre carré. C'est aussi un type de bien qui se négocie bien mieux.</p>
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                <h3 className="font-bold">Strategie de sortie claire</h3>
-                  Tu sais comment tu entres, tu sais comment tu sors.
+                <h3 className="font-bold">Une prise valeur rapide</h3>
+                  Après des travaux de rénovation, le bien gagne immédiatement en standing. Sa valeur sur le marché s'accroit de quoi espérer une belle plus-value à la revente.
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
                   <h3 className="font-bold">Suivi des travaux en continu</h3>
-                  <p>Preuves, photos, vidéos : rien n’avance sans toi.</p>
+                  <p>Preuves, photos, vidéos : rien n’avance sans vous.</p>
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
-                  <h3 className="font-bold">Optimisation rendement/risque</h3>
-                  <p>On cherche le meilleur équilibre, pas les promesses faciles.</p>
+                  <h3 className="font-bold">Un bien attractif</h3>
+                  <p>Une fois rénové, un bien séduit davantage les acquéreurs. Vous évitez la vacance locative et augmentez ainsi votre rentabilité..</p>
                 </div>
               </div>
             </div>
@@ -935,7 +912,7 @@ const Investment = () => {
               </span>
             </h2>
             <p className="mx-auto max-w-3xl text-base text-gray-600 sm:text-lg">
-              Une approche rigoureuse, transparente et pensée pour protéger ton argent.
+              Une approche rigoureuse, transparente et pensée pour vos investissements.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 sm:gap-8">

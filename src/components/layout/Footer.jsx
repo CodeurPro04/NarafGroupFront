@@ -3,7 +3,6 @@ import {
   Mail,
   MapPin,
   Facebook,
-  Twitter,
   Linkedin,
   Instagram,
 } from "lucide-react";
@@ -33,9 +32,6 @@ const Footer = () => {
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Facebook size={20} />
-              </a>
-              <a href="#" className="text-gray-400 transition-colors hover:text-white">
-                <Twitter size={20} />
               </a>
               <a href="#" className="text-gray-400 transition-colors hover:text-white">
                 <Linkedin size={20} />

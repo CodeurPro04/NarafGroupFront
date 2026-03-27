@@ -73,29 +73,29 @@ const Hero = () => {
     {
       image:
         "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80",
-      title: "Des biens fiables, pas des promesses",
-      subtitle: "Villas, appartements, terrains sécurisés, programmes neufs.\nChaque projet est vérifié, documenté et prêt pour toi.",
+      title: "Une plateforme immobilière inclusive et digitale pour l'Afrique",
+      subtitle: "AFRICA Build Investment réunit en un seul endroit tout ce dont vous avez besoin pour faire fructifier votre capital avec sécurité, transparence et performance.",
       overlay: "from-black/70 via-black/50 to-transparent",
     },
     {
       image:
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-      title: "Investir en Afrique, intelligemment",
-      subtitle: "Marchés en croissance, forte demande, rentabilité solide.\nOn t’aide à choisir les bonnes opportunités, sans pièges.",
+      title: "Trouvez votre bien immobilier  en un clic",
+      subtitle: "Villas, appartements, terrains sécurisés, programmes neufs. Chaque projet est vérifié, documenté et prêt pour toi.",
       overlay: "from-blue-900/70 via-blue-800/50 to-transparent",
     },
     {
       image:
         "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80",
-      title: "Construire sans stress, même depuis la diaspora",
-      subtitle: "Plans validés, devis clairs, preuves visuelles, validation étape par étape.\nTu ne finances plus à l’aveugle.",
+      title: "Réalisez vos projets de construction partout en Afrique",
+      subtitle: "Nous pensons et construisons votre future maison avec vous et sélectionnons avec soin les matériaux utilisés.",
       overlay: "from-slate-900/70 via-slate-800/50 to-transparent",
     },
     {
       image:
         "/images/carou.jpeg",
-      title: "Pour la diaspora, par des gens qui comprennent",
-      subtitle: "Fini les “on va gérer” sans preuve.Ici, tout est carré : documents, partenaires, suivi, transparence.Tu avances en confiance, même à distance",
+      title: "la plateforme N°1 pour l’investissement immobilier  en Afrique",
+      subtitle: "Trouver les meilleurs placements pour son épargne pour mieux investir et développer son patrimoine.",
       overlay: "from-slate-900/70 via-slate-800/50 to-transparent",
     },
   ];

@@ -248,18 +248,21 @@ const AbiCustomConstructionPage = () => {
   return (
     <div className="bg-[linear-gradient(180deg,#f4f6fb_0%,#f1eee8_42%,#ffffff_100%)] text-slate-950">
       <PropertiesHero
-        onPrimaryAction={() => navigate("/construction")}
+        onPrimaryAction={() => {
+          window.location.href =
+            "mailto:contact@africabuildinvest.com?subject=Devis%20sur%20mesure";
+        }}
         onSecondaryAction={() => {
           window.location.href =
             "mailto:contact@africabuildinvest.com?subject=Demande%20de%20rendez-vous";
         }}
-        primaryLabel="Voir les offres construction"
+        primaryLabel="Devis sur mesure"
+        primaryIcon={ClipboardCheck}
         secondaryLabel="Demander un rendez-vous"
         eyebrow=""
-        title="Concevoir, reprendre ou achever un chantier avec une execution mieux cadree."
+        title="Votre projet de construction sur mesure."
         descriptionLines={[
           "Africa Build Investment conçoit et realise des projets de construction sur mesure, de l'idee initiale a la livraison.",
-          "Nous prenons aussi en charge la renovation et l'achevement de chantiers en cours avec une logique de qualite, delais et maitrise des couts.",
         ]}
         backgroundImage="url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80')"
         overlayClassName="bg-[linear-gradient(180deg,rgba(2,6,23,0.86)_0%,rgba(3,37,99,0.88)_42%,rgba(3,64,145,0.82)_100%)]"
@@ -267,16 +270,16 @@ const AbiCustomConstructionPage = () => {
 
       <section className="border-y border-white/80 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-            <div className="max-w-[680px]">
+          <div className="space-y-8">
+            <div className="mx-auto max-w-[860px] text-center">
               <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.9rem]">
-              Un projet concu selon vos besoins, avec un pilotage complet
-              jusqu'a la livraison.
+                Un projet concu selon vos besoins, avec un pilotage complet
+                jusqu'a la livraison.
               </h1>
-              <p className="mt-5 max-w-[640px] text-base leading-7 text-slate-600 sm:text-lg">
-              Habitation, immeuble residentiel, bureaux, commerces ou projets
-              mixtes : ABI controle la conception, la maitrise d'oeuvre, la
-              coordination et le suivi qualite dans un meme parcours.
+              <p className="mx-auto mt-5 max-w-[760px] text-base leading-7 text-slate-600 sm:text-lg">
+                Habitation, immeuble residentiel, bureaux, commerces ou projets
+                mixtes : ABI controle la conception, la maitrise d'oeuvre, la
+                coordination et le suivi qualite dans un meme parcours.
               </p>
             </div>
 
@@ -423,6 +426,7 @@ const AbiCustomConstructionPage = () => {
         </div>
       </section>
 
+      {/*
       <section className="bg-[linear-gradient(135deg,#0a67cf_0%,#0452ac_48%,#033c87_100%)] text-white">
         <div className="grid w-full gap-0 lg:grid-cols-[minmax(0,1.08fr)_minmax(420px,0.92fr)]">
           <div className="px-6 py-14 sm:px-10 lg:px-12 lg:py-16 xl:px-16">
@@ -475,6 +479,7 @@ const AbiCustomConstructionPage = () => {
           </div>
         </div>
       </section>
+      */}
 
       <section className="bg-white">
         <div className="mx-auto grid max-w-[1180px] gap-6 px-6 py-14 sm:px-10 lg:grid-cols-2 lg:px-8 lg:py-16">

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
@@ -26,6 +26,7 @@ const parseNumber = (value) => {
 };
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("profil");
   const [profile, setProfile] = useState(null);
   const [profileForm, setProfileForm] = useState({
@@ -114,6 +115,17 @@ const ProfilePage = () => {
 
     return baseTabs;
   }, [isOwner, isVisitor]);
+  useEffect(() => {
+    const initialTab = location.state?.initialTab;
+    if (!initialTab) return;
+
+    const tabExists = tabs.some((tab) => tab.id === initialTab);
+    if (tabExists) {
+      setActiveTab(initialTab);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.pathname, location.state, navigate, tabs]);
+
   const showNotice = (type, message) => {
     setNotice({ type, message });
     setTimeout(() => setNotice({ type: "", message: "" }), 4000);

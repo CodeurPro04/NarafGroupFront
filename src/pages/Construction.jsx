@@ -36,7 +36,7 @@ const Construction = () => {
   const [roomsInput, setRoomsInput] = useState("tous");
   const [sortOrder, setSortOrder] = useState("recent");
   const [spotlightContent, setSpotlightContent] = useState({
-    title: "Ne ratez pas cette offre exceptionnelle",
+    title: "Découvrez nos projets deja réalisés.",
     description:
       "Deux offres speciales en video pour vous aider a lancer votre projet au meilleur moment.",
     videos: [
@@ -448,12 +448,11 @@ const Construction = () => {
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
             <div>
               <h1 className="max-w-2xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.35rem]">
-                Construire sans stress
-                <span className="block">meme depuis la diaspora</span>
+                Réalisez vos projets de
+                <span className="block">construction partout en Afrique</span>
               </h1>
               <p className="mt-5 max-w-xl text-sm leading-6 text-white sm:text-base">
-                Tu veux batir au pays, mais tu refuses les mauvaises surprises:
-                ici, tout est clair, suivi et prouve. Tu avances en confiance, meme a distance.
+                Nous pensons et construisons votre future maison avec vous et sélectionnons avec soin les matériaux utilisés.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
@@ -463,13 +462,13 @@ const Construction = () => {
                   <Mail size={18} />
                   <span>Demande de devis</span>
                 </a>
-                <button
-                  onClick={handleClientSpace}
+                <a
+                  href="mailto:contact@africabuildinvest.com?subject=Echange%20avec%20ABI"
                   className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
                 >
                   <Play size={18} />
-                  <span>Espace client</span>
-                </button>
+                  <span>Discutez avec nous</span>
+                </a>
               </div>
             </div>
           </div>
@@ -508,7 +507,7 @@ const Construction = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-10 max-w-3xl text-center sm:mb-12">
             <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
-              Faites construire votre maison partous en afrique même au village
+              Faites construire votre maison partout en afrique même au village
             </h2>
             <p className="mx-auto max-w-2xl text-base text-gray-600 sm:text-lg">
               Notre IA vous aides a Choisir votre future maison sans stress.
@@ -688,63 +687,6 @@ const Construction = () => {
             </div>
           </div>
 
-          <div className="mb-12 border border-gray-200 bg-white p-5 sm:p-7 lg:p-8">
-            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.2fr_1.8fr] xl:items-start">
-              <div className="max-w-xl">
-                <h3 className="mb-4 text-3xl font-bold leading-tight text-slate-800">
-                  Ici, ton projet passe avant tout.
-                </h3>
-                <p className="text-base leading-7 text-gray-600">
-                  Parce que chaque famille a son histoire, on t’accompagne du
-                  premier plan à la remise des clés. On s’engage sur la qualité,
-                  les délais et la transparence. Chaque détail est pensé pour
-                  que ton projet soit simple, clair et sans stress.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="border border-gray-200 bg-slate-50 p-5">
-                  <div className="mb-3 text-red-600">
-                    <Clock size={30} />
-                  </div>
-                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
-                    Delais
-                  </h4>
-                  <p className="text-sm leading-7 text-gray-600">
-                    Avec AFRICA, tu sais où tu vas. Livraison garantie, délais
-                    respectés, suivi carré. Pas de surprise, pas de retard caché.
-                  </p>
-                </div>
-
-                <div className="border border-gray-200 bg-slate-50 p-5">
-                  <div className="mb-3 text-red-600">
-                    <TrendingUp size={30} />
-                  </div>
-                  <h4 className="mb-2 text-2xl font-bold text-slate-800">Prix</h4>
-                  <p className="text-sm leading-7 text-gray-600">
-                    Des maisons accessibles grâce à des partenaires fiables et une
-                    vraie maîtrise des coûts. Tu payes le juste prix, pour une
-                    qualité qui dure.
-                  </p>
-                </div>
-
-                <div className="border border-gray-200 bg-slate-50 p-5">
-                  <div className="mb-3 text-red-600">
-                    <Award size={30} />
-                  </div>
-                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
-                    Qualite
-                  </h4>
-                  <p className="text-sm leading-7 text-gray-600">
-                    Des projets conçus selon des standards exigeants. Matériaux
-                    solides, équipements modernes, finitions propres. Un logement
-                    pensé pour durer, pas pour impressionner deux minutes
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {Array.from({ length: 3 }).map((_, idx) => (
@@ -838,6 +780,63 @@ const Construction = () => {
               className="py-12"
             />
           )}
+
+          <div className="mt-12 border border-gray-200 bg-white p-5 sm:p-7 lg:p-8">
+            <div className="space-y-8">
+              <div className="mx-auto max-w-4xl text-center">
+                <h3 className="text-3xl font-bold leading-tight text-slate-800">
+                  Ici, ton projet passe avant tout.
+                </h3>
+                <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-gray-600">
+                  Parce que chaque famille a son histoire, on t’accompagne du
+                  premier plan à la remise des clés. On s’engage sur la qualité,
+                  les délais et la transparence. Chaque détail est pensé pour
+                  que ton projet soit simple, clair et sans stress.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <Clock size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
+                    Delais
+                  </h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Avec AFRICA, tu sais où tu vas. Livraison garantie, délais
+                    respectés, suivi carré. Pas de surprise, pas de retard caché.
+                  </p>
+                </div>
+
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <TrendingUp size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">Prix</h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Des maisons accessibles grâce à des partenaires fiables et une
+                    vraie maîtrise des coûts. Tu payes le juste prix, pour une
+                    qualité qui dure.
+                  </p>
+                </div>
+
+                <div className="border border-gray-200 bg-slate-50 p-5">
+                  <div className="mb-3 text-red-600">
+                    <Award size={30} />
+                  </div>
+                  <h4 className="mb-2 text-2xl font-bold text-slate-800">
+                    Qualite
+                  </h4>
+                  <p className="text-sm leading-7 text-gray-600">
+                    Des projets conçus selon des standards exigeants. Matériaux
+                    solides, équipements modernes, finitions propres. Un logement
+                    pensé pour durer, pas pour impressionner deux minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -884,7 +883,7 @@ const Construction = () => {
 
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Pourquoi construire avec AFRICA ?
+              Pourquoi construire avec ABI ?
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
               Des avantages exclusifs pour votre projet de construction

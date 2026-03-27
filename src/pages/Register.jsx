@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   User,
@@ -138,6 +138,18 @@ const Register = () => {
   }, [location.search]);
 
   const userType = manualUserType || queryUserType || "visitor";
+
+  useEffect(() => {
+    const noticeText = location.state?.messageText;
+    if (!noticeText) return;
+
+    setMessage({
+      type: location.state?.messageType || "info",
+      text: noticeText,
+    });
+
+    navigate(location.pathname + location.search, { replace: true, state: {} });
+  }, [location.pathname, location.search, location.state, navigate]);
 
   const userTypes = [
     {
@@ -382,7 +394,7 @@ const Register = () => {
             />
           </Link>
           <h1 className="text-4xl font-bold text-gray-900">
-            Rejoignez NARAF
+            Rejoignez-nous
           </h1>
           <p className="text-gray-600">Créez votre compte selon votre profil</p>
         </div>
@@ -423,17 +435,25 @@ const Register = () => {
               className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
                 message.type === "success"
                   ? "bg-green-50 border border-green-200"
+                  : message.type === "info"
+                    ? "bg-blue-50 border border-blue-200"
                   : "bg-red-50 border border-red-200"
               }`}
             >
               {message.type === "success" ? (
                 <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+              ) : message.type === "info" ? (
+                <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
               ) : (
                 <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
               )}
               <p
                 className={`text-sm font-medium ${
-                  message.type === "success" ? "text-green-800" : "text-red-800"
+                  message.type === "success"
+                    ? "text-green-800"
+                    : message.type === "info"
+                      ? "text-blue-800"
+                      : "text-red-800"
                 }`}
               >
                 {message.text}

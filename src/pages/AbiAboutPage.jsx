@@ -3,49 +3,28 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BriefcaseBusiness,
-  Building2,
   ChevronDown,
-  Handshake,
   Landmark,
-  Leaf,
   Mail,
   MapPinned,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
-const overviewCards = [
-  {
-    title: "Plateforme panafricaine",
-    text: "Africa Build Investment soutient, finance et accompagne des projets d'immobilier, de construction et d'infrastructure durable a travers le continent.",
-    icon: Building2,
-  },
-  {
-    title: "Ecosysteme d'acteurs",
-    text: "Nous reunissons investisseurs, promoteurs, experts techniques et partenaires publics pour catalyser des initiatives a fort impact socio-economique.",
-    icon: Handshake,
-  },
-  {
-    title: "Impact durable",
-    text: "Nos interventions privilegient des projets resilients, inclusifs et utiles aux territoires urbains comme ruraux.",
-    icon: Leaf,
-  },
-];
-
 const agencyRoles = [
   "Identifier et sourcer des projets locaux.",
-  "Accompagner la structuration et la preparation des dossiers : faisabilite et due diligence.",
   "Faciliter les relations avec les autorites locales et les partenaires techniques.",
   "Assurer le suivi operationnel et le pilotage des projets sur le terrain.",
-  "Promouvoir l'acces au financement et au montage financier adapte.",
+  "Promouvoir l'acces au financement et au montage financier adapté.",
 ];
 
 const regionalOffices = [
-  "Siege regional : Casablanca, Maroc.",
+  "Afrique du nord : Casablanca, Maroc.",
   "Afrique de l'Ouest : Dakar (Senegal) et Abidjan (Cote d'Ivoire).",
   "Afrique centrale : Douala (Cameroun).",
   "Afrique de l'Est : Nairobi (Kenya).",
   "Afrique australe : Johannesburg (Afrique du Sud).",
   "Hub nigerian : Lagos (Nigeria).",
+  "Internationales : Paris (France), Montreal (Canada).",
 ];
 
 const agencyServices = [
@@ -148,10 +127,9 @@ const AbiAboutPage = () => {
         primaryLabel="Contacter ABI"
         secondaryLabel="Voir la plateforme"
         primaryIcon={Mail}
-        title="Une plateforme panafricaine pour structurer, financer."
+        title="Une plateforme Africaine pour structurer et financer."
         descriptionLines={[
-          "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires publics.",
-          "Cette page presente notre mission, notre vision, notre reseau d'agences et les clubs qui animent l'ecosysteme ABI.",
+          "Africa Build Investment relie investisseurs, promoteurs, experts techniques, agences regionales et partenaires privés et publics."
         ]}
         backgroundImage="url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=1920&q=80')"
         overlayClassName="bg-[linear-gradient(180deg,rgba(2,6,23,0.82)_0%,rgba(3,37,99,0.86)_42%,rgba(3,64,145,0.8)_100%)]"
@@ -160,10 +138,10 @@ const AbiAboutPage = () => {
       <section className="relative overflow-hidden border-y border-white/70 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,#d8e9ff_0%,rgba(216,233,255,0)_72%)]" />
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-20">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-start">
+          <div className="grid gap-8 lg:grid-cols-1 lg:items-start">
             <div className="max-w-[760px]">
               <h1 className="max-w-[720px] text-3xl font-semibold leading-[1.08] text-slate-950 sm:text-[2.35rem]">
-                Construire, financer et accompagner les projets qui transforment durablement l'Afrique.
+                Construire, Financer et Accompagner les projets qui transforment durablement l'Afrique.
               </h1>
               <p className="mt-5 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
                 Africa Build Investment est une plateforme panafricaine dediee a soutenir,
@@ -190,44 +168,8 @@ const AbiAboutPage = () => {
                 </a>
               </div>
             </div>
-
-            <aside className="grid gap-4 border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7f9fc_100%)] p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
-              <div>
-                <p className="text-base font-semibold leading-7 text-slate-950">
-                  Une plateforme qui relie financement, execution terrain et accompagnement des projets.
-                </p>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                <div className="border border-slate-200 bg-white px-4 py-4">
-                  <p className="text-sm leading-6 text-slate-700">Immobilier, construction et infrastructures durables.</p>
-                </div>
-                <div className="border border-slate-200 bg-white px-4 py-4">
-                  <p className="text-sm leading-6 text-slate-700">Coordonner experts, investisseurs, agences et partenaires publics.</p>
-                </div>
-                <div className="border border-slate-200 bg-white px-4 py-4">
-                  <p className="text-sm leading-6 text-slate-700">Rendre les projets plus lisibles, plus solides et mieux executes.</p>
-                </div>
-              </div>
-            </aside>
           </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {overviewCards.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article
-                  key={item.title}
-                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f6f9fd_100%)] px-6 py-6 shadow-[0_14px_28px_rgba(15,23,42,0.05)]"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white shadow-md">
-                    <Icon size={18} />
-                  </div>
-                  <h2 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">{item.title}</h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{item.text}</p>
-                </article>
-              );
-            })}
-          </div>
         </div>
       </section>
 
@@ -235,23 +177,22 @@ const AbiAboutPage = () => {
         <div className="mx-auto grid max-w-[1180px] items-center gap-10 px-6 py-12 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
           <div className="max-w-[560px]">
             <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
-              Faciliter l'acces au financement et aux competences pour des projets durables.
+              Faciliter l'accès au financement pour les projets immobiliers innovants
             </h2>
             <p className="mt-5 text-sm leading-7 text-slate-700 sm:text-base">
-              Nous soutenons des projets qui ameliorent la qualite de vie, creent des emplois
-              locaux et stimulent le developpement urbain et rural en Afrique.
+              Nous soutenons des projets qui améliorent la qualité de vie, créent des emplois locaux et stimulent le développement urbain et rural en Afrique.
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="border border-black/8 bg-white/70 px-5 py-5">
                 <p className="text-sm font-semibold text-slate-950">Financement structure</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Des solutions pensees pour rendre les projets bancables et mieux executes.
+                  Des solutions pensées pour rendre les projets bancables et mieux exécutés.
                 </p>
               </div>
               <div className="border border-black/8 bg-white/70 px-5 py-5">
                 <p className="text-sm font-semibold text-slate-950">Accompagnement terrain</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Une mobilisation d'expertises techniques, financieres et locales.
+                  Une mobilisation d'expertises techniques, financières et locales.
                 </p>
               </div>
             </div>
@@ -310,7 +251,7 @@ const AbiAboutPage = () => {
           <div className="grid gap-6 self-stretch">
             <div className="max-w-[620px]">
               <h2 className="mt-3 text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
-                Une presence regionale pour accompagner les projets au plus pres du terrain.
+                Une présence régionale pour accompagner les projets au plus proche des populations.
               </h2>
               <p className="mt-5 text-sm leading-7 text-slate-600 sm:text-base">
                 Africa Build Investment dispose d'un reseau d'agences regionales pour assurer une presence operationnelle et un accompagnement de proximite des projets sur l'ensemble du continent.
@@ -333,7 +274,7 @@ const AbiAboutPage = () => {
 
               <div className="grid gap-1">
                 <AccordionCard
-                  title="Implantations regionales"
+                  title="Implantations regionales et internationales"
                   icon={MapPinned}
                   items={regionalOffices}
                   isOpen={openAgencyAccordion === 1}

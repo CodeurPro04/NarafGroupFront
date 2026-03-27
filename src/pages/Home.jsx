@@ -1,7 +1,12 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Hero from "../components/layout/Hero";
-import api, { getApprovedPartners, getHouseModels } from "../api/axios";
+import api, {
+  getApprovedPartners,
+  getCurrentUser,
+  getHouseModels,
+  isAuthenticated,
+} from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
@@ -79,22 +84,35 @@ const africanCountries = [
   { name: "Republique centrafricaine", code: "cf" },
 ];
 
+const trustedPartnerLogos = [
+  { src: "/images/logoabi.svg", alt: "ABI" },
+  { src: "/images/logonaraf.png", alt: "Naraf" },
+];
+
 const Home = () => {
+  const navigate = useNavigate();
+  const getPropertyShowcaseTitle = (count = 0) =>
+    `Plus de ${count} annonce${count > 1 ? "s" : ""} disponible${count > 1 ? "s" : ""}`;
+  const getConstructionShowcaseTitle = (count = 0) =>
+    `${count} projet${count > 1 ? "s" : ""} de construction disponible${count > 1 ? "s" : ""}`;
+  const getInvestmentShowcaseTitle = (count = 0) =>
+    `Plus de ${count} opportunite${count > 1 ? "s" : ""} d'investissement en Afrique`;
+
   const defaultShowcaseSections = [
     {
-      title: "Besoin d'un bien",
+      title: getPropertyShowcaseTitle(0),
       button_label: "Voir tous les biens",
       button_link: "/properties",
       items: [],
     },
     {
-      title: "Besoin d'un projet de construction",
+      title: getConstructionShowcaseTitle(0),
       button_label: "Voir tous les projets",
       button_link: "/construction",
       items: [],
     },
     {
-      title: "J'investis dans un projet",
+      title: getInvestmentShowcaseTitle(0),
       button_label: "Voir les opportunites",
       button_link: "/investment",
       items: [],
@@ -127,19 +145,19 @@ const Home = () => {
   const whyChooseUs = [
     {
       icon: <BadgeCheck size={24} />,
-      title: "Partenaires certifiés",
+      title: "L'accès aux informations fiables",
     },
     {
       icon: <FileText size={24} />,
-      title: "Dossiers légaux complets",
+      title: "Une maîtrise des démarches administratives",
     },
     {
       icon: <Eye size={24} />,
-      title: "Suivi transparent",
+      title: "Transaction immobilière sécurisée",
     },
     {
       icon: <Users size={24} />,
-      title: "Accompagnement humain",
+      title: "Mécanisme de financement accessible",
     },
   ];
 
@@ -252,6 +270,20 @@ const Home = () => {
     }
   };
 
+  const handleCreateListingClick = () => {
+    const currentUser = getCurrentUser();
+    const normalizedRole = currentUser?.role || currentUser?.role_name;
+    const isOwnerAuthenticated =
+      isAuthenticated() && normalizedRole === "proprietaire";
+
+    if (!isOwnerAuthenticated) {
+      navigate("/register?role=proprietaire");
+      return;
+    }
+
+    navigate("/profile", { state: { initialTab: "proprietes" } });
+  };
+
   useEffect(() => {
     const loadPartners = async () => {
       try {
@@ -354,23 +386,33 @@ const Home = () => {
           propertiesResponse?.data?.data?.data ||
           propertiesResponse?.data?.data ||
           [];
+        const propertiesTotal =
+          propertiesResponse?.data?.data?.total ||
+          propertiesResponse?.data?.total ||
+          propertiesList.length;
         const constructionList =
           constructionResponse?.data?.data || constructionResponse?.data || [];
+        const constructionTotal =
+          constructionResponse?.data?.total || constructionList.length;
         const investmentsList =
           investmentsResponse?.data?.data?.data ||
           investmentsResponse?.data?.data ||
           [];
+        const investmentsTotal =
+          investmentsResponse?.data?.data?.total ||
+          investmentsResponse?.data?.total ||
+          investmentsList.length;
 
         if (isMounted) {
           setShowcaseSections([
             {
-              title: "Besoin d'un bien",
+              title: getPropertyShowcaseTitle(propertiesTotal),
               button_label: "Voir tous les biens",
               button_link: "/properties",
               items: pickRandomItems(propertiesList, 4).map(normalizePropertyItem),
             },
             {
-              title: "Besoin d'un projet de construction",
+              title: getConstructionShowcaseTitle(constructionTotal),
               button_label: "Voir tous les projets",
               button_link: "/construction",
               items: pickRandomItems(constructionList, 4).map(
@@ -378,7 +420,7 @@ const Home = () => {
               ),
             },
             {
-              title: "J'investis dans un projet",
+              title: getInvestmentShowcaseTitle(investmentsTotal),
               button_label: "Voir les opportunites",
               button_link: "/investment",
               items: pickRandomItems(investmentsList, 4).map(
@@ -619,7 +661,7 @@ const Home = () => {
                 >
                   <div className="mb-5">
                     <h2 className="text-[2rem] font-bold leading-tight text-slate-950">
-                      {section.title || "Besoin d'un bien"}
+                      {section.title || getPropertyShowcaseTitle(0)}
                     </h2>
                     <div className="mt-2 h-1 w-10 rounded-full bg-slate-950" />
                   </div>
@@ -688,13 +730,22 @@ const Home = () => {
                   )}
 
                   {section.button_label && (
-                    <div className="mt-6">
+                    <div className="mt-6 flex flex-wrap gap-3">
                       <Link
                         to={section.button_link || "#"}
                         className="inline-flex items-center border-0 bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                       >
                         {section.button_label}
                       </Link>
+                      {sectionIndex === 0 ? (
+                        <button
+                          type="button"
+                          onClick={handleCreateListingClick}
+                          className="inline-flex items-center border-0 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                        >
+                          Faire une annonce
+                        </button>
+                      ) : null}
                     </div>
                   )}
                 </div>
@@ -703,6 +754,33 @@ const Home = () => {
           </div>
         </section>
       )}
+
+      <section className="bg-[linear-gradient(135deg,#0f62c9_0%,#0a4ea3_100%)] py-10 text-white sm:py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6">
+            <div className="mx-auto max-w-2xl text-center">
+              <p className="text-3xl font-bold leading-tight sm:text-4xl">
+                Ils nous ont fait confiance
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:mx-auto sm:max-w-xl sm:grid-cols-2">
+              {trustedPartnerLogos.map((partner) => (
+                <div
+                  key={partner.src}
+                  className="flex h-20 items-center justify-center bg-white px-4"
+                >
+                  <img
+                    src={partner.src}
+                    alt={partner.alt}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="bg-slate-50 py-16 sm:py-18">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -765,10 +843,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Pourquoi nous faire confiance ?
+              Une connaissance réelle du marché africain
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Plus de 25 ans d'experience, dans l'immobilier
+              Nous sommes actif partout en Afrique
             </p>
           </div>
 
@@ -814,11 +892,7 @@ const Home = () => {
               Nos partenaires
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Nous collaborons avec des acteurs fiables, vérifiés et engagés
-              pour la qualité.
-            </p>
-            <p className="text-lg text-gray-600">
-              Nos partenaires officiels seront dévoilés très prochainement.
+              Nous collaborons avec des acteurs fiables, agrées et engagés pour la qualité.
             </p>
           </div>
 
@@ -897,7 +971,7 @@ const Home = () => {
       <section className="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Prêt à passer du rêve au concret ?
+            Contactez- nous dès aujourd'hui !
           </h2>
           <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
             Tu veux un projet sérieux, pas des paroles. On commence quand tu

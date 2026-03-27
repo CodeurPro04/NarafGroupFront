@@ -6,7 +6,6 @@ import {
   ChevronDown,
   CircleHelp,
   FileSearch,
-  Handshake,
   Landmark,
   MessageSquareText,
   ShieldCheck,
@@ -81,24 +80,6 @@ const valueItems = [
   "Accompagnement complet de la recherche a la livraison.",
 ];
 
-const overviewCards = [
-  {
-    title: "Particuliers et professionnels",
-    text: "ABI met en relation acheteurs, vendeurs, locataires, promoteurs, operateurs locaux et investisseurs dans un meme cadre de confiance.",
-    icon: Handshake,
-  },
-  {
-    title: "Immobilier et construction",
-    text: "La plateforme couvre la vente de biens existants comme la presentation de projets neufs, de promotion, de lotissements et d'operations de requalification.",
-    icon: Building2,
-  },
-  {
-    title: "Decisions mieux cadres",
-    text: "Chaque parcours cherche a mieux documenter les projets, filtrer les opportunites et fluidifier le passage a l'action.",
-    icon: ShieldCheck,
-  },
-];
-
 const LineAccordion = ({ title, items, isOpen = false, onToggle }) => {
   return (
     <div className="border-b border-slate-300/90">
@@ -157,10 +138,9 @@ const AbiRealEstatePlatformPage = () => {
         primaryLabel="Explorer les biens"
         secondaryLabel="Parler a un conseiller"
         eyebrow=""
-        title="Une plateforme immobiliere plus claire pour acheter, vendre, investir et suivre vos projets."
+        title="Une plateforme de référence pour l'investissement immobilier."
         descriptionLines={[
-          "ABI met en relation particuliers, promoteurs, operateurs locaux et investisseurs dans un cadre plus structure.",
-          "Biens existants, projets neufs, financement, accompagnement transactionnel et suivi de chantier sont reunis dans une meme experience.",
+          "ABI connecte les bons acteurs et centralise toutes les étapes : biens, projets, financement, accompagnement et suivi. Une expérience unique, claire et sécurisée."
         ]}
         backgroundImage="url('https://images.unsplash.com/photo-1494526585095-c41746248156?w=1920&q=80')"
       />
@@ -170,7 +150,7 @@ const AbiRealEstatePlatformPage = () => {
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-start">
             <div className="max-w-[760px]">
               <h1 className="text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-slate-950 sm:text-[2.35rem]">
-                La plateforme immobiliere panafricaine qui relie offre, projets et investissement.
+                La plateforme immobiliere Africaine qui relie offre, projets et investissement.
               </h1>
               <p className="mt-5 max-w-[680px] text-sm leading-7 text-slate-600 sm:text-base">
                 ABI est une plateforme de mise en relation des particuliers, promoteurs et investisseurs pour la vente de biens immobiliers et la presentation de projets de construction: neuf, promotion, lotissements et operations de requalification.
@@ -196,24 +176,6 @@ const AbiRealEstatePlatformPage = () => {
                 </div>
               </div>
             </aside>
-          </div>
-
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {overviewCards.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article
-                  key={item.title}
-                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7fafe_100%)] px-6 py-6 shadow-[0_14px_30px_rgba(15,23,42,0.04)]"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center bg-[#0f62c9] text-white">
-                    <Icon size={18} />
-                  </div>
-                  <h2 className="mt-4 text-base font-semibold text-slate-950 sm:text-lg">{item.title}</h2>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
-                </article>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -311,7 +273,7 @@ const AbiRealEstatePlatformPage = () => {
             className="h-full w-full object-cover object-center opacity-40"
           />
         </div>
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,103,207,0.95)_0%,rgba(4,82,172,0.9)_52%,rgba(3,60,135,0.25)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,103,207,0.66)_0%,rgba(4,82,172,0.56)_52%,rgba(3,60,135,0.12)_100%)]" />
 
         <div className="relative mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-18">
           <div className="max-w-[620px]">

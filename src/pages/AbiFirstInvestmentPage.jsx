@@ -190,13 +190,13 @@ const AbiFirstInvestmentPage = () => {
 
       <section className="border-y border-white/80 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
         <div className="mx-auto max-w-[1180px] px-6 py-14 sm:px-10 lg:px-8 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-            <div className="max-w-[680px]">
+          <div className="space-y-8">
+            <div className="mx-auto max-w-[860px] text-center">
               <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-[2.9rem]">
-              Un parcours d'entree plus simple pour comprendre, verifier et investir sans avancer dans le flou.
+                Un parcours d'entree plus simple pour comprendre, verifier et investir sans avancer dans le flou.
               </h1>
-              <p className="mt-5 max-w-[640px] text-base leading-7 text-slate-600 sm:text-lg">
-              ABI structure le premier investissement autour d'un enchainement clair : prise de contact, qualification, analyse, conformite, structuration, closing et suivi post-investissement.
+              <p className="mx-auto mt-5 max-w-[760px] text-base leading-7 text-slate-600 sm:text-lg">
+                ABI structure le premier investissement autour d'un enchainement clair : prise de contact, qualification, analyse, conformite, structuration, closing et suivi post-investissement.
               </p>
             </div>
 

@@ -82,7 +82,7 @@ const Properties = () => {
     {
       icon: <Shield size={32} />,
       title: "Transaction Sécurisée",
-      description: "Ton argent protégé, ton projet sécurisé.",
+      description: "Tous nos biens sont certifiés.",
       features: [
         "Due diligence complète",
         "Garanties bancaires",
@@ -286,6 +286,7 @@ const Properties = () => {
           year: property.year_built || new Date().getFullYear(),
           transaction_type: property.transaction_type || "vente",
           property_type_id: property.property_type_id,
+          property_type: property.property_type || null,
         }));
 
         setProperties(formattedProperties);
@@ -334,12 +335,37 @@ const Properties = () => {
     return "appartement";
   };
 
+  const getPropertyTypeLabel = (property) => {
+    if (property.property_type?.name) return property.property_type.name;
+
+    if (property.property_type_id) {
+      const matchingType = propertyTypes.find(
+        (type) => String(type.id) === String(property.property_type_id),
+      );
+
+      if (matchingType?.name) return matchingType.name;
+    }
+
+    const propertyType = getPropertyType(property);
+    return propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
+  };
+
   const getPropertyTag = (property) => {
     if (property.status === "approved") {
       return property.featured ? "En vedette" : "Disponible";
     }
     if (property.status === "pending") return "En attente";
     return "";
+  };
+
+  const getTransactionLabel = (property) => {
+    const transactionType = property.transaction_type?.toLowerCase();
+
+    if (transactionType === "vente") return "En vente";
+    if (transactionType === "location") return "Location";
+    if (transactionType === "location-vente") return "Location-vente";
+
+    return property.transaction_type || "Disponible";
   };
 
   const getPropertyFeatures = (property) => {
@@ -502,9 +528,7 @@ const Properties = () => {
       navigate("/register?role=proprietaire");
       return;
     }
-    setAnnouncementError("");
-    setAnnouncementSuccess("");
-    setShowAnnouncementModal(true);
+    navigate("/profile", { state: { initialTab: "proprietes" } });
   };
 
   const submitAnnouncementRequest = async (event) => {
@@ -578,30 +602,35 @@ const Properties = () => {
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
             <div>
               <h1 className="max-w-2xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.35rem]">
-                Des biens fiables,
-                <span className="block">pas des promesses</span>
+                Trouvez votre bien
+                <span className="block">immobilier en un clic</span>
               </h1>
               <p className="mt-5 max-w-xl text-sm leading-6 text-white sm:text-base">
-                Tu veux investir au pays ou en Afrique francophone, mais tu veux du serieux:
-                ici, chaque bien est verifie, documente et pret pour toi.
+                Villas, appartements, terrains sécurisés, programmes neufs. Chaque projet est vérifié, documenté et prêt pour toi.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={() => {
-                    const searchBar = document.querySelector('input[type="text"]');
-                    if (searchBar) searchBar.focus();
+                    const catalogSection =
+                      document.getElementById("property-catalog");
+                    if (catalogSection) {
+                      catalogSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }
                   }}
                   className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#12506f] shadow-lg transition hover:bg-[#f3f8fc]"
                 >
                   <Search size={18} />
-                  <span>Voir les opportunites</span>
+                  <span>Voir tous nos biens</span>
                 </button>
                 <button
                   onClick={handleAnnouncementClick}
                   className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
                 >
                   <Plus size={18} />
-                  <span>Espace client</span>
+                  <span>Faire une annonce</span>
                 </button>
               </div>
             </div>
@@ -614,7 +643,7 @@ const Properties = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <section className="mb-10 border border-[#cfe0ef] bg-[#d9e8f4] px-5 py-5 shadow-[0_12px_28px_rgba(15,23,42,0.06)] sm:px-6 sm:py-6">
             <div className="space-y-4">
-              <h2 className="mx-auto max-w-3xl text-center text-2xl font-semibold leading-tight text-slate-950 sm:text-[1.9rem]">
+              <h2 className="mx-auto max-w-3xl text-left text-xl font-semibold leading-tight text-slate-950 sm:text-[1.9rem]">
                 Plus de 650 000 particuliers et professionnels ont deja choisi ABI pour leur acquisition de bien immobilier.
               </h2>
 
@@ -681,7 +710,7 @@ const Properties = () => {
           <div className="mb-10 sm:mb-12">
             <div className="text-center mb-8 sm:mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-                Trouvez le bien qui vous ressemble
+                Trouvez vos biens.
               </h2>
               <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
                 ABI vous aide a filtrer plus vite, comparer plus clairement et avancer sur des biens mieux documentes.
@@ -962,16 +991,22 @@ const Properties = () => {
                               "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
                           }}
                         />
-                        <div className="absolute right-3 top-3 flex items-center gap-1 border border-[#d8e5ff] bg-white px-3 py-1 text-[11px] font-semibold text-[#4f72c8] shadow-sm">
-                          <CheckCircle size={13} className="text-[#5f85f5]" />
-                          <span>Verified</span>
+                        <div className="absolute left-3 top-3 bg-white px-3 py-1 text-[11px] font-extrabold text-[#12a150] shadow-sm">
+                          {formatPrice(property.price)}
+                        </div>
+                        <div className="absolute right-3 top-3 bg-[#101418] px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
+                          {getTransactionLabel(property)}
                         </div>
                       </Link>
 
                       <div className="p-4 sm:p-5">
-                        <div className="text-[2rem] font-extrabold leading-none text-[#12a150]">
-                          {formatPrice(property.price)}
-                        </div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7788]">
+                          {getPropertyTypeLabel(property)}
+                        </p>
+
+                        <h3 className="mt-2 min-h-[48px] text-lg font-semibold leading-6 text-[#16202a] line-clamp-2">
+                          {property.title}
+                        </h3>
 
                         <div className="mt-3 flex items-center gap-2 text-sm text-[#6b7788]">
                           <MapPin size={14} className="shrink-0 text-[#8a94a4]" />
@@ -993,14 +1028,10 @@ const Properties = () => {
                           </div>
                         </div>
 
-                        <h3 className="mt-3 min-h-[48px] text-lg font-semibold leading-6 text-[#16202a] line-clamp-2">
-                          {property.title}
-                        </h3>
-
                         <div className="mt-5">
                           <Link
                             to={`/property/${property.id}`}
-                            className="flex w-full items-center justify-center bg-[#ff9808] px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-[#f08b00]"
+                            className="flex w-full items-center justify-center bg-blue-600 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-700"
                           >
                             Voir les Détails
                           </Link>
@@ -1207,19 +1238,28 @@ const Properties = () => {
             On t’accompagne du choix jusqu’à la remise des clés.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#property-search"
+            <button
+              type="button"
+              onClick={() =>
+                navigate("/register?role=visiteur", {
+                  state: {
+                    messageType: "info",
+                    messageText:
+                      "Une fois votre compte cree, connectez-vous a votre profil pour echanger avec un agent ABI.",
+                  },
+                })
+              }
               className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
             >
-              <Home size={20} />
-              <span>Trouver mon bien</span>
-            </a>
+              <Search size={20} />
+              <span>Trouver un agent</span>
+            </button>
             <a
               href="tel:+330751521063"
               className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
             >
               <Phone size={20} />
-              <span>Parler à un conseiller</span>
+              <span>contactez-nous</span>
             </a>
           </div>
         </div>

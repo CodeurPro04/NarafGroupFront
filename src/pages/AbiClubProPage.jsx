@@ -12,6 +12,7 @@ import {
   Settings2,
   ShieldCheck,
   Sparkles,
+  UserPlus,
   X,
 } from "lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
@@ -245,6 +246,12 @@ const AbiClubProPage = () => {
     setOpenSection((currentIndex) => (currentIndex === index ? -1 : index));
   };
 
+  const openMembershipModal = (planKey) => {
+    setActivePlan(planKey);
+    setMembershipForm(initialMembershipForm);
+    setIsMembershipModalOpen(true);
+  };
+
   const handleMembershipFormChange = (event) => {
     const { name, value } = event.target;
     setMembershipForm((current) => ({ ...current, [name]: value }));
@@ -280,18 +287,18 @@ const AbiClubProPage = () => {
   return (
     <div className="bg-[linear-gradient(180deg,#f4f7fb_0%,#f7f1e8_42%,#ffffff_100%)] text-slate-900">
       <PropertiesHero
-        onPrimaryAction={() => navigate("/investment")}
+        onPrimaryAction={() => openMembershipModal("entreprises")}
         onSecondaryAction={() => {
           window.location.href =
             "mailto:contact@africabuildinvest.com?subject=Club%20Pro%20ABI";
         }}
-        primaryLabel="Voir les opportunites"
+        primaryLabel="Adhérer maintenant"
+        primaryIcon={UserPlus}
         secondaryLabel="Contacter ABI"
         secondaryIcon={Mail}
-        title="Club Pro ABI, un cadre plus clair pour connecter reseau, projets et opportunites."
+        title="Club Pro ABI, un cadre clair pour connecter reseau, projets et opportunites."
         descriptionLines={[
           "Africa Build Investment reunit professionnels, operateurs et partenaires dans un club pense pour structurer les rencontres, les collaborations et les opportunites.",
-          "Le Club Pro ABI aide a mieux lire l'ecosysteme, accelerer les mises en relation et integrer un cadre de travail plus utile.",
         ]}
         backgroundImage="url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&q=80')"
         overlayClassName="bg-[linear-gradient(180deg,rgba(2,6,23,0.82)_0%,rgba(3,37,99,0.86)_42%,rgba(3,64,145,0.8)_100%)]"
@@ -302,7 +309,7 @@ const AbiClubProPage = () => {
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div className="max-w-[560px]">
               <h1 className="text-3xl font-semibold leading-tight text-slate-950 sm:text-4xl lg:text-[2.9rem]">
-                Un club pense pour renforcer les relations professionnelles autour des projets ABI.
+                Un réseau de professionnelles autour des projets Africains.
               </h1>
             </div>
 
@@ -318,6 +325,7 @@ const AbiClubProPage = () => {
             </div>
           </div>
 
+          {/*
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {highlights.map((item) => (
               <div
@@ -333,6 +341,7 @@ const AbiClubProPage = () => {
               </div>
             ))}
           </div>
+          */}
         </div>
       </section>
 
@@ -347,6 +356,17 @@ const AbiClubProPage = () => {
           </div>
 
           <div className="grid gap-2 self-stretch">
+            <div className="pb-4">
+              <h2 className="text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
+                Pourquoi devenir membre du club ABI ?
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                Vous avez un conseiller dedie qui vous propose des projets adaptes a vos besoins.
+                Ideal quand le temps manque ou que le marche est complexe.
+                Acces complet au catalogue, inscription gratuite.
+              </p>
+            </div>
+
             <ClubAccordion
               title="Objectifs"
               icon={Network}
@@ -374,6 +394,7 @@ const AbiClubProPage = () => {
         </div>
       </section>
 
+      {/*
       <section className="bg-white">
         <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-14">
           <div className="mx-auto max-w-[920px]">
@@ -404,6 +425,7 @@ const AbiClubProPage = () => {
           </div>
         </div>
       </section>
+      */}
 
       <section className="bg-white py-14 sm:py-16">
         <div className="mx-auto max-w-[1180px] px-6 sm:px-10 lg:px-8">
@@ -413,7 +435,7 @@ const AbiClubProPage = () => {
             </h2>
           </div>
 
-          <div className="mx-auto mt-10 max-w-[760px] border border-[#0f62c9] p-1">
+          <div className="relative z-10 mx-auto mt-10 mb-[-28px] max-w-[760px] border border-[#0f62c9] bg-white p-1 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
             <div className="grid grid-cols-2 gap-1">
               {Object.entries(subscriptionPlans).map(([key, plan]) => {
                 const isActive = activePlan === key;
@@ -435,7 +457,7 @@ const AbiClubProPage = () => {
             </div>
           </div>
 
-          <div className="mt-8 bg-[#f4f6fa] px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+          <div className="mt-0 bg-[#f4f6fa] px-6 pt-16 pb-8 sm:px-8 sm:pt-18 sm:py-10 lg:px-12 lg:pt-20 lg:pb-12">
             <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
               <div className="overflow-hidden bg-white shadow-[0_16px_34px_rgba(15,23,42,0.08)]">
                 <img
@@ -446,7 +468,7 @@ const AbiClubProPage = () => {
               </div>
 
               <div>
-                <div className="divide-y divide-slate-300/80 border-y border-slate-300/80">
+                <div className="mt-6 divide-y divide-slate-300/80 border-y border-slate-300/80">
                   {currentPlan.items.map((item) => (
                     <div key={item} className="flex items-start gap-4 py-5">
                       <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-[#0f62c9]">
@@ -458,17 +480,35 @@ const AbiClubProPage = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
 
-                <div className="mt-8">
-                  <button
-                    type="button"
-                    onClick={() => setIsMembershipModalOpen(true)}
-                    className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-                  >
-                    <CreditCard size={16} />
-                    Adhérer
-                  </button>
-                </div>
+            <div className="mt-10 grid gap-6 border-t border-slate-300/80 pt-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div className="max-w-[760px]">
+                <h3 className="text-2xl font-semibold leading-tight text-slate-950 sm:text-[2rem]">
+                  Rejoindre un reseau plus structure pour mieux lire les opportunites et activer les bonnes connexions.
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                  ABI peut vous orienter sur les modalites d'adhesion, les rencontres du club et la facon d'integrer l'ecosysteme selon votre profil.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => openMembershipModal(activePlan)}
+                  className="inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
+                >
+                  Adhérer maintenant
+                  <ArrowRight size={16} />
+                </button>
+                <a
+                  href="mailto:contact@africabuildinvest.com?subject=Club%20Pro%20ABI"
+                  className="inline-flex items-center gap-2 border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                  Contacter ABI
+                  <Mail size={16} />
+                </a>
               </div>
             </div>
           </div>
@@ -634,38 +674,6 @@ const AbiClubProPage = () => {
         </div>
       ) : null}
 
-      <section className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-[1180px] px-6 py-12 sm:px-10 lg:px-8 lg:py-16">
-          <div className="grid gap-6 bg-[linear-gradient(135deg,#0a67cf_0%,#0452ac_42%,#033c87_100%)] px-6 py-8 text-white shadow-[0_16px_36px_rgba(15,23,42,0.08)] lg:grid-cols-[1fr_auto] lg:items-center lg:px-8">
-            <div className="max-w-[760px]">
-              <h2 className="text-2xl font-semibold leading-tight sm:text-[2rem]">
-                Rejoindre un reseau plus structure pour mieux lire les opportunites et activer les bonnes connexions.
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-white/82 sm:text-base">
-                ABI peut vous orienter sur les modalites d'adhesion, les rencontres du club et la facon d'integrer l'ecosysteme selon votre profil.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={() => navigate("/investment")}
-                className="inline-flex items-center gap-2 bg-white px-6 py-3.5 text-sm font-semibold text-[#0f62c9] transition hover:bg-slate-100"
-              >
-                Voir les opportunites
-                <ArrowRight size={16} />
-              </button>
-              <a
-                href="mailto:contact@africabuildinvest.com?subject=Club%20Pro%20ABI"
-                className="inline-flex items-center gap-2 border border-white/25 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Contacter ABI
-                <Mail size={16} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
