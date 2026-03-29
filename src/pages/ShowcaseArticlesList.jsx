@@ -51,7 +51,7 @@ const ShowcaseArticlesList = () => {
     };
   }, [sectionKey]);
 
-  const items = useMemo(() => (Array.isArray(section?.items) ? section.items : []), [section]);
+  const items = useMemo(() => Array.isArray(section?.items) ? section.items : [], [section]);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-10 sm:pt-12">
@@ -59,10 +59,10 @@ const ShowcaseArticlesList = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-200 transition hover:text-white"
-          >
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-200 transition hover:text-white">
+
             <ArrowLeft size={16} />
-            Retour a l'accueil
+            Retour à l'accueil
           </Link>
 
           <h1 className="mt-6 text-3xl font-bold sm:text-4xl">
@@ -76,45 +76,45 @@ const ShowcaseArticlesList = () => {
 
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {loading ? (
-            <p className="text-slate-500">Chargement des articles...</p>
-          ) : error ? (
-            <div className="border border-rose-100 bg-rose-50 p-6 text-rose-700">
+          {loading ?
+          <p className="text-slate-500">Chargement des articles...</p> :
+          error ?
+          <div className="border border-rose-100 bg-rose-50 p-6 text-rose-700">
               {error}
-            </div>
-          ) : items.length === 0 ? (
-            <div className="border border-slate-200 bg-white p-6 text-slate-600">
+            </div> :
+          items.length === 0 ?
+          <div className="border border-slate-200 bg-white p-6 text-slate-600">
               Aucun article disponible pour le moment.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            </div> :
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {items.map((item, index) => {
-                const imageUrl = toMediaUrl(item?.image_url) || item?.image_url;
-                return (
-                  <article
-                    key={`${item?.slug || "article"}-${index}`}
-                    className="group overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                  >
+              const imageUrl = toMediaUrl(item?.image_url) || item?.image_url;
+              return (
+                <article
+                  key={`${item?.slug || "article"}-${index}`}
+                  className="group overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+
                     <Link to={item?.details_link || "#"} className="block">
                       <div className="h-52 overflow-hidden bg-slate-100">
-                        {imageUrl ? (
-                          <img
-                            src={imageUrl}
-                            alt={item?.title || "Article"}
-                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
+                        {imageUrl ?
+                      <img
+                        src={imageUrl}
+                        alt={item?.title || "Article"}
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105" /> :
+
+
+                      <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
                             Image a ajouter
                           </div>
-                        )}
+                      }
                       </div>
                       <div className="space-y-3 p-5">
                         <h2 className="line-clamp-2 text-xl font-semibold text-slate-900">
                           {item?.title || "Titre a renseigner"}
                         </h2>
                         <p className="line-clamp-3 text-sm leading-6 text-slate-600">
-                          {item?.excerpt || "Resume a renseigner depuis l'espace administrateur."}
+                          {item?.excerpt || "Résumé a renseigner depuis l'espace administrateur."}
                         </p>
                         <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
                           Lire l'article
@@ -122,15 +122,15 @@ const ShowcaseArticlesList = () => {
                         </span>
                       </div>
                     </Link>
-                  </article>
-                );
-              })}
+                  </article>);
+
+            })}
             </div>
-          )}
+          }
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default ShowcaseArticlesList;

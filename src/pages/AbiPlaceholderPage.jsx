@@ -10,12 +10,12 @@ const AbiPlaceholderPage = ({ title }) => {
             {title}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            Cette page est en construction et sera disponible bientot.
+            Cette page est en construction et sera disponible bientôt.
           </p>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default AbiPlaceholderPage;

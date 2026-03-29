@@ -5,7 +5,7 @@ const AbiComingSoonPage = ({
   eyebrow,
   title,
   description,
-  accent = "blue",
+  accent = "blue"
 }) => {
   const accents = {
     blue: {
@@ -13,15 +13,15 @@ const AbiComingSoonPage = ({
       badge: "bg-[#d8ecff] text-[#0a4da3]",
       card: "border-[#cfe2ff] bg-[#f6fbff]",
       button: "bg-[#1367c3] hover:bg-[#0f57a5]",
-      glow: "bg-[#7bc0ff]/30",
+      glow: "bg-[#7bc0ff]/30"
     },
     sand: {
       shell: "from-[#8d5c18] via-[#c4882c] to-[#5f3a0f]",
       badge: "bg-[#fff0d6] text-[#8d5c18]",
       card: "border-[#f1dfbe] bg-[#fffbf2]",
       button: "bg-[#b6781f] hover:bg-[#9d661a]",
-      glow: "bg-[#f4c77d]/30",
-    },
+      glow: "bg-[#f4c77d]/30"
+    }
   };
 
   const theme = accents[accent] || accents.blue;
@@ -52,27 +52,27 @@ const AbiComingSoonPage = ({
               Disponibilite prochaine
             </div>
             <h2 className="mt-5 text-3xl font-semibold text-slate-900">
-              Cette page est en construction et sera disponible bientot.
+              Cette page est en construction et sera disponible bientôt.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-              L'equipe ABI finalise actuellement cette experience pour proposer
+              L'équipe ABI finalisé actuellement cette expérience pour proposer
               un parcours plus clair, plus utile et mieux integre au reste du
               site. La page sera publiee des qu'elle atteindra le niveau de
-              qualite attendu.
+              qualité attendu.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/"
-                className={`inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white transition ${theme.button}`}
-              >
+                className={`inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white transition ${theme.button}`}>
+
                 Retour a ABI
                 <ArrowRight size={16} />
               </Link>
               <Link
                 to="/properties"
-                className="inline-flex items-center justify-center gap-2 border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
-              >
+                className="inline-flex items-center justify-center gap-2 border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50">
+
                 Explorer les biens
               </Link>
             </div>
@@ -84,10 +84,10 @@ const AbiComingSoonPage = ({
                 Statut
               </p>
               <p className="mt-3 text-lg font-semibold text-slate-900">
-                Mise en preparation
+                Mise en préparation
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-500">
-                Contenu, parcours et experience utilisateur en cours de finition.
+                Contenu, parcours et expérience utilisateur en cours de finition.
               </p>
             </div>
             <div className="border border-slate-200 bg-white p-5">
@@ -98,14 +98,14 @@ const AbiComingSoonPage = ({
                 Offrir une interface claire et professionnelle
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-500">
-                Lancement prevu apres validation complete de la structure et des contenus.
+                Lancement prévu après validation complète de la structure et des contenus.
               </p>
             </div>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AbiComingSoonPage;

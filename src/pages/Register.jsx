@@ -11,8 +11,8 @@ import {
   Briefcase,
   CheckCircle,
   AlertCircle,
-  Shield,
-} from "lucide-react";
+  Shield } from
+"lucide-react";
 import { register } from "../api/axios";
 
 const PasswordStrength = ({ password }) => {
@@ -39,72 +39,73 @@ const PasswordStrength = ({ password }) => {
         <span className="text-gray-600">Force du mot de passe</span>
         <span
           className={`font-semibold ${
-            strength.color === "red"
-              ? "text-red-600"
-              : strength.color === "yellow"
-              ? "text-yellow-600"
-              : "text-green-600"
-          }`}
-        >
+          strength.color === "red" ?
+          "text-red-600" :
+          strength.color === "yellow" ?
+          "text-yellow-600" :
+          "text-green-600"}`
+          }>
+
           {strength.level}
         </span>
       </div>
       <div className="w-full bg-gray-200 h-2">
         <div
           className={`h-2 rounded-full transition-all duration-500 ${
-            strength.color === "red"
-              ? "bg-red-500"
-              : strength.color === "yellow"
-              ? "bg-yellow-500"
-              : "bg-green-500"
-          }`}
-          style={{ width: `${strength.percent}%` }}
-        />
+          strength.color === "red" ?
+          "bg-red-500" :
+          strength.color === "yellow" ?
+          "bg-yellow-500" :
+          "bg-green-500"}`
+          }
+          style={{ width: `${strength.percent}%` }} />
+
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
-const UserTypeCard = ({ type, isSelected, onSelect }) => (
-  <button
-    type="button"
-    onClick={() => onSelect(type.value)}
-    className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
-      isSelected
-        ? `border-${type.color}-600 bg-${type.color}-50 shadow-lg`
-        : "border-gray-200 hover:border-gray-300 hover:shadow-md"
-    }`}
-  >
+const UserTypeCard = ({ type, isSelected, onSelect }) =>
+<button
+  type="button"
+  onClick={() => onSelect(type.value)}
+  className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
+  isSelected ?
+  `border-${type.color}-600 bg-${type.color}-50 shadow-lg` :
+  "border-gray-200 hover:border-gray-300 hover:shadow-md"}`
+  }>
+
     <div className="flex flex-col space-y-4">
       <div className="flex items-center justify-between">
         <div
-          className={`p-3 rounded-xl ${
-            isSelected
-              ? `bg-${type.color}-100 text-${type.color}-600`
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
+        className={`p-3 rounded-xl ${
+        isSelected ?
+        `bg-${type.color}-100 text-${type.color}-600` :
+        "bg-gray-100 text-gray-600"}`
+        }>
+
           {type.icon}
         </div>
       </div>
 
       <div>
         <h3
-          className={`text-lg font-semibold ${
-            isSelected ? `text-${type.color}-900` : "text-gray-900"
-          }`}
-        >
+        className={`text-lg font-semibold ${
+        isSelected ? `text-${type.color}-900` : "text-gray-900"}`
+        }>
+
           {type.label}
         </h3>
         <p className="text-sm text-gray-600 mt-1">{type.description}</p>
       </div>
     </div>
-  </button>
-);
+  </button>;
+
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === "true";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [manualUserType, setManualUserType] = useState(null);
@@ -118,7 +119,7 @@ const Register = () => {
     confirmPassword: "",
     licenseNumber: "",
     agency: "",
-    terms: false,
+    terms: false
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -131,7 +132,7 @@ const Register = () => {
       owner: "owner",
       agent: "agent",
       visiteur: "visitor",
-      visitor: "visitor",
+      visitor: "visitor"
     };
 
     return roleToUserType[role] || null;
@@ -145,35 +146,35 @@ const Register = () => {
 
     setMessage({
       type: location.state?.messageType || "info",
-      text: noticeText,
+      text: noticeText
     });
 
     navigate(location.pathname + location.search, { replace: true, state: {} });
   }, [location.pathname, location.search, location.state, navigate]);
 
   const userTypes = [
-    {
-      value: "visitor",
-      label: "Visiteur",
-      icon: <User size={24} />,
-      description: "Consulter les biens et sauvegarder vos favoris",
-      color: "blue",
-    },
-    {
-      value: "owner",
-      label: "Propriétaire",
-      icon: <Building size={24} />,
-      description: "Publier et gérer vos propriétés",
-      color: "emerald",
-    },
-    {
-      value: "agent",
-      label: "Agent",
-      icon: <Briefcase size={24} />,
-      description: "Professionnel de l'immobilier",
-      color: "purple",
-    },
-  ];
+  {
+    value: "visitor",
+    label: "Visiteur",
+    icon: <User size={24} />,
+    description: "Consulter les biens et sauvegarder vos favoris",
+    color: "blue"
+  },
+  {
+    value: "owner",
+    label: "Propriétaire",
+    icon: <Building size={24} />,
+    description: "Publier et gérer vos propriétés",
+    color: "emerald"
+  },
+  {
+    value: "agent",
+    label: "Agent",
+    icon: <Briefcase size={24} />,
+    description: "Professionnel de l'immobilier",
+    color: "purple"
+  }];
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -247,7 +248,7 @@ const Register = () => {
       setIsLoading(false);
       setMessage({
         type: "error",
-        text: "Veuillez corriger les erreurs du formulaire",
+        text: "Veuillez corriger les erreurs du formulaire"
       });
       return;
     }
@@ -257,7 +258,7 @@ const Register = () => {
       const roleMapping = {
         visitor: "visiteur",
         owner: "proprietaire",
-        agent: "agent",
+        agent: "agent"
       };
 
       // Préparer les données pour l'API Laravel
@@ -268,7 +269,7 @@ const Register = () => {
         phone: formData.phone.trim(),
         password: formData.password,
         password_confirmation: formData.confirmPassword,
-        role: roleMapping[userType],
+        role: roleMapping[userType]
       };
 
       // Appel API avec la fonction register qui gère CSRF
@@ -277,9 +278,13 @@ const Register = () => {
       // Vérifier le succès
       if (response.success) {
         const requiresActivation =
-          response.data?.requires_activation ||
-          response.data?.user?.is_active === false;
+        response.data?.requires_activation ||
+        response.data?.user?.is_active === false;
         if (requiresActivation) {
+          if (isMaintenanceMode) {
+            navigate("/", { replace: true });
+            return;
+          }
           navigate(
             `/register/success?role=${encodeURIComponent(
               roleMapping[userType]
@@ -291,7 +296,7 @@ const Register = () => {
 
         setMessage({
           type: "success",
-          text: "Inscription reussie ! Redirection...",
+          text: "Inscription reussie ! Redirection..."
         });
 
         // Redirection vers la page d'accueil apres 1.5s
@@ -301,7 +306,7 @@ const Register = () => {
       } else {
         setMessage({
           type: "error",
-          text: response.message || "Une erreur s'est produite",
+          text: response.message || "Une erreur s'est produite"
         });
         setIsLoading(false);
       }
@@ -322,7 +327,7 @@ const Register = () => {
           password: "password",
           license_number: "licenseNumber",
           agency: "agency",
-          role: "role",
+          role: "role"
         };
 
         Object.keys(laravelErrors).forEach((key) => {
@@ -333,26 +338,26 @@ const Register = () => {
         setErrors(serverErrors);
         setMessage({
           type: "error",
-          text: "Veuillez corriger les erreurs signalées",
+          text: "Veuillez corriger les erreurs signalées"
         });
       }
       // Erreur générale
       else if (error.response?.data?.message) {
         setMessage({
           type: "error",
-          text: error.response.data.message,
+          text: error.response.data.message
         });
       }
       // Erreur réseau ou autre
       else if (error.message) {
         setMessage({
           type: "error",
-          text: "Erreur de connexion. Vérifiez votre connexion internet.",
+          text: "Erreur de connexion. Vérifiez votre connexion internet."
         });
       } else {
         setMessage({
           type: "error",
-          text: "Erreur lors de l'inscription. Veuillez réessayer.",
+          text: "Erreur lors de l'inscription. Veuillez réessayer."
         });
       }
 
@@ -385,13 +390,13 @@ const Register = () => {
         <div className="text-center py-20">
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-32 h-32"
-          >
+            className="inline-flex items-center justify-center w-32 h-32">
+
             <img
               src="/images/logoabi.svg"
               alt="ABI logo"
-              className="h-14 w-auto object-contain"
-            />
+              className="h-14 w-auto object-contain" />
+
           </Link>
           <h1 className="text-4xl font-bold text-gray-900">
             Rejoignez-nous
@@ -408,58 +413,58 @@ const Register = () => {
             Choisissez le type de compte qui correspond à vos besoins
           </p>
 
-          {userType !== "visitor" && (
-            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              Votre compte sera active par un administrateur avant votre premiere connexion.
+          {userType !== "visitor" &&
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Votre compte sera activé par un administrateur avant votre première connexion.
             </div>
-          )}
+          }
 
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {userTypes.map((type) => (
-              <UserTypeCard
-                key={type.value}
-                type={type}
-                isSelected={userType === type.value}
-                onSelect={setManualUserType}
-              />
-            ))}
+            {userTypes.map((type) =>
+            <UserTypeCard
+              key={type.value}
+              type={type}
+              isSelected={userType === type.value}
+              onSelect={setManualUserType} />
+
+            )}
           </div>
         </div>
 
         {/* Form Card */}
         <div className="bg-white shadow-2xl p-8 border border-gray-200">
           {/* Message de succès/erreur */}
-          {message.text && (
-            <div
-              className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
-                message.type === "success"
-                  ? "bg-green-50 border border-green-200"
-                  : message.type === "info"
-                    ? "bg-blue-50 border border-blue-200"
-                  : "bg-red-50 border border-red-200"
-              }`}
-            >
-              {message.type === "success" ? (
-                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-              ) : message.type === "info" ? (
-                <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              ) : (
-                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-              )}
+          {message.text &&
+          <div
+            className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
+            message.type === "success" ?
+            "bg-green-50 border border-green-200" :
+            message.type === "info" ?
+            "bg-blue-50 border border-blue-200" :
+            "bg-red-50 border border-red-200"}`
+            }>
+
+              {message.type === "success" ?
+            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" /> :
+            message.type === "info" ?
+            <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" /> :
+
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+            }
               <p
-                className={`text-sm font-medium ${
-                  message.type === "success"
-                    ? "text-green-800"
-                    : message.type === "info"
-                      ? "text-blue-800"
-                      : "text-red-800"
-                }`}
-              >
+              className={`text-sm font-medium ${
+              message.type === "success" ?
+              "text-green-800" :
+              message.type === "info" ?
+              "text-blue-800" :
+              "text-red-800"}`
+              }>
+
                 {message.text}
               </p>
             </div>
-          )}
+          }
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Informations de base */}
@@ -481,27 +486,27 @@ const Register = () => {
                       placeholder="Votre prénom"
                       value={formData.firstName}
                       onChange={(e) =>
-                        handleChange("firstName", e.target.value)
+                      handleChange("firstName", e.target.value)
                       }
                       className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.firstName
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                      }`}
+                      errors.firstName ?
+                      "border-red-500 focus:border-red-500" :
+                      "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                      }
                       disabled={isLoading}
-                      autoFocus
-                    />
-                    {errors.firstName && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      autoFocus />
+
+                    {errors.firstName &&
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       </div>
-                    )}
+                    }
                   </div>
-                  {errors.firstName && (
-                    <p className="mt-2 text-sm text-red-600">
+                  {errors.firstName &&
+                  <p className="mt-2 text-sm text-red-600">
                       {errors.firstName}
                     </p>
-                  )}
+                  }
                 </div>
 
                 <div>
@@ -515,23 +520,23 @@ const Register = () => {
                       value={formData.lastName}
                       onChange={(e) => handleChange("lastName", e.target.value)}
                       className={`w-full px-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.lastName
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                      }`}
-                      disabled={isLoading}
-                    />
-                    {errors.lastName && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      errors.lastName ?
+                      "border-red-500 focus:border-red-500" :
+                      "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                      }
+                      disabled={isLoading} />
+
+                    {errors.lastName &&
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       </div>
-                    )}
+                    }
                   </div>
-                  {errors.lastName && (
-                    <p className="mt-2 text-sm text-red-600">
+                  {errors.lastName &&
+                  <p className="mt-2 text-sm text-red-600">
                       {errors.lastName}
                     </p>
-                  )}
+                  }
                 </div>
               </div>
             </div>
@@ -552,21 +557,21 @@ const Register = () => {
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                      errors.email
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                    disabled={isLoading}
-                  />
-                  {errors.email && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    errors.email ?
+                    "border-red-500 focus:border-red-500" :
+                    "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                    }
+                    disabled={isLoading} />
+
+                  {errors.email &&
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <AlertCircle className="h-5 w-5 text-red-500" />
                     </div>
-                  )}
+                  }
                 </div>
-                {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-                )}
+                {errors.email &&
+                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                }
               </div>
 
               <div>
@@ -583,21 +588,21 @@ const Register = () => {
                     value={formData.phone}
                     onChange={(e) => handleChange("phone", e.target.value)}
                     className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                      errors.phone
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                    disabled={isLoading}
-                  />
-                  {errors.phone && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    errors.phone ?
+                    "border-red-500 focus:border-red-500" :
+                    "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                    }
+                    disabled={isLoading} />
+
+                  {errors.phone &&
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <AlertCircle className="h-5 w-5 text-red-500" />
                     </div>
-                  )}
+                  }
                 </div>
-                {errors.phone && (
-                  <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
-                )}
+                {errors.phone &&
+                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                }
               </div>
             </div>
 
@@ -621,31 +626,31 @@ const Register = () => {
                       value={formData.password}
                       onChange={(e) => handleChange("password", e.target.value)}
                       className={`w-full pl-12 pr-12 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.password
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                      }`}
-                      disabled={isLoading}
-                    />
+                      errors.password ?
+                      "border-red-500 focus:border-red-500" :
+                      "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                      }
+                      disabled={isLoading} />
+
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-gray-600 transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoading}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
-                      )}
+                      disabled={isLoading}>
+
+                      {showPassword ?
+                      <EyeOff className="h-5 w-5 text-gray-400" /> :
+
+                      <Eye className="h-5 w-5 text-gray-400" />
+                      }
                     </button>
                   </div>
                   <PasswordStrength password={formData.password} />
-                  {errors.password && (
-                    <p className="mt-2 text-sm text-red-600">
+                  {errors.password &&
+                  <p className="mt-2 text-sm text-red-600">
                       {errors.password}
                     </p>
-                  )}
+                  }
                 </div>
 
                 <div>
@@ -661,35 +666,35 @@ const Register = () => {
                       placeholder="Confirmez votre mot de passe"
                       value={formData.confirmPassword}
                       onChange={(e) =>
-                        handleChange("confirmPassword", e.target.value)
+                      handleChange("confirmPassword", e.target.value)
                       }
                       className={`w-full pl-12 pr-12 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all ${
-                        errors.confirmPassword
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                      }`}
-                      disabled={isLoading}
-                    />
+                      errors.confirmPassword ?
+                      "border-red-500 focus:border-red-500" :
+                      "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                      }
+                      disabled={isLoading} />
+
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-gray-600 transition-colors"
                       onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
+                      setShowConfirmPassword(!showConfirmPassword)
                       }
-                      disabled={isLoading}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
-                      )}
+                      disabled={isLoading}>
+
+                      {showConfirmPassword ?
+                      <EyeOff className="h-5 w-5 text-gray-400" /> :
+
+                      <Eye className="h-5 w-5 text-gray-400" />
+                      }
                     </button>
                   </div>
-                  {errors.confirmPassword && (
-                    <p className="mt-2 text-sm text-red-600">
+                  {errors.confirmPassword &&
+                  <p className="mt-2 text-sm text-red-600">
                       {errors.confirmPassword}
                     </p>
-                  )}
+                  }
                 </div>
               </div>
             </div>
@@ -703,57 +708,57 @@ const Register = () => {
                     checked={formData.terms}
                     onChange={(e) => handleChange("terms", e.target.checked)}
                     className="sr-only"
-                    disabled={isLoading}
-                  />
+                    disabled={isLoading} />
+
                   <div
                     className={`w-5 h-5 border-2 rounded transition-all flex items-center justify-center ${
-                      formData.terms
-                        ? "bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700"
-                        : "border-gray-300 group-hover:border-gray-400"
-                    }`}
-                  ></div>
+                    formData.terms ?
+                    "bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700" :
+                    "border-gray-300 group-hover:border-gray-400"}`
+                    }>
+                  </div>
                 </div>
                 <span className="ml-3 text-sm text-gray-700">
                   J'accepte les{" "}
                   <Link
                     to="/terms"
-                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-                  >
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
+
                     Conditions Générales
                   </Link>{" "}
                   et la{" "}
                   <Link
                     to="/privacy"
-                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-                  >
+                    className="font-medium text-blue-600 hover:text-blue-700 transition-colors">
+
                     Politique de Confidentialité
                   </Link>
                 </span>
               </label>
             </div>
-            {errors.terms && (
-              <p className="mt-2 text-sm text-red-600">{errors.terms}</p>
-            )}
+            {errors.terms &&
+            <p className="mt-2 text-sm text-red-600">{errors.terms}</p>
+            }
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
-            >
-              {isLoading ? (
-                <>
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
+
+              {isLoading ?
+              <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin" />
                   Création du compte...
-                </>
-              ) : (
-                <>
+                </> :
+
+              <>
                   <Shield size={20} />
                   Créer mon compte {userType === "visitor" && "Visiteur"}
                   {userType === "owner" && "Propriétaire"}
                   {userType === "agent" && "Agent"}
                 </>
-              )}
+              }
             </button>
           </form>
 
@@ -775,15 +780,15 @@ const Register = () => {
           <div className="text-center">
             <Link
               to="/login"
-              className="inline-block w-full py-3.5 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all"
-            >
+              className="inline-block w-full py-3.5 border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 font-semibold transition-all">
+
               Se connecter à NARAF
             </Link>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Register;

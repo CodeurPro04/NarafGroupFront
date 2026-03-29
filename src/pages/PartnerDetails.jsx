@@ -58,42 +58,42 @@ const PartnerDetails = () => {
   }, [partner]);
 
   const heroTitle = partner?.profile_title || `A propos de ${partner?.company_name || "ce partenaire"}`;
-  const heroDescription = partner?.profile_description || partner?.description || "Aucune description detaillee disponible.";
+  const heroDescription = partner?.profile_description || partner?.description || "Aucune description détaillée disponible.";
   const coverImage = [
-    partner?.cover_image_url,
-    partner?.cover_image_path,
-    partner?.logo_url,
-    partner?.logo_path,
-    partner?.logo?.file_path,
-  ]
-    .map(toMediaUrl)
-    .find(Boolean);
+  partner?.cover_image_url,
+  partner?.cover_image_path,
+  partner?.logo_url,
+  partner?.logo_path,
+  partner?.logo?.file_path].
+
+  map(toMediaUrl).
+  find(Boolean);
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f4f7fb_0%,#eef2f7_38%,#ffffff_100%)]">
       <section className="relative overflow-hidden border-b border-slate-200 bg-slate-950 pt-24 text-white">
         <div className="absolute inset-0">
-          {coverImage ? (
-            <img
-              src={coverImage}
-              alt={partner?.company_name || "Partenaire"}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-900">
+          {coverImage ?
+          <img
+            src={coverImage}
+            alt={partner?.company_name || "Partenaire"}
+            className="h-full w-full object-cover" /> :
+
+
+          <div className="flex h-full w-full items-center justify-center bg-slate-900">
               <Building2 className="h-16 w-16 text-white/30" />
             </div>
-          )}
+          }
         </div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.78)_0%,rgba(15,23,42,0.84)_48%,rgba(15,23,42,0.92)_100%)]" />
         <div className="relative mx-auto max-w-7xl px-4 pb-14 sm:px-6 lg:px-8 lg:pb-16">
-          {loading ? (
-            <div className="mt-6 space-y-3">
+          {loading ?
+          <div className="mt-6 space-y-3">
               <SkeletonBlock className="h-10 w-80" />
               <SkeletonBlock className="h-5 w-[28rem]" />
-            </div>
-          ) : (
-            <div className="mt-4 max-w-4xl">
+            </div> :
+
+          <div className="mt-4 max-w-4xl">
               <h1 className="text-3xl font-bold leading-tight sm:text-5xl">
                 {partner?.company_name || "Partenaire"}
               </h1>
@@ -101,7 +101,7 @@ const PartnerDetails = () => {
                 {partner?.company_type || "Entreprise partenaire"}
               </p>
             </div>
-          )}
+          }
         </div>
       </section>
 
@@ -109,8 +109,8 @@ const PartnerDetails = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {error && <p className="text-red-600">{error}</p>}
 
-          {!error && loading && (
-            <div className="space-y-8">
+          {!error && loading &&
+          <div className="space-y-8">
               <div className="grid grid-cols-1 gap-8 bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.06)] sm:p-6 lg:grid-cols-[1.15fr_1fr]">
                 <SkeletonBlock className="h-[320px] w-full sm:h-[460px]" />
                 <div className="space-y-4">
@@ -127,23 +127,23 @@ const PartnerDetails = () => {
                 <SkeletonBlock className="h-52 w-full" />
               </div>
             </div>
-          )}
+          }
 
-          {!error && !loading && partner && (
-            <div className="space-y-8">
+          {!error && !loading && partner &&
+          <div className="space-y-8">
               <div className="grid grid-cols-1 gap-8 bg-white p-4 shadow-[0_24px_60px_rgba(15,23,42,0.06)] sm:p-6 lg:grid-cols-[1.2fr_0.8fr]">
                 <div className="relative overflow-hidden bg-slate-100">
-                  {coverImage ? (
-                    <img
-                      src={coverImage}
-                      alt={partner.company_name}
-                      className="h-[320px] w-full object-cover sm:h-[460px]"
-                    />
-                  ) : (
-                    <div className="flex h-[320px] w-full items-center justify-center bg-slate-100 sm:h-[460px]">
+                  {coverImage ?
+                <img
+                  src={coverImage}
+                  alt={partner.company_name}
+                  className="h-[320px] w-full object-cover sm:h-[460px]" /> :
+
+
+                <div className="flex h-[320px] w-full items-center justify-center bg-slate-100 sm:h-[460px]">
                       <Building2 className="h-10 w-10 text-slate-400" />
                     </div>
-                  )}
+                }
                   <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-950/60 to-transparent" />
                 </div>
 
@@ -172,20 +172,20 @@ const PartnerDetails = () => {
                     <ShieldCheck size={22} className="text-blue-600" />
                     Services proposes
                   </h3>
-                  {serviceOffers.length === 0 ? (
-                    <p className="mt-4 text-slate-600">Aucun service detaille pour le moment.</p>
-                  ) : (
-                    <div className="mt-5 grid gap-3 text-slate-700">
-                      {serviceOffers.map((service, index) => (
-                        <div
-                          key={`${service}-${index}`}
-                          className="bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition-colors hover:bg-slate-100"
-                        >
+                  {serviceOffers.length === 0 ?
+                <p className="mt-4 text-slate-600">Aucun service détaillé pour le moment.</p> :
+
+                <div className="mt-5 grid gap-3 text-slate-700">
+                      {serviceOffers.map((service, index) =>
+                  <div
+                    key={`${service}-${index}`}
+                    className="bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition-colors hover:bg-slate-100">
+
                           {service}
                         </div>
-                      ))}
-                    </div>
                   )}
+                    </div>
+                }
                 </div>
 
                 <div className="bg-white p-6 shadow-[0_18px_42px_rgba(15,23,42,0.05)] sm:p-7">
@@ -193,15 +193,15 @@ const PartnerDetails = () => {
                     <Package size={22} className="text-blue-600" />
                     Produits
                   </h3>
-                  {productShowcase.length === 0 ? (
-                    <p className="mt-4 text-slate-600">Aucun produit detaille pour le moment.</p>
-                  ) : (
-                    <div className="mt-5 grid gap-4">
-                      {productShowcase.map((product, index) => (
-                        <div
-                          key={`${product.title}-${index}`}
-                          className="bg-slate-50 px-4 py-4 transition-colors hover:bg-slate-100"
-                        >
+                  {productShowcase.length === 0 ?
+                <p className="mt-4 text-slate-600">Aucun produit détaillé pour le moment.</p> :
+
+                <div className="mt-5 grid gap-4">
+                      {productShowcase.map((product, index) =>
+                  <div
+                    key={`${product.title}-${index}`}
+                    className="bg-slate-50 px-4 py-4 transition-colors hover:bg-slate-100">
+
                           <p className="text-base font-semibold leading-7 text-slate-900">
                             {product.title || `Produit ${index + 1}`}
                           </p>
@@ -209,17 +209,17 @@ const PartnerDetails = () => {
                             {product.description || "Description indisponible."}
                           </p>
                         </div>
-                      ))}
-                    </div>
                   )}
+                    </div>
+                }
                 </div>
               </div>
             </div>
-          )}
+          }
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default PartnerDetails;

@@ -4,10 +4,10 @@ import { CheckCircle2, Copy, X } from "lucide-react";
 const AccountCredentialsModal = ({
   account,
   title = "Votre compte visiteur est pret.",
-  description = "Conservez ce mot de passe temporaire pour votre premiere connexion.",
+  description = "Conservez ce mot de passe temporaire pour votre première connexion.",
   activationMessage = "",
   onClose,
-  onLogin,
+  onLogin
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -32,7 +32,7 @@ const AccountCredentialsModal = ({
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0f62c9]">
-                Compte cree
+                Compte créé
               </p>
               <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
                 {title}
@@ -46,8 +46,8 @@ const AccountCredentialsModal = ({
             type="button"
             onClick={onClose}
             className="flex h-10 w-10 items-center justify-center border border-[#d8dfeb] bg-white text-slate-500 transition hover:text-slate-950"
-            aria-label="Fermer"
-          >
+            aria-label="Fermer">
+
             <X size={18} />
           </button>
         </div>
@@ -73,40 +73,40 @@ const AccountCredentialsModal = ({
               <button
                 type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center justify-center gap-2 border border-[#d8dfeb] bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f62c9] hover:text-[#0f62c9]"
-              >
+                className="inline-flex items-center justify-center gap-2 border border-[#d8dfeb] bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f62c9] hover:text-[#0f62c9]">
+
                 <Copy size={16} />
                 {copied ? "Copie effectuee" : "Copier le mot de passe"}
               </button>
             </div>
           </div>
 
-          {activationMessage ? (
-            <div className="border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">
+          {activationMessage ?
+          <div className="border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">
               {activationMessage}
-            </div>
-          ) : null}
+            </div> :
+          null}
         </div>
 
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#d8dfeb] bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-950"
-          >
+            className="border border-[#d8dfeb] bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-950">
+
             Fermer
           </button>
           <button
             type="button"
             onClick={onLogin}
-            className="bg-[#0f62c9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-          >
-            Aller a la connexion
+            className="bg-[#0f62c9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]">
+
+            Aller à la connexion
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AccountCredentialsModal;

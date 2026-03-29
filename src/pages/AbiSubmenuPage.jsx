@@ -16,132 +16,132 @@ import {
   ShieldCheck,
   UserRound,
   UserRoundPlus,
-  WalletCards,
-} from "lucide-react";
+  WalletCards } from
+"lucide-react";
 import PropertiesHero from "../components/layout/PropertiesHero";
 
 const CATEGORY_PRESETS = {
   abi: {
     introEyebrow: "Africa Business Invest",
     introBadge:
-      "Un cadre plus lisible, des points de contact plus clairs et une experience plus coherente.",
+    "Un cadre plus lisible, des points de contact plus clairs et une expérience plus cohérente.",
     cards: [
-      {
-        title: "Orientation",
-        text: "ABI structure mieux l'entree dans la rubrique pour aller plus vite a l'essentiel.",
-        icon: UserRoundPlus,
-      },
-      {
-        title: "Lecture claire",
-        text: "Les informations prioritaires sont mieux hierarchisees pour simplifier la decision.",
-        icon: Search,
-      },
-      {
-        title: "Confiance",
-        text: "Le parcours reste raccord avec l'univers ABI et ses engagements de fiabilite.",
-        icon: ShieldCheck,
-      },
-      {
-        title: "Passage a l'action",
-        text: "Chaque rubrique oriente ensuite vers le bon service, la bonne page ou le bon parcours.",
-        icon: WalletCards,
-      },
-    ],
+    {
+      title: "Orientation",
+      text: "ABI structure mieux l'entrée dans la rubrique pour aller plus vite à l'essentiel.",
+      icon: UserRoundPlus
+    },
+    {
+      title: "Lecture claire",
+      text: "Les informations prioritaires sont mieux hiérarchisées pour simplifier la décision.",
+      icon: Search
+    },
+    {
+      title: "Confiance",
+      text: "Le parcours reste raccord avec l'univers ABI et ses engagements de fiabilite.",
+      icon: ShieldCheck
+    },
+    {
+      title: "Passage à l'action",
+      text: "Chaque rubrique orienté ensuite vers le bon service, la bonne page ou le bon parcours.",
+      icon: WalletCards
+    }],
+
     processEyebrow: "Parcours ABI",
     highlightEyebrow: "Ecosysteme ABI",
-    highlightTags: ["Confiance", "Accompagnement", "Lisibilite", "Execution"],
+    highlightTags: ["Confiance", "Accompagnement", "Lisibilite", "Exécution"],
     detailsEyebrow: "Points clés",
     detailItems: [
-      "Un contenu plus direct pour comprendre la rubrique rapidement.",
-      "Une page connectee aux autres parcours utiles de la plateforme.",
-      "Une meilleure coherence entre information, conseil et action.",
-      "Une experience plus proche des attentes reelles des utilisateurs ABI.",
-    ],
+    "Un contenu plus direct pour comprendre la rubrique rapidement.",
+    "Une page connectee aux autres parcours utiles de la plateforme.",
+    "Une meilleure cohérence entre information, conseil et action.",
+    "Une expérience plus proche des attentes réelles des utilisateurs ABI."]
+
   },
   construction: {
     introEyebrow: "Construction ABI",
     introBadge:
-      "Un projet mieux cadre, des etapes plus visibles et une execution plus defendable.",
+    "Un projet mieux cadre, des étapes plus visibles et une exécution plus défendable.",
     cards: [
-      {
-        title: "Cadrage",
-        text: "La rubrique aide a poser les bonnes bases avant de lancer ou relancer un projet.",
-        icon: Pickaxe,
-      },
-      {
-        title: "Projection",
-        text: "Les options sont relues avec une logique plus concrete de faisabilite.",
-        icon: Hammer,
-      },
-      {
-        title: "Maitrise",
-        text: "Les arbitrages techniques, budgetaires et de sequence gagnent en clarté.",
-        icon: ShieldCheck,
-      },
-      {
-        title: "Avancement",
-        text: "Vous gardez un meilleur fil entre idee, choix et execution chantier.",
-        icon: WalletCards,
-      },
-    ],
+    {
+      title: "Cadrage",
+      text: "La rubrique aide a poser les bonnes bases avant de lancer ou relancer un projet.",
+      icon: Pickaxe
+    },
+    {
+      title: "Projection",
+      text: "Les options sont relues avec une logique plus concrète de faisabilité.",
+      icon: Hammer
+    },
+    {
+      title: "Maîtrise",
+      text: "Les arbitrages techniques, budgetaires et de sequence gagnent en clarté.",
+      icon: ShieldCheck
+    },
+    {
+      title: "Avancement",
+      text: "Vous gardez un meilleur fil entre idée, choix et exécution chantier.",
+      icon: WalletCards
+    }],
+
     processEyebrow: "Parcours construction",
-    highlightEyebrow: "Execution ABI",
-    highlightTags: ["Faisabilite", "Budget", "Technique", "Progression"],
+    highlightEyebrow: "Exécution ABI",
+    highlightTags: ["Faisabilité", "Budget", "Technique", "Progression"],
     detailsEyebrow: "Lecture chantier",
     detailItems: [
-      "Une meilleure lecture des priorites avant l'engagement.",
-      "Des choix plus coherents entre terrain, plan, budget et execution.",
-      "Moins d'improvisation grace a un parcours plus explicite.",
-      "Une trajectoire projet plus simple a suivre et a justifier.",
-    ],
+    "Une meilleure lecture des priorites avant l'engagement.",
+    "Des choix plus cohérents entre terrain, plan, budget et exécution.",
+    "Moins d'improvisation grâce à un parcours plus explicite.",
+    "Une trajectoire projet plus simple a suivre et a justifier."]
+
   },
   investment: {
     introEyebrow: "Investissement ABI",
     introBadge:
-      "Plus de lisibilite sur les opportunites, les zones et les choix d'engagement.",
+    "Plus de lisibilite sur les opportunités, les zones et les choix d'engagement.",
     cards: [
-      {
-        title: "Objectif",
-        text: "La page aide a mieux relier l'opportunite a votre intention d'investissement.",
-        icon: BadgeDollarSign,
-      },
-      {
-        title: "Comparaison",
-        text: "Les projets et options sont remis dans un cadre plus utile a l'analyse.",
-        icon: Search,
-      },
-      {
-        title: "Discernement",
-        text: "Les zones de risque et de potentiel deviennent plus lisibles.",
-        icon: ShieldCheck,
-      },
-      {
-        title: "Decision",
-        text: "Le parcours aide a passer de l'interet a une decision plus defendable.",
-        icon: Briefcase,
-      },
-    ],
+    {
+      title: "Objectif",
+      text: "La page aide a mieux relier l'opportunité à votre intention d'investissement.",
+      icon: BadgeDollarSign
+    },
+    {
+      title: "Comparaison",
+      text: "Les projets et options sont remis dans un cadre plus utile à l'analyse.",
+      icon: Search
+    },
+    {
+      title: "Discernement",
+      text: "Les zones de risque et de potentiel deviennent plus lisibles.",
+      icon: ShieldCheck
+    },
+    {
+      title: "Decision",
+      text: "Le parcours aide à passer de l'intérêt à une décision plus défendable.",
+      icon: Briefcase
+    }],
+
     processEyebrow: "Parcours investissement",
-    highlightEyebrow: "Strategie ABI",
-    highlightTags: ["Potentiel", "Horizon", "Arbitrage", "Opportunite"],
-    detailsEyebrow: "Base de decision",
+    highlightEyebrow: "Stratégie ABI",
+    highlightTags: ["Potentiel", "Horizon", "Arbitrage", "Opportunité"],
+    detailsEyebrow: "Base de décision",
     detailItems: [
-      "Une lecture plus nette avant tout engagement de capital.",
-      "Des contenus relies a une vraie logique d'objectif et d'horizon.",
-      "Une meilleure priorisation des dossiers a etudier.",
-      "Un parcours plus simple entre analyse, comparaison et action.",
-    ],
-  },
+    "Une lecture plus nette avant tout engagement de capital.",
+    "Des contenus relies à une vraie logique d'objectif et d'horizon.",
+    "Une meilleure priorisation des dossiers a étudier.",
+    "Un parcours plus simple entre analyse, comparaison et action."]
+
+  }
 };
 
 const DEFAULT_IMAGES = {
   hero: "url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80')",
   process:
-    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80",
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80",
   highlight:
-    "https://images.unsplash.com/photo-1544717305-2782549b5136?w=1600&q=80",
+  "https://images.unsplash.com/photo-1544717305-2782549b5136?w=1600&q=80",
   details:
-    "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=900&q=80",
+  "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=900&q=80"
 };
 
 const buildPageContent = (page) => {
@@ -161,17 +161,17 @@ const buildPageContent = (page) => {
       secondaryTo: page.secondaryTo,
       backgroundImage: page.images?.hero || DEFAULT_IMAGES.hero,
       overlayClassName:
-        "bg-gradient-to-b from-blue-950/90 via-blue-900/85 to-blue-900/80",
+      "bg-gradient-to-b from-blue-950/90 via-blue-900/85 to-blue-900/80"
     },
     intro: {
       eyebrow: preset.introEyebrow,
       title: `${page.title} dans un cadre plus clair et plus utile.`,
-      description: `Cette page presente ${topic} avec une lecture plus structuree pour vous aider a comprendre les enjeux, comparer plus vite et agir dans la bonne direction.`,
+      description: `Cette page présente ${topic} avec une lecture plus structurée pour vous aider a comprendre les enjeux, comparer plus vite et agir dans la bonne direction.`,
       badge: preset.introBadge,
       cards: preset.cards.map((card, index) => ({
         ...card,
-        step: String(index + 1).padStart(2, "0"),
-      })),
+        step: String(index + 1).padStart(2, "0")
+      }))
     },
     process: {
       eyebrow: preset.processEyebrow,
@@ -180,32 +180,32 @@ const buildPageContent = (page) => {
       ctaLabel: page.processCtaLabel || page.primaryLabel,
       ctaTo: page.processCtaTo || page.primaryTo,
       steps: [
-        `Vous entrez dans ${topic} avec une meilleure lecture du besoin et du contexte.`,
-        `ABI remet les informations prioritaires dans un ordre plus utile a la decision.`,
-        `Les options, points de vigilance et leviers d'action deviennent plus visibles.`,
-        `Le parcours reste relie aux services et rubriques les plus pertinents pour avancer.`,
-        `Vous gardez une trajectoire plus nette entre comprehension, comparaison et execution.`,
-      ],
+      `Vous entrez dans ${topic} avec une meilleure lecture du besoin et du contexte.`,
+      `ABI remet les informations prioritaires dans un ordre plus utile à la décision.`,
+      `Les options, points de vigilance et leviers d'action deviennent plus visibles.`,
+      `Le parcours reste relie aux services et rubriques les plus pertinents pour avancer.`,
+      `Vous gardez une trajectoire plus nette entre comprehension, comparaison et exécution.`]
+
     },
     highlight: {
       eyebrow: preset.highlightEyebrow,
       title: page.highlightTitle,
-      description: `La rubrique ${topic} s'inscrit dans une logique plus large: offrir une experience ABI plus lisible, plus professionnelle et plus utile au moment de decider.`,
+      description: `La rubrique ${topic} s'inscrit dans une logique plus large: offrir une expérience ABI plus lisible, plus professionnelle et plus utile au moment de décider.`,
       tags: page.highlightTags || preset.highlightTags,
       ctaLabel: page.highlightCtaLabel || page.secondaryLabel,
       ctaTo: page.highlightCtaTo || page.secondaryTo,
-      image: page.images?.highlight || DEFAULT_IMAGES.highlight,
+      image: page.images?.highlight || DEFAULT_IMAGES.highlight
     },
     details: {
       eyebrow: preset.detailsEyebrow,
       title: `Ce qu'il faut retenir sur ${topic}.`,
-      description: `L'objectif de cette page est de rendre ${topic} plus simple a lire, plus coherent avec le theme du site et plus directement exploitable dans votre parcours.`,
+      description: `L'objectif de cette page est de rendre ${topic} plus simple a lire, plus cohérent avec le thème du site et plus directement exploitable dans votre parcours.`,
       image: page.images?.details || DEFAULT_IMAGES.details,
       items: preset.detailItems.map((text, index) => ({
         title: `${page.title} - point ${index + 1}`,
-        text,
-      })),
-    },
+        text
+      }))
+    }
   };
 };
 
@@ -225,12 +225,12 @@ const AbiSubmenuPage = ({ page }) => {
         eyebrowIcon={content.hero.eyebrowIcon}
         title={content.hero.title}
         descriptionLines={[
-          content.hero.description,
-          content.hero.descriptionSecondary,
-        ].filter(Boolean)}
+        content.hero.description,
+        content.hero.descriptionSecondary].
+        filter(Boolean)}
         backgroundImage={content.hero.backgroundImage}
-        overlayClassName={content.hero.overlayClassName}
-      />
+        overlayClassName={content.hero.overlayClassName} />
+
 
       <section className="overflow-hidden border-y border-white/70 bg-white/95 text-center shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur">
         <div className="mx-auto w-full max-w-[1180px] px-6 py-10 sm:px-10 sm:py-12 lg:px-8">
@@ -252,8 +252,8 @@ const AbiSubmenuPage = ({ page }) => {
               return (
                 <article
                   key={item.step}
-                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7fbff_100%)] px-5 py-6 text-left shadow-[0_12px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(15,23,42,0.08)]"
-                >
+                  className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f7fbff_100%)] px-5 py-6 text-left shadow-[0_12px_24px_rgba(15,23,42,0.04)] transition hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(15,23,42,0.08)]">
+
                   <div className="flex items-center justify-between">
                     <div className="flex h-11 w-11 items-center justify-center bg-[#1f6fd0] text-white shadow-md">
                       <Icon size={16} />
@@ -268,8 +268,8 @@ const AbiSubmenuPage = ({ page }) => {
                   <p className="mt-2 text-sm leading-6 text-slate-500">
                     {item.text}
                   </p>
-                </article>
-              );
+                </article>);
+
             })}
           </div>
 
@@ -286,8 +286,8 @@ const AbiSubmenuPage = ({ page }) => {
           <img
             src={content.process.image}
             alt={content.process.title}
-            className="h-full w-full object-cover object-center"
-          />
+            className="h-full w-full object-cover object-center" />
+
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
@@ -300,22 +300,22 @@ const AbiSubmenuPage = ({ page }) => {
                 {content.process.title}
               </h2>
               <div className="mt-8 space-y-5">
-                {content.process.steps.map((item, index) => (
-                  <div
-                    key={item}
-                    className="grid grid-cols-[34px_1fr] gap-4 border-b border-black/8 pb-4"
-                  >
+                {content.process.steps.map((item, index) =>
+                <div
+                  key={item}
+                  className="grid grid-cols-[34px_1fr] gap-4 border-b border-black/8 pb-4">
+
                     <span className="text-sm font-medium text-slate-400">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <p className="text-sm leading-6 text-slate-700">{item}</p>
                   </div>
-                ))}
+                )}
               </div>
               <Link
                 to={content.process.ctaTo}
-                className="mt-8 inline-flex items-center gap-2 bg-[#1e76d3] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#135ca8]"
-              >
+                className="mt-8 inline-flex items-center gap-2 bg-[#1e76d3] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#135ca8]">
+
                 {content.process.ctaLabel}
                 <ChevronRight size={16} />
               </Link>
@@ -327,8 +327,8 @@ const AbiSubmenuPage = ({ page }) => {
           <img
             src={content.process.image}
             alt={content.process.title}
-            className="h-full w-full object-cover object-center"
-          />
+            className="h-full w-full object-cover object-center" />
+
         </div>
       </section>
 
@@ -336,8 +336,8 @@ const AbiSubmenuPage = ({ page }) => {
         <img
           src={content.highlight.image}
           alt={content.highlight.title}
-          className="absolute right-0 top-0 h-full w-full object-cover object-center opacity-45 sm:object-[center_top] md:w-[52%] md:opacity-80 lg:w-[46%] xl:w-[42%]"
-        />
+          className="absolute right-0 top-0 h-full w-full object-cover object-center opacity-45 sm:object-[center_top] md:w-[52%] md:opacity-80 lg:w-[46%] xl:w-[42%]" />
+
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,113,220,0.94)_0%,rgba(0,79,169,0.82)_42%,rgba(0,61,141,0.24)_100%)]" />
 
         <div className="relative z-10 mx-auto flex min-h-[620px] max-w-[1180px] items-center px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -353,15 +353,15 @@ const AbiSubmenuPage = ({ page }) => {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-lg font-semibold text-white/90">
-              {content.highlight.tags.map((item) => (
-                <span key={item}>{item}</span>
-              ))}
+              {content.highlight.tags.map((item) =>
+              <span key={item}>{item}</span>
+              )}
             </div>
 
             <Link
               to={content.highlight.ctaTo}
-              className="mt-12 inline-flex bg-white px-5 py-3 text-sm font-semibold text-[#005bb7] shadow-md transition hover:bg-slate-100"
-            >
+              className="mt-12 inline-flex bg-white px-5 py-3 text-sm font-semibold text-[#005bb7] shadow-md transition hover:bg-slate-100">
+
               {content.highlight.ctaLabel}
             </Link>
           </div>
@@ -384,8 +384,8 @@ const AbiSubmenuPage = ({ page }) => {
               <img
                 src={content.details.image}
                 alt={content.details.title}
-                className="h-[320px] w-full object-cover"
-              />
+                className="h-[320px] w-full object-cover" />
+
             </div>
           </div>
 
@@ -397,31 +397,31 @@ const AbiSubmenuPage = ({ page }) => {
                   <button
                     type="button"
                     onClick={() => setOpenDetail(isOpen ? -1 : index)}
-                    className="flex w-full items-center justify-between gap-4 text-left transition hover:text-[#1f6fd0]"
-                  >
+                    className="flex w-full items-center justify-between gap-4 text-left transition hover:text-[#1f6fd0]">
+
                     <span className="text-sm font-medium text-slate-800">
                       {item.title}
                     </span>
                     <ChevronDown
                       size={16}
                       className={`text-slate-400 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
+                      isOpen ? "rotate-180" : ""}`
+                      } />
+
                   </button>
-                  {isOpen && (
-                    <p className="mt-3 max-w-[580px] text-sm leading-6 text-slate-500">
+                  {isOpen &&
+                  <p className="mt-3 max-w-[580px] text-sm leading-6 text-slate-500">
                       {item.text}
                     </p>
-                  )}
-                </div>
-              );
+                  }
+                </div>);
+
             })}
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AbiSubmenuPage;

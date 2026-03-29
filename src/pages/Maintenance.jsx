@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Maintenance = ({ launchDate = "27 Mars 2026" }) => {
   return (
     <section className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -11,11 +13,11 @@ const Maintenance = ({ launchDate = "27 Mars 2026" }) => {
           </p>
 
           <h1 className="text-3xl font-black leading-tight md:text-5xl">
-            Notre site revient tres bientot.
+            Notre site revient très bientôt.
           </h1>
 
           <p className="mt-5 max-w-2xl text-sm text-slate-200 md:text-base">
-            Nous preparons le lancement de notre plateforme commerciale pour vous proposer une meilleure experience.
+            Nous preparons le lancement de notre plateforme commerciale pour vous proposer une meilleure expérience.
           </p>
 
           <div className="mt-8 rounded-2xl border border-emerald-300/30 bg-emerald-400/10 p-5">
@@ -26,10 +28,18 @@ const Maintenance = ({ launchDate = "27 Mars 2026" }) => {
               Le site commercial sera lance le {launchDate}
             </p>
           </div>
+
+          <div className="mt-8 flex justify-center">
+            <Link
+              to="/register"
+              className="inline-flex min-w-[220px] items-center justify-center rounded-2xl border border-cyan-200/30 bg-[linear-gradient(135deg,#ffffff_0%,#e6f6ff_100%)] px-8 py-4 text-base font-semibold text-slate-950 shadow-[0_14px_30px_rgba(14,165,233,0.18)] transition hover:scale-[1.01] hover:border-cyan-100/40 hover:bg-[linear-gradient(135deg,#ffffff_0%,#d9f1ff_100%)]">
+              S'inscrire
+            </Link>
+          </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default Maintenance;

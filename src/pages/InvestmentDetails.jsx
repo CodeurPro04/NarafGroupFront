@@ -14,8 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
-  Ruler,
-} from "lucide-react";
+  Ruler } from
+"lucide-react";
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
 import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
@@ -36,13 +36,13 @@ const InvestmentDetails = () => {
     email: "",
     phone: "",
     amount: "",
-    message: "",
+    message: ""
   });
   const [investError, setInvestError] = useState("");
   const [investSuccess, setInvestSuccess] = useState("");
   const [createdAccount, setCreatedAccount] = useState(null);
   const defaultImage =
-    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
   const getStorageUrl = (path) => toMediaUrl(path);
   useEffect(() => {
     fetchProject();
@@ -54,17 +54,17 @@ const InvestmentDetails = () => {
     setInvestData((prev) => ({
       ...prev,
       name:
-        prev.name || [user.first_name, user.last_name].filter(Boolean).join(""),
+      prev.name || [user.first_name, user.last_name].filter(Boolean).join(""),
       email: prev.email || user.email || "",
-      phone: prev.phone || user.phone || "",
+      phone: prev.phone || user.phone || ""
     }));
   }, []);
   const normalizeProject = (raw) => {
     if (!raw) return null;
     const images = Array.isArray(raw.images_path) ? raw.images_path : [];
-    const documents = Array.isArray(raw.documents_path)
-      ? raw.documents_path
-      : [];
+    const documents = Array.isArray(raw.documents_path) ?
+    raw.documents_path :
+    [];
     const plans = Array.isArray(raw.plans_path) ? raw.plans_path : [];
     const render3D = Array.isArray(raw.render_3d_path) ? raw.render_3d_path : [];
     const totalInvestment = Number(raw.total_investment || 0);
@@ -73,7 +73,7 @@ const InvestmentDetails = () => {
     if (raw.funded_percentage !== null && raw.funded_percentage !== undefined) {
       funded = Number(raw.funded_percentage);
     } else if (totalInvestment > 0) {
-      funded = Math.round((currentFunding / totalInvestment) * 100);
+      funded = Math.round(currentFunding / totalInvestment * 100);
     }
     return {
       id: raw.uuid || raw.id,
@@ -90,9 +90,9 @@ const InvestmentDetails = () => {
       referenceCode: raw.reference_code || raw.uuid || raw.id || "",
       currentFunding,
       funded:
-        funded !== null && funded !== undefined
-          ? Math.max(0, Math.min(100, funded))
-          : null,
+      funded !== null && funded !== undefined ?
+      Math.max(0, Math.min(100, funded)) :
+      null,
       durationMonths: Number(raw.duration_months || 0),
       startDate: raw.start_date || null,
       endDate: raw.end_date || null,
@@ -101,7 +101,7 @@ const InvestmentDetails = () => {
       plans,
       render3D,
       createdAt: raw.created_at || null,
-      raw,
+      raw
     };
   };
   const fetchProject = async () => {
@@ -126,9 +126,9 @@ const InvestmentDetails = () => {
     try {
       const response = await api.get("/investments");
       const list = response?.data?.data?.data || response?.data?.data || [];
-      const filtered = Array.isArray(list)
-        ? list.filter((item) => item.uuid !== uuid).slice(0, 3)
-        : [];
+      const filtered = Array.isArray(list) ?
+      list.filter((item) => item.uuid !== uuid).slice(0, 3) :
+      [];
       const normalized = filtered.map(normalizeProject).filter(Boolean);
       setRelatedProjects(normalized);
     } catch {
@@ -159,7 +159,7 @@ const InvestmentDetails = () => {
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "XOF",
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   };
   const formatDuration = (months) => {
@@ -173,7 +173,7 @@ const InvestmentDetails = () => {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "Non specifiee";
     return new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" }).format(
-      date,
+      date
     );
   };
   const toggleFavorite = () => {
@@ -189,42 +189,42 @@ const InvestmentDetails = () => {
       const amount = Number(investData.amount || 0);
       const header = `Demande investissement: ${project.title}`;
       const amountLine = amount > 0 ? `Montant souhaite: ${amount}` : null;
-      const combinedMessage = [header, amountLine, investData.message || null]
-        .filter(Boolean)
-        .join("\n");
+      const combinedMessage = [header, amountLine, investData.message || null].
+      filter(Boolean).
+      join("\n");
       const response = await api.post("/client-requests", {
         request_type: "investissement",
         investment_uuid: project.id,
         name: investData.name,
         email: investData.email,
         phone: investData.phone || null,
-        message: combinedMessage,
+        message: combinedMessage
       });
       const account = response.data.account;
       setInvestSuccess(
-        account
-          ? "Votre demande a ete envoyee. Votre compte visiteur a ete cree."
-          : "Votre demande a ete envoyee.",
+        account ?
+        "Votre demande a été envoyee. Votre compte visiteur a été créé." :
+        "Votre demande a été envoyee."
       );
       if (account?.default_password) {
         setCreatedAccount({
           email: account.email,
-          defaultPassword: account.default_password,
+          defaultPassword: account.default_password
         });
       }
       const user = getCurrentUser();
       setInvestData({
-        name: user
-          ? [user.first_name, user.last_name].filter(Boolean).join(" ")
-          : "",
+        name: user ?
+        [user.first_name, user.last_name].filter(Boolean).join(" ") :
+        "",
         email: user?.email || "",
         phone: user?.phone || "",
         amount: "",
-        message: "",
+        message: ""
       });
     } catch (err) {
       setInvestError(
-        err.response?.data?.message || "Impossible d'envoyer la demande.",
+        err.response?.data?.message || "Impossible d'envoyer la demande."
       );
     }
   };
@@ -248,8 +248,8 @@ const InvestmentDetails = () => {
           <SkeletonBlock className="h-4 w-5/6" />{" "}
           <SkeletonBlock className="h-4 w-2/3" />{" "}
         </div>{" "}
-      </div>
-    );
+      </div>);
+
   }
   if (error || !project) {
     return (
@@ -264,23 +264,23 @@ const InvestmentDetails = () => {
           </h2>{" "}
           <p className="text-gray-600 mb-6">
             {" "}
-            Le projet que vous recherchez n'existe pas ou a ete supprime.{" "}
+            Le projet que vous recherchez n'existe pas ou a été supprimé.{" "}
           </p>{" "}
           <Button
             onClick={() => navigate("/investment")}
             variant="primary"
-            className="w-full md:w-auto"
-          >
+            className="w-full md:w-auto">
+
             {" "}
             Retour aux investissements{" "}
           </Button>{" "}
         </div>{" "}
-      </div>
-    );
+      </div>);
+
   }
   const remainingInvestment = Math.max(
     0,
-    Number(project.totalInvestment || 0) - Number(project.currentFunding || 0),
+    Number(project.totalInvestment || 0) - Number(project.currentFunding || 0)
   );
   return (
     <div className="min-h-screen bg-gray-50">
@@ -293,35 +293,35 @@ const InvestmentDetails = () => {
         onNext={nextImage}
         onSelect={setCurrentImageIndex}
         leftBadges={[
-          <span
-            key="status"
-            className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-emerald-500 text-white uppercase tracking-wide"
-          >
+        <span
+          key="status"
+          className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-emerald-500 text-white uppercase tracking-wide">
+
             Disponible
           </span>,
-          <span
-            key="type"
-            className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-white/90 text-gray-700"
-          >
+        <span
+          key="type"
+          className="px-4 py-2 rounded-full text-sm font-semibold shadow-lg bg-white/90 text-gray-700">
+
             {project.type}
-          </span>,
-        ]}
+          </span>]
+        }
         rightActions={[
-          <button
-            key="favorite"
-            onClick={toggleFavorite}
-            className="p-3 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all hover:scale-110 shadow-lg"
-            aria-label="Ajouter aux favoris"
-          >
+        <button
+          key="favorite"
+          onClick={toggleFavorite}
+          className="p-3 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all hover:scale-110 shadow-lg"
+          aria-label="Ajouter aux favoris">
+
             <Heart
-              size={20}
-              className={isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"}
-            />
-          </button>,
-        ]}
+            size={20}
+            className={isFavorite ? "fill-rose-500 text-rose-500" : "text-gray-600"} />
+
+          </button>]
+        }
         planImage={planVisuals[0] || null}
-        render3DImage={render3DVisuals[0] || null}
-      />
+        render3DImage={render3DVisuals[0] || null} />
+
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {" "}
@@ -355,8 +355,8 @@ const InvestmentDetails = () => {
                         {" "}
                         <TrendingUp
                           className="text-purple-600"
-                          size={24}
-                        />{" "}
+                          size={24} />
+                        {" "}
                         <span className="text-2xl font-bold text-gray-900">
                           {" "}
                           {project.roi || 0}%{" "}
@@ -460,7 +460,7 @@ const InvestmentDetails = () => {
               <div className="flex items-center justify-between mb-6">
                 {" "}
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Resume du projet
+                  Résumé du projet
                 </h2>{" "}
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   {" "}
@@ -502,7 +502,7 @@ const InvestmentDetails = () => {
                 <div className="p-4 bg-purple-50 space-y-2">
                   {" "}
                   <p className="text-sm text-purple-700">
-                    Niveau de securite
+                    Niveau de sécurité
                   </p>{" "}
                   <p className="text-2xl font-bold text-purple-900 flex items-center gap-2">
                     {" "}
@@ -525,7 +525,7 @@ const InvestmentDetails = () => {
                 <div className="border border-gray-100 p-4">
                   {" "}
                   <p className="text-sm text-gray-500 mb-1">
-                    Duree previsionnelle
+                    Durée previsionnelle
                   </p>{" "}
                   <p className="text-xl font-semibold text-gray-900">
                     {" "}
@@ -586,9 +586,9 @@ const InvestmentDetails = () => {
                       <p className="text-xs text-gray-500">Surface</p>{" "}
                       <p className="text-sm font-semibold text-gray-900">
                         {" "}
-                        {project.surfaceArea
-                          ? `${project.surfaceArea} m2`
-                          : "Non specifiee"}{" "}
+                        {project.surfaceArea ?
+                        `${project.surfaceArea} m2` :
+                        "Non specifiee"}{" "}
                       </p>{" "}
                     </div>{" "}
                   </div>{" "}
@@ -662,32 +662,32 @@ const InvestmentDetails = () => {
                 </div>{" "}
               </div>{" "}
             </div>{" "}
-            {project.documents.length > 0 && (
-              <div className="bg-white shadow-xl p-6 border border-gray-100">
+            {project.documents.length > 0 &&
+            <div className="bg-white shadow-xl p-6 border border-gray-100">
                 {" "}
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   Documents
                 </h2>{" "}
                 <div className="space-y-3">
                   {" "}
-                  {project.documents.map((doc) => (
-                    <a
-                      key={doc}
-                      href={getStorageUrl(doc)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-between border border-gray-200 px-4 py-3 hover:border-purple-300 transition-colors"
-                    >
+                  {project.documents.map((doc) =>
+                <a
+                  key={doc}
+                  href={getStorageUrl(doc)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between border border-gray-200 px-4 py-3 hover:border-purple-300 transition-colors">
+
                       {" "}
                       <span className="text-sm text-gray-700 truncate">
                         {doc.split("/").pop()}
                       </span>{" "}
                       <Download size={18} className="text-purple-600" />{" "}
                     </a>
-                  ))}{" "}
+                )}{" "}
                 </div>{" "}
               </div>
-            )}{" "}
+            }{" "}
           </div>{" "}
           <div className="lg:col-span-1 space-y-6">
             {" "}
@@ -709,18 +709,18 @@ const InvestmentDetails = () => {
                   </p>{" "}
                 </div>{" "}
               </div>{" "}
-              {investError && (
-                <div className="px-4 py-3 text-sm border border-red-200 bg-red-50 text-red-700">
+              {investError &&
+              <div className="px-4 py-3 text-sm border border-red-200 bg-red-50 text-red-700">
                   {" "}
                   {investError}{" "}
                 </div>
-              )}{" "}
-              {investSuccess && (
-                <div className="px-4 py-3 text-sm border border-emerald-200 bg-emerald-50 text-emerald-700">
+              }{" "}
+              {investSuccess &&
+              <div className="px-4 py-3 text-sm border border-emerald-200 bg-emerald-50 text-emerald-700">
                   {" "}
                   {investSuccess}{" "}
                 </div>
-              )}{" "}
+              }{" "}
               <form onSubmit={handleInvestSubmit} className="space-y-4">
                 {" "}
                 <div>
@@ -733,13 +733,13 @@ const InvestmentDetails = () => {
                     required
                     value={investData.name}
                     onChange={(e) =>
-                      setInvestData((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
+                    setInvestData((prev) => ({
+                      ...prev,
+                      name: e.target.value
+                    }))
                     }
-                    className="w-full border border-gray-200 px-4 py-3"
-                  />{" "}
+                    className="w-full border border-gray-200 px-4 py-3" />
+                  {" "}
                 </div>{" "}
                 <div>
                   {" "}
@@ -751,13 +751,13 @@ const InvestmentDetails = () => {
                     required
                     value={investData.email}
                     onChange={(e) =>
-                      setInvestData((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
+                    setInvestData((prev) => ({
+                      ...prev,
+                      email: e.target.value
+                    }))
                     }
-                    className="w-full border border-gray-200 px-4 py-3"
-                  />{" "}
+                    className="w-full border border-gray-200 px-4 py-3" />
+                  {" "}
                 </div>{" "}
                 <div>
                   {" "}
@@ -768,13 +768,13 @@ const InvestmentDetails = () => {
                     type="tel"
                     value={investData.phone}
                     onChange={(e) =>
-                      setInvestData((prev) => ({
-                        ...prev,
-                        phone: e.target.value,
-                      }))
+                    setInvestData((prev) => ({
+                      ...prev,
+                      phone: e.target.value
+                    }))
                     }
-                    className="w-full border border-gray-200 px-4 py-3"
-                  />{" "}
+                    className="w-full border border-gray-200 px-4 py-3" />
+                  {" "}
                 </div>{" "}
                 <div>
                   {" "}
@@ -788,13 +788,13 @@ const InvestmentDetails = () => {
                     required
                     value={investData.amount}
                     onChange={(e) =>
-                      setInvestData((prev) => ({
-                        ...prev,
-                        amount: e.target.value,
-                      }))
+                    setInvestData((prev) => ({
+                      ...prev,
+                      amount: e.target.value
+                    }))
                     }
-                    className="w-full border border-gray-200 px-4 py-3"
-                  />{" "}
+                    className="w-full border border-gray-200 px-4 py-3" />
+                  {" "}
                 </div>{" "}
                 <div>
                   {" "}
@@ -805,19 +805,19 @@ const InvestmentDetails = () => {
                     rows="3"
                     value={investData.message}
                     onChange={(e) =>
-                      setInvestData((prev) => ({
-                        ...prev,
-                        message: e.target.value,
-                      }))
+                    setInvestData((prev) => ({
+                      ...prev,
+                      message: e.target.value
+                    }))
                     }
-                    className="w-full border border-gray-200 px-4 py-3"
-                  />{" "}
+                    className="w-full border border-gray-200 px-4 py-3" />
+                  {" "}
                 </div>{" "}
                 <Button
                   type="submit"
                   variant="primary"
-                  className="w-full py-3 font-semibold text-lg"
-                >
+                  className="w-full py-3 font-semibold text-lg">
+
                   {" "}
                   Investir{" "}
                 </Button>{" "}
@@ -834,32 +834,32 @@ const InvestmentDetails = () => {
                   {" "}
                   <CheckCircle
                     size={16}
-                    className="text-emerald-500 mt-0.5"
-                  />{" "}
+                    className="text-emerald-500 mt-0.5" />
+                  {" "}
                   Dossier complet et documents du projet.{" "}
                 </li>{" "}
                 <li className="flex items-start gap-2">
                   {" "}
                   <CheckCircle
                     size={16}
-                    className="text-emerald-500 mt-0.5"
-                  />{" "}
+                    className="text-emerald-500 mt-0.5" />
+                  {" "}
                   Reporting Naraf sur l'avancement et la performance.{" "}
                 </li>{" "}
                 <li className="flex items-start gap-2">
                   {" "}
                   <CheckCircle
                     size={16}
-                    className="text-emerald-500 mt-0.5"
-                  />{" "}
-                  Accompagnement dedie durant toute la duree du projet.{" "}
+                    className="text-emerald-500 mt-0.5" />
+                  {" "}
+                  Accompagnement dédié durant toute la durée du projet.{" "}
                 </li>{" "}
               </ul>{" "}
             </div>{" "}
           </div>{" "}
         </div>{" "}
-        {relatedProjects.length > 0 && (
-          <div className="mt-12">
+        {relatedProjects.length > 0 &&
+        <div className="mt-12">
             {" "}
             <div className="flex items-center justify-between mb-6">
               {" "}
@@ -867,10 +867,10 @@ const InvestmentDetails = () => {
                 Autres projets
               </h2>{" "}
               <Button
-                variant="primary"
-                onClick={() => navigate("/investment")}
-                className="shadow-none"
-              >
+              variant="primary"
+              onClick={() => navigate("/investment")}
+              className="shadow-none">
+
                 {" "}
                 Voir tous les projets{" "}
               </Button>{" "}
@@ -878,24 +878,24 @@ const InvestmentDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {" "}
               {relatedProjects.map((item) => {
-                const image =
-                  item.images.length > 0
-                    ? getStorageUrl(item.images[0])
-                    : defaultImage;
-                return (
-                  <div
-                    key={item.id}
-                    className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
-                    onClick={() => navigate(`/investment/${item.id}`)}
-                  >
+              const image =
+              item.images.length > 0 ?
+              getStorageUrl(item.images[0]) :
+              defaultImage;
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
+                  onClick={() => navigate(`/investment/${item.id}`)}>
+
                     {" "}
                     <div className="relative h-48">
                       {" "}
                       <img
-                        src={image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />{" "}
+                      src={image}
+                      alt={item.title}
+                      className="w-full h-full object-cover" />
+                    {" "}
                       <div className="absolute top-3 left-3">
                         {" "}
                         <span className="px-3 py-1 text-xs font-semibold bg-purple-600 text-white">
@@ -927,20 +927,20 @@ const InvestmentDetails = () => {
                         </div>{" "}
                       </div>{" "}
                     </div>{" "}
-                  </div>
-                );
-              })}{" "}
+                  </div>);
+
+            })}{" "}
             </div>{" "}
           </div>
-        )}{" "}
+        }{" "}
       </div>{" "}
       <AccountCredentialsModal
         account={createdAccount}
         onClose={() => setCreatedAccount(null)}
         onLogin={() => navigate("/login")}
-        description="Conservez ce mot de passe temporaire pour suivre votre demande d'investissement et vous reconnecter a votre espace visiteur."
-      />
-    </div>
-  );
+        description="Conservez ce mot de passe temporaire pour suivre votre demande d'investissement et vous reconnecter à votre espace visiteur." />
+
+    </div>);
+
 };
 export default InvestmentDetails;

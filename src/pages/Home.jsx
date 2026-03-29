@@ -1,12 +1,12 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Hero from "../components/layout/Hero";
 import api, {
   getApprovedPartners,
   getCurrentUser,
   getHouseModels,
-  isAuthenticated,
-} from "../api/axios";
+  isAuthenticated } from
+"../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
@@ -24,100 +24,100 @@ import {
   BadgeCheck,
   FileText,
   Eye,
-  Users,
-} from "lucide-react";
+  Users } from
+"lucide-react";
 
 const africanCountries = [
-  { name: "Algerie", code: "dz" },
-  { name: "Angola", code: "ao" },
-  { name: "Benin", code: "bj" },
-  { name: "Botswana", code: "bw" },
-  { name: "Burkina Faso", code: "bf" },
-  { name: "Burundi", code: "bi" },
-  { name: "Cameroun", code: "cm" },
-  { name: "Cap-Vert", code: "cv" },
-  { name: "Comores", code: "km" },
-  { name: "Congo", code: "cg" },
-  { name: "Cote d'Ivoire", code: "ci" },
-  { name: "Djibouti", code: "dj" },
-  { name: "Egypte", code: "eg" },
-  { name: "Erythree", code: "er" },
-  { name: "Eswatini", code: "sz" },
-  { name: "Ethiopie", code: "et" },
-  { name: "Gabon", code: "ga" },
-  { name: "Gambie", code: "gm" },
-  { name: "Ghana", code: "gh" },
-  { name: "Guinee", code: "gn" },
-  { name: "Guinee-Bissau", code: "gw" },
-  { name: "Guinee equatoriale", code: "gq" },
-  { name: "Kenya", code: "ke" },
-  { name: "Lesotho", code: "ls" },
-  { name: "Liberia", code: "lr" },
-  { name: "Libye", code: "ly" },
-  { name: "Madagascar", code: "mg" },
-  { name: "Malawi", code: "mw" },
-  { name: "Mali", code: "ml" },
-  { name: "Maroc", code: "ma" },
-  { name: "Maurice", code: "mu" },
-  { name: "Mauritanie", code: "mr" },
-  { name: "Mozambique", code: "mz" },
-  { name: "Namibie", code: "na" },
-  { name: "Niger", code: "ne" },
-  { name: "Nigeria", code: "ng" },
-  { name: "Ouganda", code: "ug" },
-  { name: "RDC", code: "cd" },
-  { name: "Rwanda", code: "rw" },
-  { name: "Sao Tome-et-Principe", code: "st" },
-  { name: "Senegal", code: "sn" },
-  { name: "Seychelles", code: "sc" },
-  { name: "Sierra Leone", code: "sl" },
-  { name: "Somalie", code: "so" },
-  { name: "Soudan", code: "sd" },
-  { name: "Soudan du Sud", code: "ss" },
-  { name: "Tanzanie", code: "tz" },
-  { name: "Tchad", code: "td" },
-  { name: "Togo", code: "tg" },
-  { name: "Tunisie", code: "tn" },
-  { name: "Zambie", code: "zm" },
-  { name: "Zimbabwe", code: "zw" },
-  { name: "Afrique du Sud", code: "za" },
-  { name: "Republique centrafricaine", code: "cf" },
-];
+{ name: "Algerie", code: "dz" },
+{ name: "Angola", code: "ao" },
+{ name: "Benin", code: "bj" },
+{ name: "Botswana", code: "bw" },
+{ name: "Burkina Faso", code: "bf" },
+{ name: "Burundi", code: "bi" },
+{ name: "Cameroun", code: "cm" },
+{ name: "Cap-Vert", code: "cv" },
+{ name: "Comores", code: "km" },
+{ name: "Congo", code: "cg" },
+{ name: "Cote d'Ivoire", code: "ci" },
+{ name: "Djibouti", code: "dj" },
+{ name: "Egypte", code: "eg" },
+{ name: "Erythree", code: "er" },
+{ name: "Eswatini", code: "sz" },
+{ name: "Ethiopie", code: "et" },
+{ name: "Gabon", code: "ga" },
+{ name: "Gambie", code: "gm" },
+{ name: "Ghana", code: "gh" },
+{ name: "Guinee", code: "gn" },
+{ name: "Guinee-Bissau", code: "gw" },
+{ name: "Guinee equatoriale", code: "gq" },
+{ name: "Kenya", code: "ke" },
+{ name: "Lesotho", code: "ls" },
+{ name: "Liberia", code: "lr" },
+{ name: "Libye", code: "ly" },
+{ name: "Madagascar", code: "mg" },
+{ name: "Malawi", code: "mw" },
+{ name: "Mali", code: "ml" },
+{ name: "Maroc", code: "ma" },
+{ name: "Maurice", code: "mu" },
+{ name: "Mauritanie", code: "mr" },
+{ name: "Mozambique", code: "mz" },
+{ name: "Namibie", code: "na" },
+{ name: "Niger", code: "ne" },
+{ name: "Nigeria", code: "ng" },
+{ name: "Ouganda", code: "ug" },
+{ name: "RDC", code: "cd" },
+{ name: "Rwanda", code: "rw" },
+{ name: "Sao Tome-et-Principe", code: "st" },
+{ name: "Senegal", code: "sn" },
+{ name: "Seychelles", code: "sc" },
+{ name: "Sierra Leone", code: "sl" },
+{ name: "Somalie", code: "so" },
+{ name: "Soudan", code: "sd" },
+{ name: "Soudan du Sud", code: "ss" },
+{ name: "Tanzanie", code: "tz" },
+{ name: "Tchad", code: "td" },
+{ name: "Togo", code: "tg" },
+{ name: "Tunisie", code: "tn" },
+{ name: "Zambie", code: "zm" },
+{ name: "Zimbabwe", code: "zw" },
+{ name: "Afrique du Sud", code: "za" },
+{ name: "Republique centrafricaine", code: "cf" }];
+
 
 const trustedPartnerLogos = [
-  { src: "/images/logoabi.svg", alt: "ABI" },
-  { src: "/images/logonaraf.png", alt: "Naraf" },
-];
+{ src: "/images/logoabi.svg", alt: "ABI" },
+{ src: "/images/logonaraf.png", alt: "Naraf" }];
+
 
 const Home = () => {
   const navigate = useNavigate();
   const getPropertyShowcaseTitle = (count = 0) =>
-    `Plus de ${count} annonce${count > 1 ? "s" : ""} disponible${count > 1 ? "s" : ""}`;
+  `Plus de ${count} annonce${count > 1 ? "s" : ""} disponible${count > 1 ? "s" : ""}`;
   const getConstructionShowcaseTitle = (count = 0) =>
-    `${count} projet${count > 1 ? "s" : ""} de construction disponible${count > 1 ? "s" : ""}`;
+  `${count} projet${count > 1 ? "s" : ""} de construction disponible${count > 1 ? "s" : ""}`;
   const getInvestmentShowcaseTitle = (count = 0) =>
-    `Plus de ${count} opportunite${count > 1 ? "s" : ""} d'investissement en Afrique`;
+  `Plus de ${count} opportunite${count > 1 ? "s" : ""} d'investissement en Afrique`;
 
   const defaultShowcaseSections = [
-    {
-      title: getPropertyShowcaseTitle(0),
-      button_label: "Voir tous les biens",
-      button_link: "/properties",
-      items: [],
-    },
-    {
-      title: getConstructionShowcaseTitle(0),
-      button_label: "Voir tous les projets",
-      button_link: "/construction",
-      items: [],
-    },
-    {
-      title: getInvestmentShowcaseTitle(0),
-      button_label: "Voir les opportunites",
-      button_link: "/investment",
-      items: [],
-    },
-  ];
+  {
+    title: getPropertyShowcaseTitle(0),
+    button_label: "Voir tous les biens",
+    button_link: "/properties",
+    items: []
+  },
+  {
+    title: getConstructionShowcaseTitle(0),
+    button_label: "Voir tous les projets",
+    button_link: "/construction",
+    items: []
+  },
+  {
+    title: getInvestmentShowcaseTitle(0),
+    button_label: "Voir les opportunités",
+    button_link: "/investment",
+    items: []
+  }];
+
 
   const [partners, setPartners] = useState([]);
   const [partnersLoading, setPartnersLoading] = useState(true);
@@ -128,45 +128,45 @@ const Home = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [houseModelsSection, setHouseModelsSection] = useState({
-    title: "Modeles de maison",
+    title: "Modèles de maison",
     description:
-      "Decouvrez nos modeles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
+    "Decouvrez nos modèles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
     videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
-    showcaseSections: defaultShowcaseSections,
+    showcaseSections: defaultShowcaseSections
   });
 
   const stats = [
-    { number: "2,500+", label: "Biens vendus" },
-    { number: "150+", label: "Projets livrés" },
-    { number: "98%", label: "Satisfaction client" },
-    { number: "25 ans", label: "D'experience" },
-  ];
+  { number: "2,500+", label: "Biens vendus" },
+  { number: "150+", label: "Projets livrés" },
+  { number: "98%", label: "Satisfaction client" },
+  { number: "25 ans", label: "D'expérience" }];
+
 
   const whyChooseUs = [
-    {
-      icon: <BadgeCheck size={24} />,
-      title: "L'accès aux informations fiables",
-    },
-    {
-      icon: <FileText size={24} />,
-      title: "Une maîtrise des démarches administratives",
-    },
-    {
-      icon: <Eye size={24} />,
-      title: "Transaction immobilière sécurisée",
-    },
-    {
-      icon: <Users size={24} />,
-      title: "Mécanisme de financement accessible",
-    },
-  ];
+  {
+    icon: <BadgeCheck size={24} />,
+    title: "L'accès aux informations fiables"
+  },
+  {
+    icon: <FileText size={24} />,
+    title: "Une maîtrise des démarches administratives"
+  },
+  {
+    icon: <Eye size={24} />,
+    title: "Transaction immobilière sécurisée"
+  },
+  {
+    icon: <Users size={24} />,
+    title: "Mécanisme de financement accessible"
+  }];
+
 
   const modelHighlights = [
-    { icon: <Medal size={28} />, label: "Qualite de construction" },
-    { icon: <Handshake size={28} />, label: "Accompagnement" },
-    { icon: <Cpu size={28} />, label: "Equipements connectes" },
-    { icon: <ShieldCheck size={28} />, label: "Garanties" },
-  ];
+  { icon: <Medal size={28} />, label: "Qualité de construction" },
+  { icon: <Handshake size={28} />, label: "Accompagnement" },
+  { icon: <Cpu size={28} />, label: "Equipements connectés" },
+  { icon: <ShieldCheck size={28} />, label: "Garanties" }];
+
 
   const pickRandomItems = (items, maxItems = 4) => {
     const source = Array.isArray(items) ? [...items] : [];
@@ -184,16 +184,16 @@ const Home = () => {
     return {
       title: property?.title || "Bien immobilier",
       excerpt:
-        property?.short_description ||
-        property?.description ||
-        "Decouvrez ce bien immobilier disponible actuellement.",
+      property?.short_description ||
+      property?.description ||
+      "Decouvrez ce bien immobilier disponible actuellement.",
       image_url:
-        toMediaUrl(property?.primary_image?.file_path) ||
-        toMediaUrl(mediaImage) ||
-        toMediaUrl(property?.cover_image) ||
-        toMediaUrl(property?.image_url) ||
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-      link: `/property/${property?.uuid || property?.id}`,
+      toMediaUrl(property?.primary_image?.file_path) ||
+      toMediaUrl(mediaImage) ||
+      toMediaUrl(property?.cover_image) ||
+      toMediaUrl(property?.image_url) ||
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+      link: `/property/${property?.uuid || property?.id}`
     };
   };
 
@@ -203,15 +203,15 @@ const Home = () => {
     return {
       title: project?.title || "Projet de construction",
       excerpt:
-        project?.short_description ||
-        project?.description ||
-        "Consultez ce projet de construction disponible actuellement.",
+      project?.short_description ||
+      project?.description ||
+      "Consultez ce projet de construction disponible actuellement.",
       image_url:
-        (images.length ? toMediaUrl(images[0]) : "") ||
-        toMediaUrl(project?.cover_image) ||
-        toMediaUrl(project?.image_url) ||
-        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
-      link: `/construction/${project?.uuid || project?.id}`,
+      (images.length ? toMediaUrl(images[0]) : "") ||
+      toMediaUrl(project?.cover_image) ||
+      toMediaUrl(project?.image_url) ||
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+      link: `/construction/${project?.uuid || project?.id}`
     };
   };
 
@@ -221,15 +221,15 @@ const Home = () => {
     return {
       title: project?.title || "Projet d'investissement",
       excerpt:
-        project?.short_description ||
-        project?.description ||
-        "Consultez cette opportunite d'investissement disponible actuellement.",
+      project?.short_description ||
+      project?.description ||
+      "Consultez cette opportunité d'investissement disponible actuellement.",
       image_url:
-        (images.length ? toMediaUrl(images[0]) : "") ||
-        toMediaUrl(project?.cover_image) ||
-        toMediaUrl(project?.image_url) ||
-        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
-      link: `/investment/${project?.uuid || project?.id}`,
+      (images.length ? toMediaUrl(images[0]) : "") ||
+      toMediaUrl(project?.cover_image) ||
+      toMediaUrl(project?.image_url) ||
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+      link: `/investment/${project?.uuid || project?.id}`
     };
   };
 
@@ -241,18 +241,18 @@ const Home = () => {
 
       if (parsedUrl.hostname.includes("youtube.com")) {
         const embedId =
-          parsedUrl.searchParams.get("v") ||
-          parsedUrl.pathname.split("/").filter(Boolean).pop();
-        return embedId
-          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
-          : null;
+        parsedUrl.searchParams.get("v") ||
+        parsedUrl.pathname.split("/").filter(Boolean).pop();
+        return embedId ?
+        `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1` :
+        null;
       }
 
       if (parsedUrl.hostname.includes("youtu.be")) {
         const embedId = parsedUrl.pathname.split("/").filter(Boolean).pop();
-        return embedId
-          ? `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1`
-          : null;
+        return embedId ?
+        `https://www.youtube.com/embed/${embedId}?rel=0&modestbranding=1` :
+        null;
       }
 
       if (parsedUrl.hostname.includes("vimeo.com")) {
@@ -274,7 +274,7 @@ const Home = () => {
     const currentUser = getCurrentUser();
     const normalizedRole = currentUser?.role || currentUser?.role_name;
     const isOwnerAuthenticated =
-      isAuthenticated() && normalizedRole === "proprietaire";
+    isAuthenticated() && normalizedRole === "proprietaire";
 
     if (!isOwnerAuthenticated) {
       navigate("/register?role=proprietaire");
@@ -316,42 +316,42 @@ const Home = () => {
           const models = Array.isArray(list) ? list : [];
           setHouseModels(models);
           setHouseModelsSection({
-            title: payload?.section?.title || "Modeles de maison",
+            title: payload?.section?.title || "Modèles de maison",
             description:
-              payload?.section?.description ||
-              "Decouvrez nos modeles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
+            payload?.section?.description ||
+            "Decouvrez nos modèles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
             videos:
-              Array.isArray(payload?.section?.videos) &&
-              payload.section.videos.length
-                ? payload.section.videos
-                : ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+            Array.isArray(payload?.section?.videos) &&
+            payload.section.videos.length ?
+            payload.section.videos :
+            ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
             showcaseSections:
-              Array.isArray(payload?.section?.showcase_sections) &&
-              payload.section.showcase_sections.length >= 3
-                ? payload.section.showcase_sections.map((section) => ({
-                    title: section?.title || "",
-                    button_label: section?.button_label || "",
-                    button_link: section?.button_link || "",
-                    items: Array.isArray(section?.items)
-                      ? section.items.filter(
-                          (item) =>
-                            item?.title ||
-                            item?.excerpt ||
-                            item?.image_url ||
-                            item?.link,
-                        )
-                      : [],
-                  }))
-                : defaultShowcaseSections,
+            Array.isArray(payload?.section?.showcase_sections) &&
+            payload.section.showcase_sections.length >= 3 ?
+            payload.section.showcase_sections.map((section) => ({
+              title: section?.title || "",
+              button_label: section?.button_label || "",
+              button_link: section?.button_link || "",
+              items: Array.isArray(section?.items) ?
+              section.items.filter(
+                (item) =>
+                item?.title ||
+                item?.excerpt ||
+                item?.image_url ||
+                item?.link
+              ) :
+              []
+            })) :
+            defaultShowcaseSections
           });
         }
       } catch (error) {
-        console.error("Erreur chargement modeles maison:", error);
+        console.error("Erreur chargement modèles maison:", error);
         if (isMounted) {
           setHouseModels([]);
           setHouseModelsSection((prev) => ({
             ...prev,
-            videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+            videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"]
           }));
         }
       } finally {
@@ -376,58 +376,58 @@ const Home = () => {
         setShowcaseSectionsLoading(true);
 
         const [propertiesResponse, constructionResponse, investmentsResponse] =
-          await Promise.all([
-            api.get("/properties", { params: { per_page: 50 } }),
-            api.get("/construction-projects"),
-            api.get("/investments"),
-          ]);
+        await Promise.all([
+        api.get("/properties", { params: { per_page: 50 } }),
+        api.get("/construction-projects"),
+        api.get("/investments")]
+        );
 
         const propertiesList =
-          propertiesResponse?.data?.data?.data ||
-          propertiesResponse?.data?.data ||
-          [];
+        propertiesResponse?.data?.data?.data ||
+        propertiesResponse?.data?.data ||
+        [];
         const propertiesTotal =
-          propertiesResponse?.data?.data?.total ||
-          propertiesResponse?.data?.total ||
-          propertiesList.length;
+        propertiesResponse?.data?.data?.total ||
+        propertiesResponse?.data?.total ||
+        propertiesList.length;
         const constructionList =
-          constructionResponse?.data?.data || constructionResponse?.data || [];
+        constructionResponse?.data?.data || constructionResponse?.data || [];
         const constructionTotal =
-          constructionResponse?.data?.total || constructionList.length;
+        constructionResponse?.data?.total || constructionList.length;
         const investmentsList =
-          investmentsResponse?.data?.data?.data ||
-          investmentsResponse?.data?.data ||
-          [];
+        investmentsResponse?.data?.data?.data ||
+        investmentsResponse?.data?.data ||
+        [];
         const investmentsTotal =
-          investmentsResponse?.data?.data?.total ||
-          investmentsResponse?.data?.total ||
-          investmentsList.length;
+        investmentsResponse?.data?.data?.total ||
+        investmentsResponse?.data?.total ||
+        investmentsList.length;
 
         if (isMounted) {
           setShowcaseSections([
-            {
-              title: getPropertyShowcaseTitle(propertiesTotal),
-              button_label: "Voir tous les biens",
-              button_link: "/properties",
-              items: pickRandomItems(propertiesList, 4).map(normalizePropertyItem),
-            },
-            {
-              title: getConstructionShowcaseTitle(constructionTotal),
-              button_label: "Voir tous les projets",
-              button_link: "/construction",
-              items: pickRandomItems(constructionList, 4).map(
-                normalizeConstructionItem,
-              ),
-            },
-            {
-              title: getInvestmentShowcaseTitle(investmentsTotal),
-              button_label: "Voir les opportunites",
-              button_link: "/investment",
-              items: pickRandomItems(investmentsList, 4).map(
-                normalizeInvestmentItem,
-              ),
-            },
-          ]);
+          {
+            title: getPropertyShowcaseTitle(propertiesTotal),
+            button_label: "Voir tous les biens",
+            button_link: "/properties",
+            items: pickRandomItems(propertiesList, 4).map(normalizePropertyItem)
+          },
+          {
+            title: getConstructionShowcaseTitle(constructionTotal),
+            button_label: "Voir tous les projets",
+            button_link: "/construction",
+            items: pickRandomItems(constructionList, 4).map(
+              normalizeConstructionItem
+            )
+          },
+          {
+            title: getInvestmentShowcaseTitle(investmentsTotal),
+            button_label: "Voir les opportunités",
+            button_link: "/investment",
+            items: pickRandomItems(investmentsList, 4).map(
+              normalizeInvestmentItem
+            )
+          }]
+          );
         }
       } catch (error) {
         console.error("Erreur chargement sections accueil:", error);
@@ -450,21 +450,21 @@ const Home = () => {
 
   const activeModel = houseModels[0] || null;
   const fallbackSliderImages = [
-    "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80",
-    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80",
-    "https://images.unsplash.com/photo-1600566752227-8f3b2f28a2a9?w=1600&q=80",
-  ];
+  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80",
+  "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80",
+  "https://images.unsplash.com/photo-1600566752227-8f3b2f28a2a9?w=1600&q=80"];
+
 
   const sliderImages = useMemo(() => {
-    const allModelImages = houseModels
-      .flatMap((model) => [
-        toMediaUrl(model?.cover_image_url || model?.cover_image_path),
-        ...(Array.isArray(model?.gallery_image_urls)
-          ? model.gallery_image_urls.map(toMediaUrl)
-          : []),
-      ])
-      .filter(Boolean);
+    const allModelImages = houseModels.
+    flatMap((model) => [
+    toMediaUrl(model?.cover_image_url || model?.cover_image_path),
+    ...(Array.isArray(model?.gallery_image_urls) ?
+    model.gallery_image_urls.map(toMediaUrl) :
+    [])]
+    ).
+    filter(Boolean);
 
     const uniqueImages = Array.from(new Set(allModelImages));
     if (uniqueImages.length === 0) return fallbackSliderImages;
@@ -494,12 +494,12 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [sliderImages.length]);
 
-  const videoEmbeds = (houseModelsSection.videos || [])
-    .map((video) => ({
-      source: video,
-      embed: toEmbedVideoUrl(video),
-    }))
-    .filter((video) => video.embed);
+  const videoEmbeds = (houseModelsSection.videos || []).
+  map((video) => ({
+    source: video,
+    embed: toEmbedVideoUrl(video)
+  })).
+  filter((video) => video.embed);
 
   const activeVideo = videoEmbeds[activeVideoIndex] || videoEmbeds[0] || null;
 
@@ -509,16 +509,16 @@ const Home = () => {
 
       <section className="w-full overflow-hidden border-y border-slate-200 bg-slate-100 py-3 text-slate-900">
         <div className="flag-marquee flex w-max items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
-          {[...africanCountries, ...africanCountries].map((country, index) => (
-            <img
-              key={`${country.name}-${index}`}
-              src={`https://flagcdn.com/w80/${country.code}.png`}
-              alt={country.name}
-              title={country.name}
-              className="h-6 w-9 shrink-0 object-cover sm:h-7 sm:w-10 lg:h-8 lg:w-12"
-              loading="lazy"
-            />
-          ))}
+          {[...africanCountries, ...africanCountries].map((country, index) =>
+          <img
+            key={`${country.name}-${index}`}
+            src={`https://flagcdn.com/w80/${country.code}.png`}
+            alt={country.name}
+            title={country.name}
+            className="h-6 w-9 shrink-0 object-cover sm:h-7 sm:w-10 lg:h-8 lg:w-12"
+            loading="lazy" />
+
+          )}
         </div>
       </section>
 
@@ -534,17 +534,17 @@ const Home = () => {
             </p>
           </div>
 
-          {houseModelsLoading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
+          {houseModelsLoading ?
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
               <div>
                 <SkeletonBlock className="w-full h-[280px] sm:h-[420px]" />
                 <div className="flex items-center justify-center gap-2 mt-4">
-                  {[0, 1, 2, 3].map((dot) => (
-                    <SkeletonBlock
-                      key={`model-dot-${dot}`}
-                      className="h-2.5 w-2.5 rounded-full"
-                    />
-                  ))}
+                  {[0, 1, 2, 3].map((dot) =>
+                <SkeletonBlock
+                  key={`model-dot-${dot}`}
+                  className="h-2.5 w-2.5 rounded-full" />
+
+                )}
                 </div>
               </div>
               <div className="space-y-4">
@@ -553,60 +553,60 @@ const Home = () => {
                 <SkeletonBlock className="h-5 w-11/12" />
                 <SkeletonBlock className="h-5 w-4/5" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  {[0, 1, 2, 3].map((item) => (
-                    <div
-                      key={`model-highlight-${item}`}
-                      className="flex items-center gap-4"
-                    >
+                  {[0, 1, 2, 3].map((item) =>
+                <div
+                  key={`model-highlight-${item}`}
+                  className="flex items-center gap-4">
+
                       <SkeletonBlock className="h-7 w-7 rounded-full" />
                       <SkeletonBlock className="h-5 w-40" />
                     </div>
-                  ))}
+                )}
                 </div>
                 <SkeletonBlock className="h-12 w-56 mt-3" />
               </div>
-            </div>
-          ) : !activeModel ? (
-            <EmptyState
-              title="Aucun modele de maison disponible pour le moment."
-            />
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
+            </div> :
+          !activeModel ?
+          <EmptyState
+            title="Aucun modèle de maison disponible pour le moment." /> :
+
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
               <div>
                 <div className="relative overflow-hidden">
-                  {sliderImages.map((image, index) => (
-                    <img
-                      key={`${activeModel?.uuid || "model"}-img-${index}`}
-                      src={image}
-                      alt={activeModel?.title || "Modele"}
-                      className={`absolute inset-0 w-full h-[280px] sm:h-[420px] object-cover transition-opacity duration-700 ${
-                        index === activeImageIndex ? "opacity-100" : "opacity-0"
-                      }`}
-                    />
-                  ))}
-                  <img
-                    src={sliderImages[activeImageIndex]}
-                    alt={activeModel?.title || "Modele"}
-                    className="invisible w-full h-[280px] sm:h-[420px] object-cover"
-                  />
-                </div>
-                {sliderImages.length > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-3">
-                    {sliderImages.map((image, index) => (
-                      <button
-                        key={`dot-${image}-${index}`}
-                        type="button"
-                        aria-label={`Image ${index + 1}`}
-                        onClick={() => setActiveImageIndex(index)}
-                        className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                          activeImageIndex === index
-                            ? "bg-blue-700"
-                            : "bg-slate-300 hover:bg-slate-400"
-                        }`}
-                      />
-                    ))}
-                  </div>
+                  {sliderImages.map((image, index) =>
+                <img
+                  key={`${activeModel?.uuid || "model"}-img-${index}`}
+                  src={image}
+                  alt={activeModel?.title || "Modèle"}
+                  className={`absolute inset-0 w-full h-[280px] sm:h-[420px] object-cover transition-opacity duration-700 ${
+                  index === activeImageIndex ? "opacity-100" : "opacity-0"}`
+                  } />
+
                 )}
+                  <img
+                  src={sliderImages[activeImageIndex]}
+                  alt={activeModel?.title || "Modèle"}
+                  className="invisible w-full h-[280px] sm:h-[420px] object-cover" />
+
+                </div>
+                {sliderImages.length > 1 &&
+              <div className="flex items-center justify-center gap-2 mt-3">
+                    {sliderImages.map((image, index) =>
+                <button
+                  key={`dot-${image}-${index}`}
+                  type="button"
+                  aria-label={`Image ${index + 1}`}
+                  onClick={() => setActiveImageIndex(index)}
+                  className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                  activeImageIndex === index ?
+                  "bg-blue-700" :
+                  "bg-slate-300 hover:bg-slate-400"}`
+                  } />
+
+                )}
+                  </div>
+              }
               </div>
 
               <div>
@@ -615,50 +615,50 @@ const Home = () => {
                 </h2>
                 <p className="mt-5 text-lg text-slate-700 leading-relaxed">
                   {activeModel.short_description ||
-                    "Choisissez votre future maison neuve a partir de nos gammes de modeles."}
+                "Choisissez votre future maison neuve à partir de nos gammes de modèles."}
                 </p>
                 <p className="mt-4 text-lg text-slate-700 leading-relaxed">
-                  {activeModel.description
-                    ? String(activeModel.description).split("\n")[0]
-                    : "Un accompagnement complet pour concevoir une maison qui vous ressemble."}
+                  {activeModel.description ?
+                String(activeModel.description).split("\n")[0] :
+                "Un accompagnement complet pour concevoir une maison qui vous ressemble."}
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-7">
-                  {modelHighlights.map((item) => (
-                    <div key={item.label} className="flex items-center gap-4">
+                  {modelHighlights.map((item) =>
+                <div key={item.label} className="flex items-center gap-4">
                       <span className="text-blue-600">{item.icon}</span>
                       <span className="text-lg font-medium text-slate-900">
                         {item.label}
                       </span>
                     </div>
-                  ))}
+                )}
                 </div>
 
                 <Link
-                  to="/house-models"
-                  className="inline-flex mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold transition-colors"
-                >
-                  Decouvrir nos modeles
+                to="/house-models"
+                className="inline-flex mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold transition-colors">
+
+                  Decouvrir nos modèles
                 </Link>
               </div>
             </div>
-          )}
+          }
         </div>
       </section>
 
-      {showcaseSections.length > 0 && (
-        <section className="bg-white py-12 sm:py-14">
+      {showcaseSections.length > 0 &&
+      <section className="bg-white py-12 sm:py-14">
           <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
             {showcaseSections.map((section, sectionIndex) => {
-              const items = Array.isArray(section.items)
-                ? section.items.slice(0, 4)
-                : [];
+            const items = Array.isArray(section.items) ?
+            section.items.slice(0, 4) :
+            [];
 
-              return (
-                <div
-                  key={`home-showcase-${sectionIndex}`}
-                  className="border-t border-slate-200 pt-4"
-                >
+            return (
+              <div
+                key={`home-showcase-${sectionIndex}`}
+                className="border-t border-slate-200 pt-4">
+
                   <div className="mb-5">
                     <h2 className="text-[2rem] font-bold leading-tight text-slate-950">
                       {section.title || getPropertyShowcaseTitle(0)}
@@ -666,94 +666,94 @@ const Home = () => {
                     <div className="mt-2 h-1 w-10 rounded-full bg-slate-950" />
                   </div>
 
-                  {showcaseSectionsLoading ? (
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                      {[0, 1, 2, 3].map((itemIndex) => (
-                        <div
-                          key={`home-showcase-skeleton-${sectionIndex}-${itemIndex}`}
-                          className="border-b border-slate-200 pb-4"
-                        >
+                  {showcaseSectionsLoading ?
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                      {[0, 1, 2, 3].map((itemIndex) =>
+                  <div
+                    key={`home-showcase-skeleton-${sectionIndex}-${itemIndex}`}
+                    className="border-b border-slate-200 pb-4">
+
                           <SkeletonBlock className="h-40 w-full" />
                           <SkeletonBlock className="mt-3 h-5 w-5/6" />
                           <SkeletonBlock className="mt-2 h-4 w-full" />
                           <SkeletonBlock className="mt-2 h-4 w-4/5" />
                         </div>
-                      ))}
-                    </div>
-                  ) : items.length === 0 ? (
-                    <EmptyState
-                      title={
-                        sectionIndex === 0
-                          ? "Aucune propriete immobiliere disponible pour le moment."
-                          : sectionIndex === 1
-                            ? "Aucun projet de construction disponible pour le moment."
-                            : "Aucun projet d'investissement disponible pour le moment."
-                      }
-                    />
-                  ) : (
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                      {items.map((item, itemIndex) => {
-                        const imageUrl = toMediaUrl(item.image_url) || item.image_url;
-                        const cardLink = item.link || "#";
+                  )}
+                    </div> :
+                items.length === 0 ?
+                <EmptyState
+                  title={
+                  sectionIndex === 0 ?
+                  "Aucune propriété immobiliere disponible pour le moment." :
+                  sectionIndex === 1 ?
+                  "Aucun projet de construction disponible pour le moment." :
+                  "Aucun projet d'investissement disponible pour le moment."
+                  } /> :
 
-                        return (
-                          <Link
-                            key={`home-showcase-card-${sectionIndex}-${itemIndex}`}
-                            to={cardLink}
-                            className="group block border-b border-slate-200 pb-4 transition duration-200 hover:-translate-y-1"
-                          >
+
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                      {items.map((item, itemIndex) => {
+                    const imageUrl = toMediaUrl(item.image_url) || item.image_url;
+                    const cardLink = item.link || "#";
+
+                    return (
+                      <Link
+                        key={`home-showcase-card-${sectionIndex}-${itemIndex}`}
+                        to={cardLink}
+                        className="group block border-b border-slate-200 pb-4 transition duration-200 hover:-translate-y-1">
+
                             <div className="overflow-hidden bg-slate-100">
-                              {imageUrl ? (
-                                <img
-                                  src={imageUrl}
-                                  alt={item.title || `Element ${itemIndex + 1}`}
-                                  className="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]"
-                                />
-                              ) : (
-                                <div className="flex h-40 w-full items-center justify-center bg-slate-200 text-sm text-slate-500">
+                              {imageUrl ?
+                          <img
+                            src={imageUrl}
+                            alt={item.title || `Element ${itemIndex + 1}`}
+                            className="h-40 w-full object-cover transition duration-300 group-hover:scale-[1.03]" /> :
+
+
+                          <div className="flex h-40 w-full items-center justify-center bg-slate-200 text-sm text-slate-500">
                                   Image a ajouter
                                 </div>
-                              )}
+                          }
                             </div>
                             <div className="pt-3">
                               <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-900">
                                 {item.title || "Titre a renseigner"}
                               </h3>
                               <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
-                                {item.excerpt || "Resume indisponible pour le moment."}
+                                {item.excerpt || "Résumé indisponible pour le moment."}
                               </p>
                             </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
+                          </Link>);
 
-                  {section.button_label && (
-                    <div className="mt-6 flex flex-wrap gap-3">
+                  })}
+                    </div>
+                }
+
+                  {section.button_label &&
+                <div className="mt-6 flex flex-wrap gap-3">
                       <Link
-                        to={section.button_link || "#"}
-                        className="inline-flex items-center border-0 bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                      >
+                    to={section.button_link || "#"}
+                    className="inline-flex items-center border-0 bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+
                         {section.button_label}
                       </Link>
-                      {sectionIndex === 0 ? (
-                        <button
-                          type="button"
-                          onClick={handleCreateListingClick}
-                          className="inline-flex items-center border-0 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                        >
+                      {sectionIndex === 0 ?
+                  <button
+                    type="button"
+                    onClick={handleCreateListingClick}
+                    className="inline-flex items-center border-0 bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+
                           Faire une annonce
-                        </button>
-                      ) : null}
+                        </button> :
+                  null}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                }
+                </div>);
+
+          })}
           </div>
         </section>
-      )}
+      }
 
       <section className="bg-[linear-gradient(135deg,#0f62c9_0%,#0a4ea3_100%)] py-10 text-white sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -765,18 +765,18 @@ const Home = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:mx-auto sm:max-w-xl sm:grid-cols-2">
-              {trustedPartnerLogos.map((partner) => (
-                <div
-                  key={partner.src}
-                  className="flex h-20 items-center justify-center bg-white px-4"
-                >
+              {trustedPartnerLogos.map((partner) =>
+              <div
+                key={partner.src}
+                className="flex h-20 items-center justify-center bg-white px-4">
+
                   <img
-                    src={partner.src}
-                    alt={partner.alt}
-                    className="h-full w-full object-contain"
-                  />
+                  src={partner.src}
+                  alt={partner.alt}
+                  className="h-full w-full object-contain" />
+
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
@@ -787,53 +787,53 @@ const Home = () => {
           <div className="mx-auto max-w-5xl">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
-                Videos de presentation
+                Videos de présentation
               </h2>
               <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
                 Consulte les contenus video ajoutes depuis l'espace administrateur
-                pour decouvrir l'univers ABI et ses modeles.
+                pour decouvrir l'univers ABI et ses modèles.
               </p>
             </div>
 
-            {activeVideo ? (
-              <div className="space-y-5">
+            {activeVideo ?
+            <div className="space-y-5">
                 <div className="bg-black p-2 shadow-2xl">
                   <div className="aspect-video bg-black">
                     <iframe
-                      className="h-full w-full"
-                      src={activeVideo.embed}
-                      title={`Presentation video ${activeVideoIndex + 1}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    />
+                    className="h-full w-full"
+                    src={activeVideo.embed}
+                    title={`Présentation video ${activeVideoIndex + 1}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen />
+
                   </div>
                 </div>
 
-                {videoEmbeds.length > 1 && (
-                  <div className="flex flex-wrap justify-center gap-3">
-                    {videoEmbeds.map((video, index) => (
-                      <button
-                        key={`${video.source}-${index}`}
-                        type="button"
-                        onClick={() => setActiveVideoIndex(index)}
-                        className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                          index === activeVideoIndex
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700"
-                        }`}
-                      >
+                {videoEmbeds.length > 1 &&
+              <div className="flex flex-wrap justify-center gap-3">
+                    {videoEmbeds.map((video, index) =>
+                <button
+                  key={`${video.source}-${index}`}
+                  type="button"
+                  onClick={() => setActiveVideoIndex(index)}
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                  index === activeVideoIndex ?
+                  "border-blue-600 bg-blue-600 text-white" :
+                  "border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-700"}`
+                  }>
+
                         Video {index + 1}
                       </button>
-                    ))}
-                  </div>
                 )}
-              </div>
-            ) : (
-              <EmptyState
-                title="Aucune video disponible pour le moment."
-              />
-            )}
+                  </div>
+              }
+              </div> :
+
+            <EmptyState
+              title="Aucune video disponible pour le moment." />
+
+            }
           </div>
         </div>
       </section>
@@ -851,14 +851,20 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {whyChooseUs.map((item, index) => (
-              <div key={index} className="text-center p-6">
+            {whyChooseUs.map((item, index) =>
+            <div key={index} className="text-center p-6">
                 <div
-                  className="group inline-flex items-center justify-center w-16 h-16 
+                className="group inline-flex items-center justify-center w-16 h-16 
                 bg-blue-100 text-blue-600 rounded-full mb-4 
                 transition-all duration-300 ease-in-out 
-                hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-lg"
-                >
+                hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-lg">
+
+
+
+
+
+
+
                   <div className="transition-transform duration-300 group-hover:rotate-6">
                     {item.icon}
                   </div>
@@ -868,18 +874,18 @@ const Home = () => {
                 </h3>
                 <p className="text-gray-600">{item.text}</p>
               </div>
-            ))}
+            )}
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-gradient-to-r from-blue-600 to-blue-700 p-12 text-white">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
+            {stats.map((stat, index) =>
+            <div key={index} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold mb-2">
                   {stat.number}
                 </div>
                 <div className="text-blue-100">{stat.label}</div>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -896,56 +902,56 @@ const Home = () => {
             </p>
           </div>
 
-          {partnersLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[0, 1, 2, 3].map((item) => (
-                <div
-                  key={`partner-skeleton-${item}`}
-                  className="bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-                >
+          {partnersLoading ?
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[0, 1, 2, 3].map((item) =>
+            <div
+              key={`partner-skeleton-${item}`}
+              className="bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+
                   <SkeletonBlock className="h-24 w-full" />
                   <SkeletonBlock className="mt-5 h-5 w-20" />
                   <SkeletonBlock className="mt-3 h-6 w-3/4" />
                   <SkeletonBlock className="mt-3 h-4 w-1/2" />
                   <SkeletonBlock className="mt-6 h-4 w-24" />
                 </div>
-              ))}
-            </div>
-          ) : partners.length === 0 ? (
-            <EmptyState
-              title="Aucun partenaire publie pour le moment."
-            />
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {partners.map((partner) => {
-                const partnerLogo = [
-                  partner.logo_url,
-                  partner.logo_path,
-                  partner.cover_image_url,
-                  partner.cover_image_path,
-                  partner.logo?.file_path,
-                ]
-                  .map(toMediaUrl)
-                  .find(Boolean);
+            )}
+            </div> :
+          partners.length === 0 ?
+          <EmptyState
+            title="Aucun partenaire publie pour le moment." /> :
 
-                return (
-                  <Link
-                    key={partner.uuid}
-                    to={`/partners/${partner.uuid}`}
-                    className="group block bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.1)]"
-                  >
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {partners.map((partner) => {
+              const partnerLogo = [
+              partner.logo_url,
+              partner.logo_path,
+              partner.cover_image_url,
+              partner.cover_image_path,
+              partner.logo?.file_path].
+
+              map(toMediaUrl).
+              find(Boolean);
+
+              return (
+                <Link
+                  key={partner.uuid}
+                  to={`/partners/${partner.uuid}`}
+                  className="group block bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.1)]">
+
                     <div className="flex h-24 items-center justify-center bg-[linear-gradient(180deg,#f8fafc_0%,#eef3f8_100%)] px-6">
-                      {partnerLogo ? (
-                        <img
-                          src={partnerLogo}
-                          alt={partner.company_name}
-                          className="h-full w-full object-contain"
-                        />
-                      ) : (
-                        <span className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      {partnerLogo ?
+                    <img
+                      src={partnerLogo}
+                      alt={partner.company_name}
+                      className="h-full w-full object-contain" /> :
+
+
+                    <span className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
                           Logo
                         </span>
-                      )}
+                    }
                     </div>
                     <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
                       Partenaire ABI
@@ -959,11 +965,11 @@ const Home = () => {
                     <p className="mt-3 text-xs uppercase tracking-[0.16em] text-slate-400">
                       {partner.city || "Localisation a definir"}
                     </p>
-                  </Link>
-                );
-              })}
+                  </Link>);
+
+            })}
             </div>
-          )}
+          }
         </div>
       </section>
 
@@ -980,23 +986,23 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+330751521063"
-              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
-            >
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+
               <Phone size={20} />
               <span>+33 07 51 52 10 63</span>
             </a>
             <a
               href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous"
-              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
-            >
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
+
               <Mail size={20} />
               <span>Prendre rendez-vous</span>
             </a>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Home;

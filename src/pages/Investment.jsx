@@ -22,8 +22,8 @@ import {
   Mail,
   Briefcase,
   Layers3,
-  ShieldCheck,
-} from "lucide-react";
+  ShieldCheck } from
+"lucide-react";
 import api from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
@@ -45,7 +45,7 @@ const Investment = () => {
   const pageLocation = useLocation();
 
   const defaultImage =
-    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
+  "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
   const getStorageUrl = (path) => toMediaUrl(path);
 
   const formatDuration = (months) => {
@@ -56,9 +56,9 @@ const Investment = () => {
   };
 
   const normalizeProject = (project) => {
-    const images = Array.isArray(project.images_path)
-      ? project.images_path
-      : [];
+    const images = Array.isArray(project.images_path) ?
+    project.images_path :
+    [];
     const durationMonths = Number(project.duration_months || 0);
     const expectedReturn = Number(project.expected_return || 0);
     const minInvestment = Number(project.min_investment || 0);
@@ -68,28 +68,28 @@ const Investment = () => {
 
     let fundedPercentage = null;
     if (
-      project.funded_percentage !== null &&
-      project.funded_percentage !== undefined
-    ) {
+    project.funded_percentage !== null &&
+    project.funded_percentage !== undefined)
+    {
       fundedPercentage = Number(project.funded_percentage);
     } else if (project.funded !== null && project.funded !== undefined) {
       fundedPercentage = Number(project.funded);
     } else if (totalInvestment > 0) {
-      fundedPercentage = Math.round((currentFunding / totalInvestment) * 100);
+      fundedPercentage = Math.round(currentFunding / totalInvestment * 100);
     }
 
     const normalizedFunded =
-      typeof fundedPercentage === "number"
-        ? Math.max(0, Math.min(100, fundedPercentage))
-        : null;
+    typeof fundedPercentage === "number" ?
+    Math.max(0, Math.min(100, fundedPercentage)) :
+    null;
 
     return {
       id: project.uuid || project.id,
       image:
-        (images.length ? getStorageUrl(images[0]) : "") ||
-        getStorageUrl(project.cover_image) ||
-        getStorageUrl(project.image_url) ||
-        defaultImage,
+      (images.length ? getStorageUrl(images[0]) : "") ||
+      getStorageUrl(project.cover_image) ||
+      getStorageUrl(project.image_url) ||
+      defaultImage,
       gallery: images.map(getStorageUrl),
       title: project.title || "Projet d'investissement",
       location,
@@ -106,16 +106,16 @@ const Investment = () => {
       totalInvestment,
       currentFunding,
       isFullyFunded:
-        (normalizedFunded !== null && normalizedFunded >= 100) ||
-        project.status === "closed" ||
-        project.status === "completed",
+      normalizedFunded !== null && normalizedFunded >= 100 ||
+      project.status === "closed" ||
+      project.status === "completed",
       investors: project.investors_count ?? null,
       features: Array.isArray(project.features) ? project.features : [],
       popularity: project.popularity || "",
       status: project.status || "open",
       description: project.description || "",
       reference: project.reference_code || project.uuid || project.id || "",
-      raw: project,
+      raw: project
     };
   };
 
@@ -127,9 +127,9 @@ const Investment = () => {
       try {
         const response = await api.get("/investments");
         const list = response?.data?.data?.data || response?.data?.data || [];
-        const normalized = Array.isArray(list)
-          ? list.map(normalizeProject)
-          : [];
+        const normalized = Array.isArray(list) ?
+        list.map(normalizeProject) :
+        [];
         if (isMounted) {
           setInvestmentProjects(normalized);
         }
@@ -170,27 +170,27 @@ const Investment = () => {
 
   const projectsSource = investmentProjects;
   const heroTabs = [
-    {
-      key: "nos-offres",
-      title: "Nos offres",
-      icon: <Building2 size={22} />,
-    },
-    {
-      key: "je-veux",
-      title: "Je veux",
-      icon: <Target size={22} />,
-    },
-    {
-      key: "les-meilleurs",
-      title: "Les meilleurs",
-      icon: <TrendingUp size={22} />,
-    },
-    {
-      key: "ou-investir",
-      title: "Ou investir",
-      icon: <MapPin size={22} />,
-    },
-  ];
+  {
+    key: "nos-offres",
+    title: "Nos offres",
+    icon: <Building2 size={22} />
+  },
+  {
+    key: "je-veux",
+    title: "Je veux",
+    icon: <Target size={22} />
+  },
+  {
+    key: "les-meilleurs",
+    title: "Les meilleurs",
+    icon: <TrendingUp size={22} />
+  },
+  {
+    key: "ou-investir",
+    title: "Ou investir",
+    icon: <MapPin size={22} />
+  }];
+
 
   const heroTabStyles = {
     "nos-offres": {
@@ -199,7 +199,7 @@ const Investment = () => {
       accent: "bg-slate-400",
       active: "bg-slate-800 border-slate-800 text-white shadow-md",
       activeIcon: "text-white",
-      activeAccent: "bg-white/80",
+      activeAccent: "bg-white/80"
     },
     "je-veux": {
       hover: "hover:bg-emerald-100 hover:border-emerald-300 hover:text-emerald-700",
@@ -207,7 +207,7 @@ const Investment = () => {
       accent: "bg-emerald-400",
       active: "bg-emerald-600 border-emerald-600 text-white shadow-md",
       activeIcon: "text-white",
-      activeAccent: "bg-white/80",
+      activeAccent: "bg-white/80"
     },
     "les-meilleurs": {
       hover: "hover:bg-violet-100 hover:border-violet-300 hover:text-violet-700",
@@ -215,7 +215,7 @@ const Investment = () => {
       accent: "bg-violet-400",
       active: "bg-violet-600 border-violet-600 text-white shadow-md",
       activeIcon: "text-white",
-      activeAccent: "bg-white/80",
+      activeAccent: "bg-white/80"
     },
     "ou-investir": {
       hover: "hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700",
@@ -223,124 +223,124 @@ const Investment = () => {
       accent: "bg-cyan-400",
       active: "bg-blue-600 border-blue-600 text-white shadow-md",
       activeIcon: "text-white",
-      activeAccent: "bg-white/80",
-    },
+      activeAccent: "bg-white/80"
+    }
   };
 
   const offerFamilies = [
-    {
-      title: "Investir a petit budget",
-      details:
-        "Pour 100 EUR vous devenez co-propriétaire d'un portefeuille immobilier grâce a ABI. Un placement accessible qui democratise l'investissement immobilier.",
-    },
-    {
-      title: "Diversifier votre patrimoine",
-      details:
-        "Vous réduisez les risques en investissant dans différents biens, secteur géographique et types de patrimoines.",
-    },
-    {
-      title: "Optimiser vos rendements",
-      details:
-        "Vous bénéficier de revenus régulier et potentiel sous forme de dividende sur chaque euro investi. Un complément de revenu qui sécurise votre épargne.",
-    },
-    {
-      title: "Services d'accompagnement",
-      details:
-        "Une équipe d'experts reconnus et expérimentées en investissement  accompagne chaque projet ABI dans l'études de faisabilité, structuration juridique et conformité.",
-    },
-    {
-      title: "100% digital, 100% sécurisé",
-      details:
-        "Investissez en 5 minutes, ou que vous soyez. Votre souscription est sécurisée par des titres obligataires visés par l'Autorité des Marchés Financiers.",
-    },
-  ];
+  {
+    title: "Investir a petit budget",
+    details:
+    "Pour 100 EUR vous devenez co-propriétaire d'un portefeuille immobilier grâce a ABI. Un placement accessible qui démocratise l'investissement immobilier."
+  },
+  {
+    title: "Diversifier votre patrimoine",
+    details:
+    "Vous réduisez les risques en investissant dans différents biens, secteur géographique et types de patrimoines."
+  },
+  {
+    title: "Optimiser vos rendements",
+    details:
+    "Vous bénéficier de revenus régulier et potentiel sous forme de dividende sur chaque euro investi. Un complément de revenu qui sécurise votre épargne."
+  },
+  {
+    title: "Services d'accompagnement",
+    details:
+    "Une équipe d'experts reconnus et expérimentées en investissement  accompagne chaque projet ABI dans l'études de faisabilité, structuration juridique et conformité."
+  },
+  {
+    title: "100% digital, 100% sécurisé",
+    details:
+    "Investissez en 5 minutes, ou que vous soyez. Votre souscription est sécurisée par des titres obligataires visés par l'Autorité des Marchés Financiers."
+  }];
+
 
   const offerHighlights = [
-    {
-      icon: <Layers3 size={18} />,
-      title: "Modalites flexibles",
-      text: "Tickets adaptables selon l'offre pour investisseurs particuliers, family offices, fonds et institutions, avec gouvernance claire et reporting periodique.",
-    },
-  ];
+  {
+    icon: <Layers3 size={18} />,
+    title: "Modalités flexibles",
+    text: "Tickets adaptables selon l'offre pour investisseurs particuliers, family offices, fonds et institutions, avec gouvernance claire et reporting périodique."
+  }];
 
 
-  const OfferAccordion = ({ title, details, isOpen, onToggle }) => (
-    <div
-      className="border-b border-slate-300/90 bg-transparent py-1"
-      style={{ overflowAnchor: "none" }}
-    >
+
+  const OfferAccordion = ({ title, details, isOpen, onToggle }) =>
+  <div
+    className="border-b border-slate-300/90 bg-transparent py-1"
+    style={{ overflowAnchor: "none" }}>
+
       <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 py-5 text-left"
-      >
+      type="button"
+      onClick={onToggle}
+      className="flex w-full items-center justify-between gap-4 py-5 text-left">
+
         <h3 className="text-lg font-semibold text-slate-950 sm:text-xl">
           {title}
         </h3>
         <ChevronDown
-          size={18}
-          className={`shrink-0 text-slate-400 transition-transform duration-300 ease-out ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
-        />
+        size={18}
+        className={`shrink-0 text-slate-400 transition-transform duration-300 ease-out ${
+        isOpen ? "rotate-180" : "rotate-0"}`
+        } />
+
       </button>
 
       <div
-        className={`grid overflow-hidden transition-all duration-500 ease-out ${
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-      >
+      className={`grid overflow-hidden transition-all duration-500 ease-out ${
+      isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`
+      }>
+
         <div className="min-h-0 overflow-hidden">
           <div
-            className={`pb-5 text-sm leading-6 text-slate-600 transition-all duration-500 ease-out sm:text-base ${
-              isOpen ? "translate-y-0" : "-translate-y-2"
-            }`}
-          >
+          className={`pb-5 text-sm leading-6 text-slate-600 transition-all duration-500 ease-out sm:text-base ${
+          isOpen ? "translate-y-0" : "-translate-y-2"}`
+          }>
+
             <p>{details}</p>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
+
 
   const benefits = [
-    {
-      icon: <Shield size={32} />,
-      title: "Construire son patrimoine",
-      description: "Les meilleures opportunités du marché.",
-      features: [
-        "Due diligence",
-        "Garanties bancaires",
-        "Assurances projet",
-      ],
-    },
-    {
-      icon: <BarChart3 size={32} />,
-      title: "Préparer sa retraite",
-      description: "Investissez dans vos revenus de demain.",
-      features: [
-        "Études de marché",
-        "Optimisation fiscale",
-        "Gestion active",
-      ],
-    },
-    {
-      icon: <Target size={32} />,
-      title: "Participer au développement",
-      description: "L’investissement n’est pas seulement une question de revenu. C’est un moteur de transformation dont vous êtes le levier.",
-      features: ["Conseiller dédié", "Reporting régulier", "Support 7j/7"],
-    },
-    {
-      icon: <Zap size={32} />,
-      title: "Jouir de son investissement",
-      description: "Investir dans l'immobilier aujourd'hui est une rente tout les mois pendant plusieurs années.",
-      features: [
-        "Plateforme digitale",
-        "Documentation claire",
-        "Paiement sécurisé",
-      ],
-    },
-  ];
+  {
+    icon: <Shield size={32} />,
+    title: "Construire son patrimoine",
+    description: "Les meilleures opportunités du marché.",
+    features: [
+    "Due diligence",
+    "Garanties bancaires",
+    "Assurances projet"]
+
+  },
+  {
+    icon: <BarChart3 size={32} />,
+    title: "Préparer sa retraite",
+    description: "Investissez dans vos revenus de demain.",
+    features: [
+    "Études de marché",
+    "Optimisation fiscale",
+    "Gestion activé"]
+
+  },
+  {
+    icon: <Target size={32} />,
+    title: "Participer au développement",
+    description: "L’investissement n’est pas seulement une question de revenu. C’est un moteur de transformation dont vous êtes le levier.",
+    features: ["Conseiller dédié", "Reporting régulier", "Support 7j/7"]
+  },
+  {
+    icon: <Zap size={32} />,
+    title: "Jouir de son investissement",
+    description: "Investir dans l'immobilier aujourd'hui est une rente tout les mois pendant plusieurs années.",
+    features: [
+    "Plateforme digitale",
+    "Documentation claire",
+    "Paiement sécurisé"]
+
+  }];
+
 
   const formatPrice = (price) => {
     if (price === null || price === undefined || Number.isNaN(Number(price))) {
@@ -349,70 +349,70 @@ const Investment = () => {
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "xof",
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   };
 
-  const filteredProjects = projectsSource
-    .filter((project) => {
-      if (
-        activeFilter !== "tous" &&
-        !project.type.toLowerCase().includes(activeFilter.toLowerCase())
-      ) {
-        return false;
-      }
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          project.title.toLowerCase().includes(searchLower) ||
-          project.location.toLowerCase().includes(searchLower) ||
-          project.type.toLowerCase().includes(searchLower)
-        );
-      }
-      return true;
-    })
-    .filter((project) => {
-      if (budgetFilter === "tous") return true;
+  const filteredProjects = projectsSource.
+  filter((project) => {
+    if (
+    activeFilter !== "tous" &&
+    !project.type.toLowerCase().includes(activeFilter.toLowerCase()))
+    {
+      return false;
+    }
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        project.title.toLowerCase().includes(searchLower) ||
+        project.location.toLowerCase().includes(searchLower) ||
+        project.type.toLowerCase().includes(searchLower));
 
-      const budget = Number(project.minInvestment);
-      if (Number.isNaN(budget)) return false;
+    }
+    return true;
+  }).
+  filter((project) => {
+    if (budgetFilter === "tous") return true;
 
-      if (budgetFilter.includes("-")) {
-        const [minBudget, maxBudget] = budgetFilter
-          .split("-")
-          .map((value) => Number(value));
-        if (Number.isNaN(minBudget) || Number.isNaN(maxBudget)) return true;
-        return budget >= minBudget && budget <= maxBudget;
-      }
+    const budget = Number(project.minInvestment);
+    if (Number.isNaN(budget)) return false;
 
-      if (budgetFilter.endsWith("+")) {
-        const minBudget = Number(budgetFilter.replace("+", ""));
-        if (Number.isNaN(minBudget)) return true;
-        return budget >= minBudget;
-      }
+    if (budgetFilter.includes("-")) {
+      const [minBudget, maxBudget] = budgetFilter.
+      split("-").
+      map((value) => Number(value));
+      if (Number.isNaN(minBudget) || Number.isNaN(maxBudget)) return true;
+      return budget >= minBudget && budget <= maxBudget;
+    }
 
-      return true;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "roi_desc":
-          return parseFloat(b.roi) - parseFloat(a.roi);
-        case "roi_asc":
-          return parseFloat(a.roi) - parseFloat(b.roi);
-        case "min_invest":
-          return a.minInvestment - b.minInvestment;
-        case "popularity":
-          return (b.funded || 0) - (a.funded || 0);
-        default:
-          return 0;
-      }
-    });
+    if (budgetFilter.endsWith("+")) {
+      const minBudget = Number(budgetFilter.replace("+", ""));
+      if (Number.isNaN(minBudget)) return true;
+      return budget >= minBudget;
+    }
+
+    return true;
+  }).
+  sort((a, b) => {
+    switch (sortBy) {
+      case "roi_desc":
+        return parseFloat(b.roi) - parseFloat(a.roi);
+      case "roi_asc":
+        return parseFloat(a.roi) - parseFloat(b.roi);
+      case "min_invest":
+        return a.minInvestment - b.minInvestment;
+      case "popularity":
+        return (b.funded || 0) - (a.funded || 0);
+      default:
+        return 0;
+    }
+  });
 
   const toggleFavorite = (projectId) => {
     setFavorites((prev) =>
-      prev.includes(projectId)
-        ? prev.filter((id) => id !== projectId)
-        : [...prev, projectId],
+    prev.includes(projectId) ?
+    prev.filter((id) => id !== projectId) :
+    [...prev, projectId]
     );
   };
 
@@ -429,21 +429,21 @@ const Investment = () => {
   };
 
   const filterOptions = [
-    "tous",
-    ...Array.from(
-      new Set(
-        investmentProjects
-          .map((project) => project.type)
-          .filter(Boolean)
-          .map((type) => type.toLowerCase()),
-      ),
-    ),
-  ];
+  "tous",
+  ...Array.from(
+    new Set(
+      investmentProjects.
+      map((project) => project.type).
+      filter(Boolean).
+      map((type) => type.toLowerCase())
+    )
+  )];
+
 
   const handleOfferToggle = (index) => {
     const currentScrollY = window.scrollY;
 
-    setOpenOfferIndex((currentIndex) => (currentIndex === index ? -1 : index));
+    setOpenOfferIndex((currentIndex) => currentIndex === index ? -1 : index);
 
     requestAnimationFrame(() => {
       window.scrollTo({ top: currentScrollY });
@@ -460,18 +460,18 @@ const Investment = () => {
         style={{
           backgroundImage: `url(${heroInvest})`,
           backgroundSize: "cover",
-          backgroundPosition: "center 69%",
-        }}
-      >
+          backgroundPosition: "center 69%"
+        }}>
+
         <div
-          className="absolute inset-0 opacity-0"
-        />
+          className="absolute inset-0 opacity-0" />
+
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,190,104,0.84),rgba(12,190,104,0.72))]" />
         <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:px-8">
           <div className="relative z-10 flex max-w-4xl items-center py-[6.75rem] lg:py-32">
             <div>
-              <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.15rem]">
-                la plateforme N°1 pour 
+              <h1 className="max-w-3xl text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[2.4rem]">
+                la plateforme N°1 pour
                 <span className="block">l’investissement immobilier  en Afrique.</span>
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-6 text-white sm:text-base">
@@ -481,24 +481,24 @@ const Investment = () => {
                 <button
                   type="button"
                   onClick={() =>
-                    document.getElementById("investment-catalog")?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    })
+                  document.getElementById("investment-catalog")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                  })
                   }
-                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#0c7d44] shadow-lg transition hover:bg-[#f4fff9]"
-                >
+                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#0c7d44] shadow-lg transition hover:bg-[#f4fff9]">
+
                   <Search size={18} />
-                  <span>Voir les opportunites</span>
+                  <span>Voir les opportunités</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     window.location.href =
-                      "mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous%20investissement";
+                    "mailto:contact@africabuildinvest.com?subject=Prise%20de%20rendez-vous%20investissement";
                   }}
-                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
-                >
+                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]">
+
                   <Briefcase size={18} />
                   <span>Prendre un rendez-vous</span>
                 </button>
@@ -509,92 +509,92 @@ const Investment = () => {
       </section>
 
       {/*
-      <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-8 sm:px-6 lg:-mt-10 lg:px-8">
-        <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
-            {heroTabs.map((tab) => {
-              const tabStyle =
-                heroTabStyles[tab.key] || heroTabStyles["nos-offres"];
-              const isActive = activeHeroTab === tab.key;
-
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveHeroTab(tab.key)}
-                  className={`border px-3 py-3 text-left transition-all duration-200 ${
-                    isActive
-                      ? tabStyle.active
-                      : `bg-[#f6f6f6] border-gray-200 text-slate-800 ${tabStyle.hover} hover:shadow-sm`
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className={isActive ? tabStyle.activeIcon : tabStyle.icon}>
-                      {tab.icon}
-                    </span>
-                  </div>
-                  <span
-                    className={`mb-1.5 mt-1.5 block h-1 w-10 ${
-                      isActive ? tabStyle.activeAccent : tabStyle.accent
-                    }`}
-                  />
-                  <p
-                    className={`text-base font-medium leading-tight sm:text-lg ${
-                      isActive ? "text-white" : ""
-                    }`}
-                  >
-                    {tab.title}
-                  </p>
-                </button>
-              );
-            })}
+          <div className="relative mx-auto mt-6 max-w-7xl px-4 sm:mt-8 sm:px-6 lg:-mt-10 lg:px-8">
+           <div className="border border-gray-200 bg-[#f2f2f2] p-1.5 shadow-2xl sm:p-2">
+             <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 xl:grid-cols-4">
+               {heroTabs.map((tab) => {
+                 const tabStyle =
+                   heroTabStyles[tab.key] || heroTabStyles["nos-offres"];
+                 const isActive = activeHeroTab === tab.key;
+                  return (
+                   <button
+                     key={tab.key}
+                     type="button"
+                     onClick={() => setActiveHeroTab(tab.key)}
+                     className={`border px-3 py-3 text-left transition-all duration-200 ${
+                       isActive
+                         ? tabStyle.active
+                         : `bg-[#f6f6f6] border-gray-200 text-slate-800 ${tabStyle.hover} hover:shadow-sm`
+                     }`}
+                   >
+                     <div className="flex items-center justify-between">
+                       <span className={isActive ? tabStyle.activeIcon : tabStyle.icon}>
+                         {tab.icon}
+                       </span>
+                     </div>
+                     <span
+                       className={`mb-1.5 mt-1.5 block h-1 w-10 ${
+                         isActive ? tabStyle.activeAccent : tabStyle.accent
+                       }`}
+                     />
+                     <p
+                       className={`text-base font-medium leading-tight sm:text-lg ${
+                         isActive ? "text-white" : ""
+                       }`}
+                     >
+                       {tab.title}
+                     </p>
+                   </button>
+                 );
+               })}
+             </div>
+           </div>
           </div>
-        </div>
-      </div>
-      */}
+          */
+      }
 
       <section id="investment-opportunities" className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10">
             <div className="text-center">
               <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-[2.5rem]">
-                Opportunites d'investissement
+                Opportunités d'investissement
               </h2>
               <p className="text-sm text-gray-600 sm:text-base">
                 {filteredProjects.length} projet
                 {filteredProjects.length !== 1 ? "s" : ""} disponible
                 {filteredProjects.length !== 1 ? "s" : ""}
               </p>
-              {isLoading && (
-                <div className="mt-2 flex justify-center">
+              {isLoading &&
+              <div className="mt-2 flex justify-center">
                   <SkeletonBlock className="h-4 w-32" />
                 </div>
-              )}
-              {loadError && (
-                <p className="mt-2 text-sm text-red-600">{loadError}</p>
-              )}
+              }
+              {loadError &&
+              <p className="mt-2 text-sm text-red-600">{loadError}</p>
+              }
             </div>
 
             <div className="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr]">
               <div className="relative md:col-span-2 xl:col-span-1">
                 <Search
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
+                  size={20} />
+
                 <input
                   type="text"
                   placeholder="Rechercher un projet..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full border border-gray-200 bg-white py-3 pl-12 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                />
+                  className="w-full border border-gray-200 bg-white py-3 pl-12 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+
               </div>
               <div className="relative">
                 <select
                   value={budgetFilter}
                   onChange={(e) => setBudgetFilter(e.target.value)}
-                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
+                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+
                   <option value="tous">Tous les budgets</option>
                   <option value="0-5000000">0 - 5M XOF</option>
                   <option value="5000000-20000000">5M - 20M XOF</option>
@@ -603,15 +603,15 @@ const Investment = () => {
                 </select>
                 <Filter
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={18}
-                />
+                  size={18} />
+
               </div>
               <div className="relative">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
+                  className="w-full appearance-none border border-gray-200 bg-white py-3 pl-4 pr-10 font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+
                   <option value="roi_desc">Rendement decroissant</option>
                   <option value="roi_asc">Rendement croissant</option>
                   <option value="min_invest">Investissement minimum</option>
@@ -619,90 +619,90 @@ const Investment = () => {
                 </select>
                 <Filter
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={18}
-                />
+                  size={18} />
+
               </div>
             </div>
           </div>
 
           <div className="mb-8 flex gap-2 overflow-x-auto pb-4">
-            {filterOptions.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-4 sm:px-5 py-2.5 font-medium whitespace-nowrap transition-all ${
-                  activeFilter === filter
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-                }`}
-              >
+            {filterOptions.map((filter) =>
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-4 sm:px-5 py-2.5 font-medium whitespace-nowrap transition-all ${
+              activeFilter === filter ?
+              "bg-blue-600 text-white shadow-lg" :
+              "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"}`
+              }>
+
                 {filter.charAt(0).toUpperCase() + filter.slice(1)}
               </button>
-            ))}
+            )}
           </div>
 
-          {isLoading ? (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 sm:gap-8">
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <PropertyCardSkeleton key={`investment-skeleton-${idx}`} />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
-              {filteredProjects.map((project) => {
-                const isFavorite = favorites.includes(project.id);
-                const annualReturn = calculateAnnualReturn(
-                  project.minInvestment,
-                  project.roi,
-                );
-                const fundedValue =
-                  typeof project.funded === "number" ? project.funded : null;
+          {isLoading ?
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3 sm:gap-8">
+              {Array.from({ length: 6 }).map((_, idx) =>
+            <PropertyCardSkeleton key={`investment-skeleton-${idx}`} />
+            )}
+            </div> :
 
-                return (
-                  <div
-                    key={project.id}
-                    className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
-                  >
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+              {filteredProjects.map((project) => {
+              const isFavorite = favorites.includes(project.id);
+              const annualReturn = calculateAnnualReturn(
+                project.minInvestment,
+                project.roi
+              );
+              const fundedValue =
+              typeof project.funded === "number" ? project.funded : null;
+
+              return (
+                <div
+                  key={project.id}
+                  className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+
                     <div className="relative h-56 overflow-hidden">
                       <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
                         <span className="px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-blue-600">
                           {project.type}
                         </span>
-                        {project.isFullyFunded && (
-                          <span className="px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-slate-700">
+                        {project.isFullyFunded &&
+                      <span className="px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-slate-700">
                             Complet
                           </span>
-                        )}
+                      }
                       </div>
                       <div className="absolute top-4 right-4 flex flex-col gap-2">
                         <button
-                          onClick={() => toggleFavorite(project.id)}
-                          className={`p-2.5 backdrop-blur-sm transition-all ${
-                            isFavorite
-                              ? "bg-rose-500 text-white"
-                              : "bg-white/90 text-gray-700 hover:bg-white"
-                          }`}
-                        >
+                        onClick={() => toggleFavorite(project.id)}
+                        className={`p-2.5 backdrop-blur-sm transition-all ${
+                        isFavorite ?
+                        "bg-rose-500 text-white" :
+                        "bg-white/90 text-gray-700 hover:bg-white"}`
+                        }>
+
                           <Heart
-                            size={18}
-                            fill={isFavorite ? "currentColor" : "none"}
-                          />
+                          size={18}
+                          fill={isFavorite ? "currentColor" : "none"} />
+
                         </button>
                         <button
-                          onClick={() => navigate(`/investment/${project.id}`)}
-                          className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors"
-                        >
+                        onClick={() => navigate(`/investment/${project.id}`)}
+                        className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors">
+
                           <Eye size={18} />
                         </button>
                       </div>
-                      {fundedValue !== null && (
-                        <div className="absolute bottom-4 left-4 right-4">
+                      {fundedValue !== null &&
+                    <div className="absolute bottom-4 left-4 right-4">
                           <div className="mb-2">
                             <div className="flex justify-between text-xs text-white mb-1">
                               <span>Financement</span>
@@ -710,13 +710,13 @@ const Investment = () => {
                             </div>
                             <div className="w-full bg-white/30 h-2">
                               <div
-                                className="bg-emerald-400 h-2 transition-all duration-1000"
-                                style={{ width: `${fundedValue}%` }}
-                              ></div>
+                            className="bg-emerald-400 h-2 transition-all duration-1000"
+                            style={{ width: `${fundedValue}%` }}>
+                          </div>
                             </div>
                           </div>
                         </div>
-                      )}
+                    }
                     </div>
                     <div className="p-5 sm:p-6">
                       <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-blue-700">
@@ -740,52 +740,52 @@ const Investment = () => {
                         </div>
                           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                           <button
-                            onClick={() =>
-                              navigate(`/investment/${project.id}`)
-                            }
-                            disabled={project.isFullyFunded}
-                            className={`px-4 py-3 font-semibold transition-all ${
-                              project.isFullyFunded
-                                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700 text-white"
-                            }`}
-                          >
+                          onClick={() =>
+                          navigate(`/investment/${project.id}`)
+                          }
+                          disabled={project.isFullyFunded}
+                          className={`px-4 py-3 font-semibold transition-all ${
+                          project.isFullyFunded ?
+                          "bg-gray-200 text-gray-500 cursor-not-allowed" :
+                          "bg-blue-600 hover:bg-blue-700 text-white"}`
+                          }>
+
                             {project.isFullyFunded ? "Complet" : "Investir"}
                           </button>
                           <button
-                            onClick={() =>
-                              navigate(`/investment/${project.id}`)
-                            }
-                            className="px-4 py-3 bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 font-semibold transition-all"
-                          >
+                          onClick={() =>
+                          navigate(`/investment/${project.id}`)
+                          }
+                          className="px-4 py-3 bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 font-semibold transition-all">
+
                             Details
                           </button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  </div>);
 
-          {!isLoading && filteredProjects.length === 0 && (
-            <EmptyState
-              title="Aucun projet ne correspond a votre recherche."
-              className="py-20"
-              action={
-                <button
-                  onClick={() => {
-                    setActiveFilter("tous");
-                    setSearchTerm("");
-                  }}
-                  className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg"
-                >
+            })}
+            </div>
+          }
+
+          {!isLoading && filteredProjects.length === 0 &&
+          <EmptyState
+            title="Aucun projet ne correspond à votre recherche."
+            className="py-20"
+            action={
+            <button
+              onClick={() => {
+                setActiveFilter("tous");
+                setSearchTerm("");
+              }}
+              className="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg">
+
                   Voir tous les projets
                 </button>
-              }
-            />
-          )}
+            } />
+
+          }
         </div>
       </section>
 
@@ -800,20 +800,20 @@ const Investment = () => {
             </p>
           </div>
           <div className="mx-auto mt-8 max-w-[760px]">
-            {offerHighlights.map((item) => (
-              <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 text-center shadow-[0_14px_28px_rgba(15,23,42,0.04)]">
+            {offerHighlights.map((item) =>
+            <div key={item.title} className="border border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-6 py-6 text-center shadow-[0_14px_28px_rgba(15,23,42,0.04)]">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#f2f7fd] text-[#0f62c9]">
                   {item.icon}
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-slate-950">{item.title}</h3>
                 <p className="mt-2 text-sm leading-7 text-slate-600">{item.text}</p>
               </div>
-            ))}
+            )}
             <div className="mt-6 flex justify-center">
               <a
                 href="mailto:contact@africabuildinvest.com?subject=Rejoindre%20ABI%20Investissement"
-                className="inline-flex items-center justify-center bg-[#0f62c9] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-              >
+                className="inline-flex items-center justify-center bg-[#0f62c9] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]">
+
                 Rejoignez-nous
               </a>
             </div>
@@ -832,22 +832,22 @@ const Investment = () => {
                  Devenez copropriétaire d’un portefeuille de biens gérés par une société (achat, gestion, location) et percevez des revenus potentiels. Investissez en achetant des parts maintenant !
               </p>
               <div className="mt-8">
-                {offerFamilies.map((offer, index) => (
-                  <OfferAccordion
-                    key={offer.title}
-                    title={offer.title}
-                    details={offer.details}
-                    isOpen={openOfferIndex === index}
-                    onToggle={() => handleOfferToggle(index)}
-                  />
-                ))}
+                {offerFamilies.map((offer, index) =>
+                <OfferAccordion
+                  key={offer.title}
+                  title={offer.title}
+                  details={offer.details}
+                  isOpen={openOfferIndex === index}
+                  onToggle={() => handleOfferToggle(index)} />
+
+                )}
               </div>
               <a
                 href="mailto:contact@africabuildinvest.com?subject=Brochure%20investissement"
-                className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]"
-              >
+                className="mt-8 inline-flex items-center gap-2 bg-[#0f62c9] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]">
+
                 <Mail size={16} />
-                Recevoir la brochure detaillee
+                Recevoir la brochure détaillée
               </a>
             </div>
 
@@ -855,8 +855,8 @@ const Investment = () => {
               <img
                 src="/images/invest1.jpg"
                 alt="Offres d'investissement ABI"
-                className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]"
-              />
+                className="w-full h-full min-h-[320px] object-cover object-center sm:min-h-[420px]" />
+
             </div>
           </div>
         </div>
@@ -866,8 +866,8 @@ const Investment = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-8 border border-gray-200 bg-white p-5 sm:p-8 lg:grid-cols-[1.05fr_1fr]">
             <div>
-              <h2 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-                Nous investissons dans des projets d'extension ou de renovation.
+              <h2 className="text-3xl font-bold leading-tight text-slate-900 sm:text-3xl">
+                Nous investissons dans des projets d'extension ou de rénovation.
               </h2>
               <p className="mt-4 text-base leading-7 text-gray-600 sm:text-lg">
                 Plus de choix, des prix plus bas et une meilleure fiscalité, investir dans un bien à rénover, offre  de vastes opportunités.
@@ -879,7 +879,7 @@ const Investment = () => {
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
                 <h3 className="font-bold">Une prise valeur rapide</h3>
-                  Après des travaux de rénovation, le bien gagne immédiatement en standing. Sa valeur sur le marché s'accroit de quoi espérer une belle plus-value à la revente.
+                  Après des travaux de rénovation, le bien gagne immédiatement en standing. Sa valeur sur le marché s'accroît de quoi espérer une belle plus-value à la revente.
                 </div>
                 <div className="border border-blue-100 bg-blue-50/60 px-4 py-3 text-sm text-slate-700">
                   <h3 className="font-bold">Suivi des travaux en continu</h3>
@@ -894,9 +894,9 @@ const Investment = () => {
             <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1400&q=80"
-                alt="Investir dans la renovation"
-                className="w-full h-[280px] sm:h-[360px] object-cover"
-              />
+                alt="Investir dans la rénovation"
+                className="w-full h-[280px] sm:h-[360px] object-cover" />
+
             </div>
           </div>
         </div>
@@ -916,11 +916,11 @@ const Investment = () => {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 sm:gap-8">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="group border border-gray-100 bg-white p-6 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7"
-              >
+            {benefits.map((benefit, index) =>
+            <div
+              key={index}
+              className="group border border-gray-100 bg-white p-6 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7">
+
                 <div className="mb-6 inline-flex h-14 w-14 items-center justify-center bg-blue-50 transition-transform group-hover:scale-110 sm:h-16 sm:w-16">
                   <div className="text-blue-600">{benefit.icon}</div>
                 </div>
@@ -929,17 +929,17 @@ const Investment = () => {
                 </h3>
                 <p className="mb-4 text-gray-600">{benefit.description}</p>
                 <div className="space-y-2">
-                  {benefit.features.map((feature, idx) => (
-                    <div
-                      key={idx}
-                      className="text-sm text-gray-500"
-                    >
+                  {benefit.features.map((feature, idx) =>
+                <div
+                  key={idx}
+                  className="text-sm text-gray-500">
+
                       {feature}
                     </div>
-                  ))}
+                )}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -956,23 +956,23 @@ const Investment = () => {
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <a
                 href="mailto:contact@africabuildinvest.com?subject=Prise%20de%20contact%20investissement"
-                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl"
-              >
+                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
+
                 <Mail size={22} />
-                <span>Parler a un expert</span>
+                <span>Parler à un expert</span>
               </a>
               <button
                 type="button"
                 onClick={() =>
-                  document
-                    .getElementById("investment-opportunities")
-                    ?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    })
+                document.
+                getElementById("investment-opportunities")?.
+                scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                })
                 }
-                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl"
-              >
+                className="inline-flex items-center justify-center gap-3 bg-white text-blue-900 px-8 sm:px-10 py-3.5 sm:py-4 font-bold hover:bg-blue-50 transition-all shadow-2xl">
+
                 <FileText size={22} />
                 <span>Découvrir les opportunités</span>
               </button>
@@ -980,8 +980,8 @@ const Investment = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Investment;

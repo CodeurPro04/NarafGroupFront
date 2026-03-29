@@ -32,7 +32,7 @@ const RegisterSuccess = () => {
 
         <div className="px-8 py-8 space-y-6">
           <p className="text-base text-gray-700 leading-7">
-            Votre compte {roleLabel(role)} a bien ete cree. Il est actuellement
+            Votre compte {roleLabel(role)} a bien été créé. Il est actuellement
             inactif et en attente d activation par un administrateur.
           </p>
 
@@ -43,48 +43,48 @@ const RegisterSuccess = () => {
                 <p className="font-semibold text-amber-900">Activation en attente</p>
               </div>
               <p className="text-sm text-amber-800 leading-6">
-                Un administrateur doit d abord valider votre compte avant son activation complete.
+                Un administrateur doit d abord valider votre compte avant son activation complète.
               </p>
             </div>
 
             <div className="border border-blue-200 bg-blue-50 px-5 py-5">
               <div className="flex items-center gap-3 mb-3">
                 <ShieldAlert className="h-5 w-5 text-blue-700" />
-                <p className="font-semibold text-blue-900">Acces agent controle</p>
+                <p className="font-semibold text-blue-900">Accès agent contrôle</p>
               </div>
               <p className="text-sm text-blue-800 leading-6">
                 Le bouton <span className="font-semibold">Espace administrateur</span> n apparaitra
-                pour un agent qu apres activation effective du compte.
+                pour un agent qu après activation effective du compte.
               </p>
             </div>
           </div>
 
           <div className="border border-gray-200 bg-gray-50 px-5 py-5">
             <p className="text-sm text-gray-700 leading-6">
-              Vous pouvez continuer a utiliser le site public. Une fois votre compte active,
-              les acces associes a votre profil seront disponibles.
+              Vous pouvez continuer a utiliser le site public. Une fois votre compte activé,
+              les accès associes à votre profil seront disponibles.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               to="/login"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-            >
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+
               <LogIn className="h-4 w-4" />
               Se connecter
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
-            >
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">
+
               Retour a l accueil
             </Link>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default RegisterSuccess;

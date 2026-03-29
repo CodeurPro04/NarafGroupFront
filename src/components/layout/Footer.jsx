@@ -142,7 +142,7 @@ const Footer = () => {
                   <p className="text-gray-400">
                     Grand-Bassam
                     <br />
-                    Abidjan, Cote d'Ivoire
+                    Abidjan, Côte d'Ivoire
                   </p>
                 </div>
               </div>
@@ -151,15 +151,15 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-500">
-          <p>© {currentYear} E-nova digital business. Tous droits reserves.
+          <p>© {currentYear} E-nova digital business. Tous droits réservés.
           </p>
           <p className="mt-2 text-sm">
             <Link to="/legal" className="transition-colors hover:text-gray-400">
-              Mentions legales
+              Mentions légales
             </Link>
             {" • "}
             <Link to="/privacy" className="transition-colors hover:text-gray-400">
-              Politique de confidentialite
+              Politique de confidentialité
             </Link>
           </p>
         </div>

@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
@@ -49,7 +49,16 @@ function App() {
   const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
   if (isMaintenanceMode) {
-    return <Maintenance launchDate="27 Mars 2026" />;
+    return (
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Maintenance launchDate="27 Mars 2026" />} />
+          <Route path="/register/success" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
@@ -66,125 +75,125 @@ function App() {
             <Route
               path="/investment/ou-investir"
               element={
-                <AbiComingSoonPage
-                  title="Ou investir est en mise en veille"
-                  description="Cette rubrique est temporairement en mise en veille pendant la preparation d'un contenu plus clair pour orienter les decisions d'investissement."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Ou investir est en mise en veille"
+                description="Cette rubrique est temporairement en mise en veille pendant la préparation d'un contenu plus clair pour orienter les décisions d'investissement."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/investment/ou-investir/nos-conseils"
               element={
-                <AbiComingSoonPage
-                  title="Nos conseils sont en mise en veille"
-                  description="Cette page est temporairement indisponible le temps de finaliser une version plus utile et mieux structuree des conseils ABI."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Nos conseils sont en mise en veille"
+                description="Cette page est temporairement indisponible le temps de finaliser une version plus utile et mieux structurée des conseils ABI."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/investment/ou-investir/meilleurs-investissements"
               element={
-                <AbiComingSoonPage
-                  title="Cette page est en mise en veille"
-                  description="La rubrique sur les meilleurs investissements est temporairement en mise en veille pendant la refonte de son contenu."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Cette page est en mise en veille"
+                description="La rubrique sur les meilleurs investissements est temporairement en mise en veille pendant la refonte de son contenu."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/investment/je-veux-investir/pourquoi-investir"
               element={
-                <AbiComingSoonPage
-                  title="Pourquoi investir est en mise en veille"
-                  description="Cette page est temporairement en mise en veille le temps de proposer un contenu plus clair, plus pedagogique et mieux structure."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Pourquoi investir est en mise en veille"
+                description="Cette page est temporairement en mise en veille le temps de proposer un contenu plus clair, plus pédagogique et mieux structuré."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/investment/je-veux-investir/investir-avec-abi"
               element={
-                <AbiComingSoonPage
-                  title="Investir avec ABI est en mise en veille"
-                  description="Cette page est temporairement indisponible pendant la refonte de l'experience et la clarification de la methode ABI."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Investir avec ABI est en mise en veille"
+                description="Cette page est temporairement indisponible pendant la refonte de l'expérience et la clarification de la méthode ABI."
+                accent="blue" />
+
+              } />
+
             <Route path="/investment/je-veux-investir/premier-investissement" element={<AbiFirstInvestmentPage />} />
             <Route path="/construction/mon-projet-sur-mesure" element={<AbiCustomConstructionPage />} />
             <Route
               path="/construction/nos-plans"
               element={
-                <AbiComingSoonPage
-                  title="Nos plans sont en mise en veille"
-                  description="Cette page est temporairement en mise en veille pendant la preparation d'une presentation plus claire et plus utile de nos plans."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Nos plans sont en mise en veille"
+                description="Cette page est temporairement en mise en veille pendant la préparation d'une présentation plus claire et plus utile de nos plans."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/achever-ma-construction"
               element={
-                <AbiComingSoonPage
-                  title="Achever ma construction est en mise en veille"
-                  description="Cette rubrique revient bientot avec un parcours mieux structure pour finaliser, reprendre ou corriger un chantier existant."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Achever ma construction est en mise en veille"
+                description="Cette rubrique revient bientôt avec un parcours mieux structuré pour finaliser, reprendre ou corriger un chantier existant."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/offres/terrain-constructible"
               element={
-                <AbiComingSoonPage
-                  title="Cette offre est en mise en veille"
-                  description="La presentation Terrain constructible est temporairement indisponible le temps de finaliser une version plus claire et plus complete."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Cette offre est en mise en veille"
+                description="La présentation Terrain constructible est temporairement indisponible le temps de finaliser une version plus claire et plus complète."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/offres/maison-terrain"
               element={
-                <AbiComingSoonPage
-                  title="Cette offre est en mise en veille"
-                  description="La presentation Maison + Terrain est temporairement indisponible pendant la preparation d'un contenu plus structure."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Cette offre est en mise en veille"
+                description="La présentation Maison + Terrain est temporairement indisponible pendant la préparation d'un contenu plus structuré."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/offres/programme-en-cours"
               element={
-                <AbiComingSoonPage
-                  title="Cette offre est en mise en veille"
-                  description="La page Programme en cours est temporairement en mise en veille le temps de proposer une lecture plus lisible des projets."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Cette offre est en mise en veille"
+                description="La page Programme en cours est temporairement en mise en veille le temps de proposer une lecture plus lisible des projets."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/achever/finir-ma-construction"
               element={
-                <AbiComingSoonPage
-                  title="Finir ma construction est en mise en veille"
-                  description="Cette page sera bientot de retour avec un parcours plus clair pour accompagner la finalisation des chantiers."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Finir ma construction est en mise en veille"
+                description="Cette page sera bientôt de retour avec un parcours plus clair pour accompagner la finalisation des chantiers."
+                accent="sand" />
+
+              } />
+
             <Route
               path="/construction/achever/renovation-modification"
               element={
-                <AbiComingSoonPage
-                  title="Renovation & Modification est en mise en veille"
-                  description="Cette page est temporairement indisponible pendant la refonte de son contenu et de son experience utilisateur."
-                  accent="sand"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                title="Rénovation & Modification est en mise en veille"
+                description="Cette page est temporairement indisponible pendant la refonte de son contenu et de son expérience utilisateur."
+                accent="sand" />
+
+              } />
+
             <Route path="/property/:uuid" element={<PropertyDetails />} />
             <Route path="/construction" element={<Construction />} />
             <Route path="/construction/:uuid" element={<ConstructionDetails />} />
@@ -205,58 +214,58 @@ function App() {
             <Route path="/abi/qui-sommes-nous" element={<AbiAboutPage />} />
             <Route
               path="/abi/club-abi-diaspora"
-              element={<AbiClubDiasporaPage />}
-            />
+              element={<AbiClubDiasporaPage />} />
+
             <Route
               path="/abi/club-abi"
-              element={<AbiClubProPage />}
-            />
+              element={<AbiClubProPage />} />
+
             <Route
               path="/abi/nos-actualites"
               element={
-                <AbiComingSoonPage
-                  eyebrow="Actualites ABI"
-                  title="La rubrique actualites est en mise en veille"
-                  description="Nous preparons une nouvelle version de cet espace pour proposer des actualites plus lisibles, plus utiles et mieux integrees au parcours ABI."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                eyebrow="Actualités ABI"
+                title="La rubrique actualités est en mise en veille"
+                description="Nous preparons une nouvelle version de cet espace pour proposer des actualités plus lisibles, plus utiles et mieux intégrées au parcours ABI."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/abi/club"
               element={
-                <AbiComingSoonPage
-                  eyebrow="ABI Club"
-                  title="ABI Club arrive bientot"
-                  description="Une page dediee aux avantages, services et privileges de l'univers ABI Club est en preparation."
-                  accent="blue"
-                />
-              }
-            />
+              <AbiComingSoonPage
+                eyebrow="ABI Club"
+                title="ABI Club arrive bientôt"
+                description="Une page dédiée aux avantages, services et privilèges de l'univers ABI Club est en préparation."
+                accent="blue" />
+
+              } />
+
             <Route
               path="/abi/parrainage"
               element={
-                <AbiComingSoonPage
-                  eyebrow="Parrainage ABI"
-                  title="Mon espace de parrainage sera disponible bientot"
-                  description="Le parcours de parrainage ABI est en cours de conception pour offrir une experience plus simple, plus lisible et plus efficace."
-                  accent="sand"
-                />
-              }
-            />
-            {submenuPages.map((page) => (
-              <Route
-                key={page.path}
-                path={page.path}
-                element={<AbiSubmenuPage page={page} />}
-              />
-            ))}
+              <AbiComingSoonPage
+                eyebrow="Parrainage ABI"
+                title="Mon espace de parrainage sera disponible bientôt"
+                description="Le parcours de parrainage ABI est en cours de conception pour offrir une expérience plus simple, plus lisible et plus efficace."
+                accent="sand" />
+
+              } />
+
+            {submenuPages.map((page) =>
+            <Route
+              key={page.path}
+              path={page.path}
+              element={<AbiSubmenuPage page={page} />} />
+
+            )}
           </Routes>
         </main>
         <Footer />
       </div>
-    </Router>
-  );
+    </Router>);
+
 }
 
 export default App;

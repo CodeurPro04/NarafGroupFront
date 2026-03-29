@@ -24,8 +24,8 @@ import {
   Grid,
   List,
   ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+  ChevronRight } from
+"lucide-react";
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { toMediaUrl } from "../utils/media";
@@ -64,95 +64,95 @@ const Properties = () => {
     bathrooms: "",
     areaMin: "",
     areaMax: "",
-    features: [],
+    features: []
   });
 
   const stats = [
-    {
-      icon: <Building2 size={40} />,
-      value: `${totalProperties}+`,
-      label: "Biens disponibles",
-    },
-    { icon: <Home size={40} />, value: "98%", label: "Clients satisfaits" },
-    { icon: <Award size={40} />, value: "25 ans", label: "D'expérience" },
-    { icon: <TrendingUp size={40} />, value: "150+", label: "Ventes/mois" },
-  ];
+  {
+    icon: <Building2 size={40} />,
+    value: `${totalProperties}+`,
+    label: "Biens disponibles"
+  },
+  { icon: <Home size={40} />, value: "98%", label: "Clients satisfaits" },
+  { icon: <Award size={40} />, value: "25 ans", label: "D'expérience" },
+  { icon: <TrendingUp size={40} />, value: "150+", label: "Ventes/mois" }];
+
 
   const advantages = [
-    {
-      icon: <Shield size={32} />,
-      title: "Transaction Sécurisée",
-      description: "Tous nos biens sont certifiés.",
-      features: [
-        "Due diligence complète",
-        "Garanties bancaires",
-        "Contrats vérifiés",
-      ],
-    },
-    {
-      icon: <Clock size={32} />,
-      title: "Visite 24/7",
-      description: "Visite quand tu veux, où que tu sois.",
-      features: [
-        "Visite virtuelle 360°",
-        "Planning flexible",
-        "Confirmation immédiate",
-      ],
-    },
-    {
-      icon: <Award size={32} />,
-      title: "Expertise Certifiée",
-      description: "Des pros fiables, pas des improvisés.",
-      features: [
-        "Conseillers certifiés",
-        "Formation continue",
-        "Réseau étendu",
-      ],
-    },
-    {
-      icon: <CheckCircle size={32} />,
-      title: "Accompagnement",
-      description: "On t’accompagne du premier clic aux clés.",
-      features: ["Conseiller dédié", "Aide financement", "Support 7j/7"],
-    },
-  ];
+  {
+    icon: <Shield size={32} />,
+    title: "Transaction Sécurisée",
+    description: "Tous nos biens sont certifiés.",
+    features: [
+    "Due diligence complète",
+    "Garanties bancaires",
+    "Contrats vérifiés"]
+
+  },
+  {
+    icon: <Clock size={32} />,
+    title: "Visite 24/7",
+    description: "Visite quand tu veux, où que tu sois.",
+    features: [
+    "Visite virtuelle 360°",
+    "Planning flexible",
+    "Confirmation immédiate"]
+
+  },
+  {
+    icon: <Award size={32} />,
+    title: "Expertise Certifiée",
+    description: "Des pros fiables, pas des improvisés.",
+    features: [
+    "Conseillers certifiés",
+    "Formation continue",
+    "Réseau étendu"]
+
+  },
+  {
+    icon: <CheckCircle size={32} />,
+    title: "Accompagnement",
+    description: "On t’accompagne du premier clic aux clés.",
+    features: ["Conseiller dédié", "Aide financement", "Support 7j/7"]
+  }];
+
 
   const testimonials = [
-    {
-      quote:
-        "\"Mon compte principal. Creation facile, interfaces simples et efficaces. Je n'ai pas besoin de plus.\"",
-      author: "Merci Sogexa.",
-      meta: "Ludovic, Rennes",
-      image:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80",
-    },
-    {
-      quote:
-        "\"Une equipe reactive, des conseils concrets et un parcours vraiment limpide du debut a la signature.\"",
-      author: "Experience validee.",
-      meta: "Aminata, Abidjan",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80",
-    },
-    {
-      quote:
-        "\"J'ai trouve un bien adapte a mon budget sans perdre de temps. L'accompagnement a fait la difference.\"",
-      author: "Service fiable.",
-      meta: "Cedric, Yamoussoukro",
-      image:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80",
-    },
-  ];
+  {
+    quote:
+    "\"Mon compte principal. Creation facile, interfaces simples et efficaces. Je n'ai pas besoin de plus.\"",
+    author: "Merci Sogexa.",
+    meta: "Ludovic, Rennes",
+    image:
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80"
+  },
+  {
+    quote:
+    "\"Une équipe reactive, des conseils concrets et un parcours vraiment limpide du début à la signature.\"",
+    author: "Expérience validee.",
+    meta: "Aminata, Abidjan",
+    image:
+    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80"
+  },
+  {
+    quote:
+    "\"J'ai trouve un bien adapté à mon budget sans perdre de temps. L'accompagnement a fait la difference.\"",
+    author: "Service fiable.",
+    meta: "Cedric, Yamoussoukro",
+    image:
+    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80"
+  }];
+
 
   const previousTestimonial = () => {
     setActiveTestimonial((prev) =>
-      prev === 0 ? testimonials.length - 1 : prev - 1,
+    prev === 0 ? testimonials.length - 1 : prev - 1
     );
   };
 
   const nextTestimonial = () => {
     setActiveTestimonial((prev) =>
-      prev === testimonials.length - 1 ? 0 : prev + 1,
+    prev === testimonials.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -178,7 +178,7 @@ const Properties = () => {
       const response = await api.get("/properties");
       if (response.data.success) {
         const propertiesData =
-          response.data.data.data || response.data.data || [];
+        response.data.data.data || response.data.data || [];
         const typesSet = new Set();
 
         propertiesData.forEach((property) => {
@@ -187,8 +187,8 @@ const Properties = () => {
               JSON.stringify({
                 id: property.property_type.id,
                 name: property.property_type.name,
-                slug: property.property_type.slug,
-              }),
+                slug: property.property_type.slug
+              })
             );
           }
         });
@@ -222,7 +222,7 @@ const Properties = () => {
       const response = await api.get("/properties");
       if (response.data.success) {
         const propertiesData =
-          response.data.data.data || response.data.data || [];
+        response.data.data.data || response.data.data || [];
         const featuresSet = new Set();
 
         propertiesData.forEach((property) => {
@@ -254,18 +254,18 @@ const Properties = () => {
         bedrooms: filters.bedrooms || undefined,
         min_surface: filters.areaMin || undefined,
         sort_by: getSortField(),
-        sort_order: getSortOrder(),
+        sort_order: getSortOrder()
       };
 
       Object.keys(params).forEach(
-        (key) => params[key] === undefined && delete params[key],
+        (key) => params[key] === undefined && delete params[key]
       );
 
       const response = await api.get("/properties", { params });
 
       if (response.data.success) {
         const propertiesData =
-          response.data.data.data || response.data.data || [];
+        response.data.data.data || response.data.data || [];
         const formattedProperties = propertiesData.map((property) => ({
           id: property.uuid,
           uuid: property.uuid,
@@ -286,7 +286,7 @@ const Properties = () => {
           year: property.year_built || new Date().getFullYear(),
           transaction_type: property.transaction_type || "vente",
           property_type_id: property.property_type_id,
-          property_type: property.property_type || null,
+          property_type: property.property_type || null
         }));
 
         setProperties(formattedProperties);
@@ -310,8 +310,8 @@ const Properties = () => {
       return [toMediaUrl(property.media[0].file_path)];
     }
     return [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-    ];
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80"];
+
   };
 
   const calculatePricePerSqm = (property) => {
@@ -323,7 +323,7 @@ const Properties = () => {
 
   const getPropertyLocation = (property) => {
     const parts = [property.city, property.quartier, property.commune].filter(
-      Boolean,
+      Boolean
     );
     return parts.join(", ") || "Localisation non spécifiée";
   };
@@ -331,7 +331,7 @@ const Properties = () => {
   const getPropertyType = (property) => {
     if (property.property_type?.slug) return property.property_type.slug;
     if (property.property_type?.name)
-      return property.property_type.name.toLowerCase();
+    return property.property_type.name.toLowerCase();
     return "appartement";
   };
 
@@ -340,7 +340,7 @@ const Properties = () => {
 
     if (property.property_type_id) {
       const matchingType = propertyTypes.find(
-        (type) => String(type.id) === String(property.property_type_id),
+        (type) => String(type.id) === String(property.property_type_id)
       );
 
       if (matchingType?.name) return matchingType.name;
@@ -424,7 +424,7 @@ const Properties = () => {
       priceMax,
       bedrooms,
       areaMin,
-      areaMax,
+      areaMax
     }));
 
     if (typeId) {
@@ -443,7 +443,7 @@ const Properties = () => {
   useEffect(() => {
     if (!pendingTypeId || propertyTypes.length === 0) return;
     const match = propertyTypes.find(
-      (t) => String(t.id) === String(pendingTypeId),
+      (t) => String(t.id) === String(pendingTypeId)
     );
     if (match?.slug) {
       setActiveTab(match.slug);
@@ -481,22 +481,22 @@ const Properties = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      ...(key === "search" ? { city: "" } : {}),
+      ...(key === "search" ? { city: "" } : {})
     }));
   };
 
   const toggleFeature = (feature) => {
     setFilters((prev) => ({
       ...prev,
-      features: prev.features.includes(feature)
-        ? prev.features.filter((f) => f !== feature)
-        : [...prev.features, feature],
+      features: prev.features.includes(feature) ?
+      prev.features.filter((f) => f !== feature) :
+      [...prev.features, feature]
     }));
   };
 
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id],
+    prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
     );
   };
 
@@ -512,7 +512,7 @@ const Properties = () => {
       bathrooms: "",
       areaMin: "",
       areaMax: "",
-      features: [],
+      features: []
     });
     setActiveTab("tous");
     setSortBy("recommended");
@@ -521,7 +521,7 @@ const Properties = () => {
   const currentUser = getCurrentUser();
   const normalizedRole = currentUser?.role || currentUser?.role_name;
   const isOwnerAuthenticated =
-    isAuthenticated() && normalizedRole === "proprietaire";
+  isAuthenticated() && normalizedRole === "proprietaire";
 
   const handleAnnouncementClick = () => {
     if (!isOwnerAuthenticated) {
@@ -544,7 +544,7 @@ const Properties = () => {
       setAnnouncementSuccess("");
 
       await api.post("/proprietaire/property-requests", {
-        description: announcementText.trim(),
+        description: announcementText.trim()
       });
 
       setAnnouncementSuccess("Demande envoyee avec succes.");
@@ -555,8 +555,8 @@ const Properties = () => {
       }, 900);
     } catch (error) {
       const message =
-        error?.response?.data?.message ||
-        "Erreur lors de l'envoi de la demande.";
+      error?.response?.data?.message ||
+      "Erreur lors de l'envoi de la demande.";
       setAnnouncementError(message);
     } finally {
       setAnnouncementSubmitting(false);
@@ -568,14 +568,14 @@ const Properties = () => {
     return new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "XOF",
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   };
 
   const filteredProperties = properties.filter((property) => {
     if (filters.features.length > 0 && property.features) {
       return filters.features.every((feature) =>
-        property.features.includes(feature),
+      property.features.includes(feature)
       );
     }
     return true;
@@ -594,9 +594,9 @@ const Properties = () => {
         style={{
           backgroundImage: `url(${heroImobi})`,
           backgroundSize: "cover",
-          backgroundPosition: "center 22%",
-        }}
-      >
+          backgroundPosition: "center 22%"
+        }}>
+
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.12),transparent_34%),linear-gradient(90deg,rgba(7,139,208,0.82),rgba(7,139,208,0.68))]" />
         <div className="mx-auto grid min-h-[520px] max-w-7xl grid-cols-1 overflow-hidden px-4 sm:px-6 lg:min-h-[610px] lg:grid-cols-[minmax(0,1fr)_420px] lg:px-8">
           <div className="relative z-10 flex max-w-3xl items-center py-[6.75rem] lg:py-32">
@@ -612,23 +612,23 @@ const Properties = () => {
                 <button
                   onClick={() => {
                     const catalogSection =
-                      document.getElementById("property-catalog");
+                    document.getElementById("property-catalog");
                     if (catalogSection) {
                       catalogSection.scrollIntoView({
                         behavior: "smooth",
-                        block: "start",
+                        block: "start"
                       });
                     }
                   }}
-                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#12506f] shadow-lg transition hover:bg-[#f3f8fc]"
-                >
+                  className="inline-flex items-center justify-center gap-2 bg-white px-5 py-3 text-sm font-semibold text-[#12506f] shadow-lg transition hover:bg-[#f3f8fc]">
+
                   <Search size={18} />
                   <span>Voir tous nos biens</span>
                 </button>
                 <button
                   onClick={handleAnnouncementClick}
-                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]"
-                >
+                  className="inline-flex items-center justify-center gap-2 border border-white bg-[#101418] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1d232b]">
+
                   <Plus size={18} />
                   <span>Faire une annonce</span>
                 </button>
@@ -644,7 +644,7 @@ const Properties = () => {
           <section className="mb-10 border border-[#cfe0ef] bg-[#d9e8f4] px-5 py-5 shadow-[0_12px_28px_rgba(15,23,42,0.06)] sm:px-6 sm:py-6">
             <div className="space-y-4">
               <h2 className="mx-auto max-w-3xl text-left text-xl font-semibold leading-tight text-slate-950 sm:text-[1.9rem]">
-                Plus de 650 000 particuliers et professionnels ont deja choisi ABI pour leur acquisition de bien immobilier.
+                Plus de 650 000 particuliers et professionnels ont déjà choisi ABI pour leur acquisition de bien immobilier.
               </h2>
 
               <div className="grid gap-4 border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] sm:grid-cols-[150px_1fr] sm:gap-5">
@@ -652,8 +652,8 @@ const Properties = () => {
                   <img
                     src={testimonials[activeTestimonial].image}
                     alt={testimonials[activeTestimonial].meta}
-                    className="h-full w-full object-cover"
-                  />
+                    className="h-full w-full object-cover" />
+
                 </div>
 
                 <div className="flex min-h-[140px] flex-col justify-between border border-slate-200 bg-[#fbfdff] px-5 py-4 sm:min-h-[150px] sm:px-6">
@@ -674,31 +674,31 @@ const Properties = () => {
                       type="button"
                       onClick={previousTestimonial}
                       aria-label="Temoignage precedent"
-                      className="text-sky-600 transition hover:text-sky-800"
-                    >
+                      className="text-sky-600 transition hover:text-sky-800">
+
                       <ChevronLeft size={16} />
                     </button>
                     <div className="flex items-center gap-1.5">
-                      {testimonials.map((_, index) => (
-                        <button
-                          key={`testimonial-dot-${index}`}
-                          type="button"
-                          aria-label={`Temoignage ${index + 1}`}
-                          onClick={() => setActiveTestimonial(index)}
-                          className={`h-1.5 rounded-full transition-all ${
-                            index === activeTestimonial
-                              ? "w-4 bg-sky-600"
-                              : "w-1.5 bg-sky-200 hover:bg-sky-400"
-                          }`}
-                        />
-                      ))}
+                      {testimonials.map((_, index) =>
+                      <button
+                        key={`testimonial-dot-${index}`}
+                        type="button"
+                        aria-label={`Temoignage ${index + 1}`}
+                        onClick={() => setActiveTestimonial(index)}
+                        className={`h-1.5 rounded-full transition-all ${
+                        index === activeTestimonial ?
+                        "w-4 bg-sky-600" :
+                        "w-1.5 bg-sky-200 hover:bg-sky-400"}`
+                        } />
+
+                      )}
                     </div>
                     <button
                       type="button"
                       onClick={nextTestimonial}
                       aria-label="Temoignage suivant"
-                      className="text-sky-600 transition hover:text-sky-800"
-                    >
+                      className="text-sky-600 transition hover:text-sky-800">
+
                       <ChevronRight size={16} />
                     </button>
                   </div>
@@ -721,42 +721,42 @@ const Properties = () => {
                 <div className="flex-1 relative">
                   <Search
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={20}
-                  />
+                    size={20} />
+
                   <input
                     id="property-search"
                     type="text"
                     placeholder="Rechercher par ville, quartier ou type de bien..."
                     value={filters.search}
                     onChange={(e) =>
-                      handleFilterChange("search", e.target.value)
+                    handleFilterChange("search", e.target.value)
                     }
-                    className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  />
+                    className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" />
+
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg"
-                  >
+                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg">
+
                     <SlidersHorizontal size={20} />
                     <span>Filtres avances</span>
                     {Object.values(filters).filter((v) =>
-                      Array.isArray(v) ? v.length > 0 : v,
-                    ).length > 1 && (
-                      <span className="bg-white text-blue-600 text-xs px-2 py-0.5 font-bold">
+                    Array.isArray(v) ? v.length > 0 : v
+                    ).length > 1 &&
+                    <span className="bg-white text-blue-600 text-xs px-2 py-0.5 font-bold">
                         {Object.values(filters).filter((v) =>
-                          Array.isArray(v) ? v.length > 0 : v,
-                        ).length - 1}
+                      Array.isArray(v) ? v.length > 0 : v
+                      ).length - 1}
                       </span>
-                    )}
+                    }
                   </button>
                   <div className="relative w-full sm:w-56">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:ring-2 focus:ring-blue-500 outline-none font-medium w-full"
-                    >
+                      className="appearance-none bg-white border-2 border-gray-200 pl-4 pr-10 py-3 focus:ring-2 focus:ring-blue-500 outline-none font-medium w-full">
+
                       <option value="recommended">Recommande</option>
                       <option value="price_asc">Prix croissant</option>
                       <option value="price_desc">Prix decroissant</option>
@@ -764,36 +764,36 @@ const Properties = () => {
                     </select>
                     <ArrowUpDown
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                      size={18}
-                    />
+                      size={18} />
+
                   </div>
                   <div className="flex items-center bg-gray-100 p-1 w-full sm:w-auto">
                     <button
                       onClick={() => setViewMode("grid")}
-                      className={`p-2.5 transition-colors ${viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}
-                    >
+                      className={`p-2.5 transition-colors ${viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}>
+
                       <Grid size={20} />
                     </button>
                     <button
                       onClick={() => setViewMode("list")}
-                      className={`p-2.5 transition-colors ${viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}
-                    >
+                      className={`p-2.5 transition-colors ${viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-600 hover:bg-gray-200"}`}>
+
                       <List size={20} />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {showFilters && (
-                <div className="mt-5 p-5 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
+              {showFilters &&
+              <div className="mt-5 p-5 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200">
                   <div className="flex justify-between items-center mb-5">
                     <h3 className="text-lg font-bold text-gray-900">
                       Filtres avances
                     </h3>
                     <button
-                      onClick={() => setShowFilters(false)}
-                      className="p-2 hover:bg-gray-200 transition-colors"
-                    >
+                    onClick={() => setShowFilters(false)}
+                    className="p-2 hover:bg-gray-200 transition-colors">
+
                       <X size={20} />
                     </button>
                   </div>
@@ -804,18 +804,18 @@ const Properties = () => {
                         Type de bien
                       </label>
                       <select
-                        value={filters.type}
-                        onChange={(e) =>
-                          handleFilterChange("type", e.target.value)
-                        }
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                      >
+                      value={filters.type}
+                      onChange={(e) =>
+                      handleFilterChange("type", e.target.value)
+                      }
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+
                         <option value="">Tous les types</option>
-                        {propertyTypes.map((type) => (
-                          <option key={type.id} value={type.id}>
+                        {propertyTypes.map((type) =>
+                      <option key={type.id} value={type.id}>
                             {type.name}
                           </option>
-                        ))}
+                      )}
                       </select>
                     </div>
 
@@ -824,12 +824,12 @@ const Properties = () => {
                         Transaction
                       </label>
                       <select
-                        value={filters.transactionType}
-                        onChange={(e) =>
-                          handleFilterChange("transactionType", e.target.value)
-                        }
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                      >
+                      value={filters.transactionType}
+                      onChange={(e) =>
+                      handleFilterChange("transactionType", e.target.value)
+                      }
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+
                         <option value="">Toutes</option>
                         <option value="vente">Vente</option>
                         <option value="location">Location</option>
@@ -841,14 +841,14 @@ const Properties = () => {
                         Prix minimum (XOF)
                       </label>
                       <input
-                        type="number"
-                        placeholder="100 000"
-                        value={filters.priceMin}
-                        onChange={(e) =>
-                          handleFilterChange("priceMin", e.target.value)
-                        }
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
+                      type="number"
+                      placeholder="100 000"
+                      value={filters.priceMin}
+                      onChange={(e) =>
+                      handleFilterChange("priceMin", e.target.value)
+                      }
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+
                     </div>
 
                     <div>
@@ -856,14 +856,14 @@ const Properties = () => {
                         Prix maximum (XOF)
                       </label>
                       <input
-                        type="number"
-                        placeholder="500 000"
-                        value={filters.priceMax}
-                        onChange={(e) =>
-                          handleFilterChange("priceMax", e.target.value)
-                        }
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
+                      type="number"
+                      placeholder="500 000"
+                      value={filters.priceMax}
+                      onChange={(e) =>
+                      handleFilterChange("priceMax", e.target.value)
+                      }
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+
                     </div>
 
                     <div>
@@ -871,14 +871,14 @@ const Properties = () => {
                         Surface min (m2)
                       </label>
                       <input
-                        type="number"
-                        placeholder="50"
-                        value={filters.areaMin}
-                        onChange={(e) =>
-                          handleFilterChange("areaMin", e.target.value)
-                        }
-                        className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
+                      type="number"
+                      placeholder="50"
+                      value={filters.areaMin}
+                      onChange={(e) =>
+                      handleFilterChange("areaMin", e.target.value)
+                      }
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" />
+
                     </div>
                   </div>
 
@@ -887,20 +887,20 @@ const Properties = () => {
                       Chambres
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {[1, 2, 3, 4, "5+"].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() =>
-                            handleFilterChange(
-                              "bedrooms",
-                              num === "5+" ? "5" : num.toString(),
-                            )
-                          }
-                          className={`px-4 py-2.5 font-medium transition-all ${filters.bedrooms === (num === "5+" ? "5" : num.toString()) ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"}`}
-                        >
+                      {[1, 2, 3, 4, "5+"].map((num) =>
+                    <button
+                      key={num}
+                      onClick={() =>
+                      handleFilterChange(
+                        "bedrooms",
+                        num === "5+" ? "5" : num.toString()
+                      )
+                      }
+                      className={`px-4 py-2.5 font-medium transition-all ${filters.bedrooms === (num === "5+" ? "5" : num.toString()) ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"}`}>
+
                           {num}
                         </button>
-                      ))}
+                    )}
                     </div>
                   </div>
 
@@ -909,34 +909,34 @@ const Properties = () => {
                       Caracteristiques
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {propertyFeatures.map((feature) => (
-                        <button
-                          key={feature}
-                          onClick={() => toggleFeature(feature)}
-                          className={`px-3 py-1.5 text-sm font-medium transition-all ${filters.features.includes(feature) ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}
-                        >
+                      {propertyFeatures.map((feature) =>
+                    <button
+                      key={feature}
+                      onClick={() => toggleFeature(feature)}
+                      className={`px-3 py-1.5 text-sm font-medium transition-all ${filters.features.includes(feature) ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}>
+
                           {feature}
                         </button>
-                      ))}
+                    )}
                     </div>
                   </div>
 
                   <div className="flex flex-wrap justify-end gap-3 mt-8 pt-6 border-t border-gray-300">
                     <button
-                      onClick={resetFilters}
-                      className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 font-medium transition-colors border-2 border-gray-200"
-                    >
+                    onClick={resetFilters}
+                    className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 font-medium transition-colors border-2 border-gray-200">
+
                       Reinitialiser
                     </button>
                     <button
-                      onClick={() => setShowFilters(false)}
-                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg"
-                    >
+                    onClick={() => setShowFilters(false)}
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg">
+
                       Appliquer les filtres
                     </button>
                   </div>
                 </div>
-              )}
+              }
             </div>
 
           </div>
@@ -944,53 +944,53 @@ const Properties = () => {
           {/* Tabs */}
           <div
             id="property-catalog"
-            className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12 overflow-x-auto pb-2"
-          >
+            className="flex flex-wrap justify-center gap-2 mb-10 sm:mb-12 overflow-x-auto pb-2">
+
             {getTabs().map((tab) => {
               const propertyType = propertyTypes.find((t) => t.slug === tab);
               return (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === tab ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}
-                >
-                  {tab === "tous"
-                    ? "Tous les biens"
-                    : propertyType?.name ||
-                      tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              );
+                  className={`px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === tab ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"}`}>
+
+                  {tab === "tous" ?
+                  "Tous les biens" :
+                  propertyType?.name ||
+                  tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>);
+
             })}
           </div>
 
           {/* Properties Grid */}
-          {loading ? (
-            <div className="text-center py-20">
+          {loading ?
+          <div className="text-center py-20">
               <div className="animate-spin h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
               <p className="mt-4 text-gray-600">Chargement des propriétés...</p>
-            </div>
-          ) : (
-            <>
-              {viewMode === "grid" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                  {filteredProperties.map((property) => (
-                    <div
-                      key={property.id}
-                      className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]"
-                    >
+            </div> :
+
+          <>
+              {viewMode === "grid" ?
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {filteredProperties.map((property) =>
+              <div
+                key={property.id}
+                className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)]">
+
                       <Link
-                        to={`/property/${property.id}`}
-                        className="relative block h-[240px] overflow-hidden bg-[#eef3f7]"
-                      >
+                  to={`/property/${property.id}`}
+                  className="relative block h-[240px] overflow-hidden bg-[#eef3f7]">
+
                         <img
-                          src={property.images[0]}
-                          alt={property.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                          onError={(e) => {
-                            e.target.src =
-                              "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
-                          }}
-                        />
+                    src={property.images[0]}
+                    alt={property.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    onError={(e) => {
+                      e.target.src =
+                      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
+                    }} />
+
                         <div className="absolute left-3 top-3 bg-white px-3 py-1 text-[11px] font-extrabold text-[#12a150] shadow-sm">
                           {formatPrice(property.price)}
                         </div>
@@ -1030,38 +1030,38 @@ const Properties = () => {
 
                         <div className="mt-5">
                           <Link
-                            to={`/property/${property.id}`}
-                            className="flex w-full items-center justify-center bg-blue-600 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-700"
-                          >
+                      to={`/property/${property.id}`}
+                      className="flex w-full items-center justify-center bg-blue-600 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-700">
+
                             Voir les Détails
                           </Link>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                // Vue liste
-                <div className="space-y-6">
-                  {filteredProperties.map((property) => (
-                    <div
-                      key={property.id}
-                      className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-                    >
+              )}
+                </div> :
+
+            // Vue liste
+            <div className="space-y-6">
+                  {filteredProperties.map((property) =>
+              <div
+                key={property.id}
+                className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+
                       <div className="flex flex-col md:flex-row">
                         <Link
-                          to={`/property/${property.id}`}
-                          className="relative h-64 md:h-auto md:w-1/3"
-                        >
+                    to={`/property/${property.id}`}
+                    className="relative h-64 md:h-auto md:w-1/3">
+
                           <img
-                            src={property.images[0]}
-                            alt={property.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.src =
-                                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
-                            }}
-                          />
+                      src={property.images[0]}
+                      alt={property.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src =
+                        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
+                      }} />
+
                         </Link>
                         <div className="md:w-2/3 p-6">
                           <div className="flex justify-between items-start mb-4">
@@ -1079,9 +1079,9 @@ const Properties = () => {
                                 {formatPrice(property.price)}
                               </div>
                               <span className="text-sm font-medium px-2 py-1 bg-gray-100 text-gray-700">
-                                {property.transaction_type === "vente"
-                                  ? "À vendre"
-                                  : "À louer"}
+                                {property.transaction_type === "vente" ?
+                          "À vendre" :
+                          "À louer"}
                               </span>
                             </div>
                           </div>
@@ -1101,9 +1101,9 @@ const Properties = () => {
                             </div>
                             <div className="flex items-center">
                               <Maximize
-                                className="text-blue-600 mr-2"
-                                size={18}
-                              />
+                          className="text-blue-600 mr-2"
+                          size={18} />
+
                               <span className="text-gray-700">
                                 {property.area} m²
                               </span>
@@ -1117,67 +1117,67 @@ const Properties = () => {
                           </div>
 
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {property.features
-                              ?.slice(0, 5)
-                              .map((feature, idx) => (
-                                <span
-                                  key={idx}
-                                  className="text-xs bg-blue-50 text-blue-700 px-2 py-1"
-                                >
+                            {property.features?.
+                      slice(0, 5).
+                      map((feature, idx) =>
+                      <span
+                        key={idx}
+                        className="text-xs bg-blue-50 text-blue-700 px-2 py-1">
+
                                   {feature}
                                 </span>
-                              ))}
+                      )}
                           </div>
 
                           <div className="flex justify-between items-center">
                             <Link
-                              to={`/property/${property.id}`}
-                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-                            >
+                        to={`/property/${property.id}`}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+
                               Voir détails
                             </Link>
                             <button
-                              onClick={() => toggleFavorite(property.id)}
-                              className={`p-2 ${favorites.includes(property.id) ? "text-rose-500" : "text-gray-400 hover:text-rose-500"}`}
-                            >
+                        onClick={() => toggleFavorite(property.id)}
+                        className={`p-2 ${favorites.includes(property.id) ? "text-rose-500" : "text-gray-400 hover:text-rose-500"}`}>
+
                               <Heart
-                                size={20}
-                                fill={
-                                  favorites.includes(property.id)
-                                    ? "currentColor"
-                                    : "none"
-                                }
-                              />
+                          size={20}
+                          fill={
+                          favorites.includes(property.id) ?
+                          "currentColor" :
+                          "none"
+                          } />
+
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
               )}
+                </div>
+            }
 
-              {filteredProperties.length === 0 && !loading && (
-                <div className="text-center py-20">
+              {filteredProperties.length === 0 && !loading &&
+            <div className="text-center py-20">
                   {/*<div className="text-6xl mb-4">🏠</div>*/}
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">
                     Aucun bien trouvé
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    {properties.length === 0
-                      ? "Aucune propriété n'est actuellement disponible."
-                      : "Essayez de modifier vos critères de recherche"}
+                    {properties.length === 0 ?
+                "Aucune propriété n'est actuellement disponible." :
+                "Essayez de modifier vos critères de recherche"}
                   </p>
                   <button
-                    onClick={resetFilters}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-                  >
+                onClick={resetFilters}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+
                     Réinitialiser les filtres
                   </button>
                 </div>
-              )}
+            }
             </>
-          )}
+          }
         </div>
       </section>
 
@@ -1194,22 +1194,37 @@ const Properties = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {advantages.map((adv, index) => (
-              <div
-                key={index}
-                className="group bg-white p-8 shadow-lg hover:shadow-2xl 
+            {advantages.map((adv, index) =>
+            <div
+              key={index}
+              className="group bg-white p-8 shadow-lg hover:shadow-2xl 
                  transition-all duration-500 hover:-translate-y-2 
-                 border border-gray-100 text-center"
-              >
+                 border border-gray-100 text-center">
+
+
+
+
+
+
+
                 <div
-                  className="flex justify-center mb-6 
-                      group-hover:scale-110 transition-transform"
-                >
+                className="flex justify-center mb-6 
+                      group-hover:scale-110 transition-transform">
+
+
+
+
                   <div
-                    className="flex items-center justify-center 
+                  className="flex items-center justify-center 
                         w-16 h-16 
-                        bg-gradient-to-br from-blue-50 to-blue-100"
-                  >
+                        bg-gradient-to-br from-blue-50 to-blue-100">
+
+
+
+
+
+
+
                     <div className="text-blue-600">{adv.icon}</div>
                   </div>
                 </div>
@@ -1220,7 +1235,7 @@ const Properties = () => {
 
                 <p className="text-gray-600 mb-4">{adv.description}</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -1241,23 +1256,23 @@ const Properties = () => {
             <button
               type="button"
               onClick={() =>
-                navigate("/register?role=visiteur", {
-                  state: {
-                    messageType: "info",
-                    messageText:
-                      "Une fois votre compte cree, connectez-vous a votre profil pour echanger avec un agent ABI.",
-                  },
-                })
+              navigate("/register?role=visiteur", {
+                state: {
+                  messageType: "info",
+                  messageText:
+                  "Une fois votre compte créé, connectez-vous à votre profil pour echanger avec un agent ABI."
+                }
+              })
               }
-              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg"
-            >
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2 shadow-lg">
+
               <Search size={20} />
               <span>Trouver un agent</span>
             </button>
             <a
               href="tel:+330751521063"
-              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
-            >
+              className="bg-white text-blue-900 px-10 py-4 font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2">
+
               <Phone size={20} />
               <span>contactez-nous</span>
             </a>
@@ -1265,73 +1280,73 @@ const Properties = () => {
         </div>
       </section>
 
-      {showAnnouncementModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center px-4">
+      {showAnnouncementModal &&
+      <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-[1px] flex items-center justify-center px-4">
           <div className="w-full max-w-2xl bg-white shadow-2xl border border-slate-200">
             <div className="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <h3 className="text-xl font-bold text-slate-900">
                 Faire une annonce
               </h3>
               <button
-                type="button"
-                onClick={() => setShowAnnouncementModal(false)}
-                className="p-2 text-slate-500 hover:text-slate-700"
-              >
+              type="button"
+              onClick={() => setShowAnnouncementModal(false)}
+              className="p-2 text-slate-500 hover:text-slate-700">
+
                 <X size={20} />
               </button>
             </div>
 
             <form
-              onSubmit={submitAnnouncementRequest}
-              className="p-5 sm:p-6 space-y-4"
-            >
+            onSubmit={submitAnnouncementRequest}
+            className="p-5 sm:p-6 space-y-4">
+
               <div>
                 <label className="text-sm font-medium text-slate-700">
                   Decrivez votre bien
                 </label>
                 <textarea
-                  value={announcementText}
-                  onChange={(event) => setAnnouncementText(event.target.value)}
-                  rows={6}
-                  className="mt-2 w-full border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="J'aimerais ajouter une maison de 4 pieces situee a..."
-                  required
-                />
+                value={announcementText}
+                onChange={(event) => setAnnouncementText(event.target.value)}
+                rows={6}
+                className="mt-2 w-full border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="J'aimerais ajouter une maison de 4 pieces située a..."
+                required />
+
               </div>
 
-              {announcementError && (
-                <div className="text-sm px-3 py-2 bg-red-50 border border-red-200 text-red-700">
+              {announcementError &&
+            <div className="text-sm px-3 py-2 bg-red-50 border border-red-200 text-red-700">
                   {announcementError}
                 </div>
-              )}
-              {announcementSuccess && (
-                <div className="text-sm px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700">
+            }
+              {announcementSuccess &&
+            <div className="text-sm px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700">
                   {announcementSuccess}
                 </div>
-              )}
+            }
 
               <div className="flex justify-end gap-3 pt-2">
                 <button
-                  type="button"
-                  onClick={() => setShowAnnouncementModal(false)}
-                  className="px-5 py-2.5 border border-slate-300 text-slate-700 hover:bg-slate-50"
-                >
+                type="button"
+                onClick={() => setShowAnnouncementModal(false)}
+                className="px-5 py-2.5 border border-slate-300 text-slate-700 hover:bg-slate-50">
+
                   Annuler
                 </button>
                 <button
-                  type="submit"
-                  disabled={announcementSubmitting}
-                  className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
-                >
+                type="submit"
+                disabled={announcementSubmitting}
+                className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60">
+
                   {announcementSubmitting ? "Envoi..." : "Envoyer la demande"}
                 </button>
               </div>
             </form>
           </div>
         </div>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 };
 
 export default Properties;
