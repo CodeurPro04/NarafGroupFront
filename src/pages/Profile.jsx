@@ -14,11 +14,15 @@ import {
   MapPin,
   CheckCircle,
   ExternalLink,
-  Building2 } from
+  Building2,
+  TrendingUp } from
 "lucide-react";
 import { visitorService } from "../services/visitorService";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import PartnerProductsManager from "../components/partner/PartnerProductsManager";
+import InvestorDashboard from "../components/investor/InvestorDashboard";
 const emptyList = [];
+const MESSAGES_PER_PAGE = 3;
 const parseNumber = (value) => {
   if (value === "" || value === null || value === undefined) return null;
   const parsed = Number(value);
@@ -32,7 +36,8 @@ const ProfilePage = () => {
   const [profileForm, setProfileForm] = useState({
     first_name: "",
     last_name: "",
-    phone: ""
+    phone: "",
+    interests: []
   });
   const [passwordForm, setPasswordForm] = useState({
     current_password: "",
@@ -40,6 +45,7 @@ const ProfilePage = () => {
     new_password_confirmation: ""
   });
   const [messages, setMessages] = useState(emptyList);
+  const [messagesPage, setMessagesPage] = useState(1);
   const [searchRequests, setSearchRequests] = useState(emptyList);
   const [constructionRequests, setConstructionRequests] = useState(emptyList);
   const [propertyRequests, setPropertyRequests] = useState(emptyList);
@@ -97,6 +103,11 @@ const ProfilePage = () => {
         label: "Demandes",
         icon: <Search size={18} />
       });
+      baseTabs.push({
+        id: "investisseur",
+        label: "Investissements",
+        icon: <TrendingUp size={18} />
+      });
     }
 
     if (isOwner) {
@@ -107,6 +118,14 @@ const ProfilePage = () => {
       });
     }
 
+    if (isPartner) {
+      baseTabs.push({
+        id: "produits",
+        label: "Mes produits",
+        icon: <Building2 size={18} />
+      });
+    }
+
     baseTabs.push({
       id: "securite",
       label: "Securite",
@@ -114,7 +133,7 @@ const ProfilePage = () => {
     });
 
     return baseTabs;
-  }, [isOwner, isVisitor]);
+  }, [isOwner, isVisitor, isPartner]);
   useEffect(() => {
     const initialTab = location.state?.initialTab;
     if (!initialTab) return;
@@ -140,7 +159,8 @@ const ProfilePage = () => {
         setProfileForm({
           first_name: user.first_name || "",
           last_name: user.last_name || "",
-          phone: user.phone || ""
+          phone: user.phone || "",
+          interests: Array.isArray(user.interests) ? user.interests : []
         });
       }
     } catch (error) {
@@ -155,6 +175,7 @@ const ProfilePage = () => {
     try {
       const response = await visitorService.getMessagesByRole(role);
       setMessages(visitorService.extractList(response));
+      setMessagesPage(1);
     } catch (error) {
       showNotice("error", "Impossible de charger les messages.");
     } finally {
@@ -231,6 +252,18 @@ const ProfilePage = () => {
     const { name, value } = event.target;
     setProfileForm((prev) => ({ ...prev, [name]: value }));
   };
+  const toggleInterest = (interestValue) => {
+    setProfileForm((prev) => {
+      const current = Array.isArray(prev.interests) ? prev.interests : [];
+      const selected = current.includes(interestValue);
+      return {
+        ...prev,
+        interests: selected
+          ? current.filter((value) => value !== interestValue)
+          : [...current, interestValue]
+      };
+    });
+  };
   const handlePasswordChange = (event) => {
     const { name, value } = event.target;
     setPasswordForm((prev) => ({ ...prev, [name]: value }));
@@ -245,6 +278,10 @@ const ProfilePage = () => {
   };
   const updateProfile = async (event) => {
     event.preventDefault();
+    if (isVisitor && (!Array.isArray(profileForm.interests) || profileForm.interests.length === 0)) {
+      showNotice("error", "Veuillez sélectionner au moins un centre d'intérêt.");
+      return;
+    }
     setLoading((prev) => ({ ...prev, action: true }));
     try {
       const response = await visitorService.updateProfile(profileForm);
@@ -486,7 +523,7 @@ const ProfilePage = () => {
                 }
                 {(isAgent || isAdmin) && profile?.is_active &&
                 <a
-                  href="https://backoffice.africabuildinvest.com/"
+                  href="https://back-office.africabuildinvest.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 bg-emerald-500 text-white px-5 py-3 font-semibold hover:bg-emerald-600 transition">
@@ -655,6 +692,52 @@ const ProfilePage = () => {
                     className="mt-2 w-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   {" "}
                   </div>{" "}
+                  {isVisitor && (
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-700">
+                        Centres d&apos;intérêt
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Sélectionnez au moins un domaine pour personnaliser votre expérience.
+                      </p>
+                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {[
+                          { value: "immobilier", label: "Immobilier", icon: "🏠" },
+                          { value: "construction", label: "Construction", icon: "🏗️" },
+                          { value: "investissement", label: "Investissement", icon: "📈" }
+                        ].map((interest) => {
+                          const selected = Array.isArray(profileForm.interests) && profileForm.interests.includes(interest.value);
+                          return (
+                            <button
+                              key={interest.value}
+                              type="button"
+                              onClick={() => toggleInterest(interest.value)}
+                              className={`p-4 border-2 text-left transition ${
+                                selected
+                                  ? "border-blue-500 bg-blue-50"
+                                  : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <div>
+                                  <div className="text-sm font-semibold text-gray-900">
+                                    <span className="mr-2">{interest.icon}</span>
+                                    {interest.label}
+                                  </div>
+                                </div>
+                                {selected && <CheckCircle size={18} className="text-blue-600" />}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {Array.isArray(profileForm.interests) && profileForm.interests.length === 0 && (
+                        <p className="text-sm text-amber-700 mt-2">
+                          Choisissez au moins un centre d&apos;intérêt avant d&apos;enregistrer.
+                        </p>
+                      )}
+                    </div>
+                  )}{" "}
                   <div className="md:col-span-2 flex justify-end">
                     {" "}
                     <button
@@ -703,7 +786,12 @@ const ProfilePage = () => {
 
               <div className="space-y-4">
                     {" "}
-                    {messages.map((message) =>
+                    {messages.
+                slice(
+                  (messagesPage - 1) * MESSAGES_PER_PAGE,
+                  messagesPage * MESSAGES_PER_PAGE
+                ).
+                map((message) =>
                 <div
                   key={message.uuid}
                   className="border border-gray-200 p-4 space-y-3">
@@ -759,8 +847,43 @@ const ProfilePage = () => {
                         </div>{" "}
                       </div>
                 )}{" "}
+                    {messages.length > MESSAGES_PER_PAGE && (
+                  <div className="flex items-center justify-between pt-2">
+                        <button
+                      type="button"
+                      onClick={() =>
+                      setMessagesPage((prev) => Math.max(1, prev - 1))
+                      }
+                      disabled={messagesPage <= 1}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                          Precedent
+                        </button>
+                        <p className="text-sm text-gray-500">
+                          Page {messagesPage} / {Math.max(1, Math.ceil(messages.length / MESSAGES_PER_PAGE))}
+                        </p>
+                        <button
+                      type="button"
+                      onClick={() =>
+                      setMessagesPage((prev) =>
+                      Math.min(
+                        Math.ceil(messages.length / MESSAGES_PER_PAGE),
+                        prev + 1
+                      )
+                      )
+                      }
+                      disabled={messagesPage >= Math.ceil(messages.length / MESSAGES_PER_PAGE)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                          Suivant
+                        </button>
+                      </div>
+                )}{" "}
                   </div>
               }{" "}
+              </div>
+            }{" "}
+            {activeTab === "investisseur" && isVisitor &&
+            <div className="bg-white border border-gray-200 shadow-lg p-6">
+                <InvestorDashboard />
               </div>
             }{" "}
             {activeTab === "recherche" &&
@@ -1219,6 +1342,12 @@ const ProfilePage = () => {
                 </div>{" "}
               </div>
             }{" "}
+            {activeTab === "produits" && isPartner &&
+            <div className="bg-white border border-gray-200 shadow-lg p-6">
+                <PartnerProductsManager partnerType={profile?.partner_type} />
+              </div>
+            }
+
             {activeTab === "securite" &&
             <div className="bg-white border border-gray-200 shadow-lg p-6">
                 {" "}

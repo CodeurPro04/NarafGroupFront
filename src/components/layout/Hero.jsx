@@ -129,7 +129,7 @@ const Hero = () => {
     const loadInvestmentTypes = async () => {
       try {
         setLoadingInvestmentTypes(true);
-        const response = await api.get("/investments");
+        const response = await api.get("/investments", { params: { per_page: 60 } });
         const list = response?.data?.data?.data || response?.data?.data || [];
         const uniqueTypes = Array.from(
           new Set(

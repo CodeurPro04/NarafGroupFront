@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Bed,
@@ -23,11 +23,89 @@ import {
   DollarSign,
   Navigation,
   Maximize,
+  TreeDeciduous,
+  Warehouse,
   Users,
   Shield,
   Award,
   Check } from
 "lucide-react";
+
+/* ─── Normalise un slug/nom de type (retire accents, espaces, casse) ── */
+const normalizeSlug = (str) =>
+  (str || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "");
+
+/* ─── Stats à afficher selon le type de bien ──────────────────────────
+   Chaque entrée : { key, icon, label, suffix }
+   Seules les entrées avec une valeur > 0 seront affichées (max 4).
+──────────────────────────────────────────────────────────────────────── */
+const STATS_BY_TYPE = {
+  terrain: [
+    { key: "surface_area", icon: Maximize, label: "Superficie", suffix: "m²" },
+    { key: "land_area",    icon: TreeDeciduous,  label: "Terrain",    suffix: "m²" },
+  ],
+  appartement: [
+    { key: "surface_area",   icon: Maximize, label: "Surface",   suffix: "m²" },
+    { key: "bedrooms",       icon: Bed,      label: "Chambres",  suffix: "" },
+    { key: "bathrooms",      icon: Bath,     label: "Sdb",       suffix: "" },
+    { key: "parking_spaces", icon: Car,      label: "Parking",   suffix: "" },
+  ],
+  studio: [
+    { key: "surface_area",   icon: Maximize, label: "Surface",  suffix: "m²" },
+    { key: "bathrooms",      icon: Bath,     label: "Sdb",      suffix: "" },
+    { key: "floor_number",   icon: Layers,   label: "Étage",    suffix: "" },
+    { key: "parking_spaces", icon: Car,      label: "Parking",  suffix: "" },
+  ],
+  villa: [
+    { key: "surface_area",   icon: Maximize,      label: "Surface",  suffix: "m²" },
+    { key: "land_area",      icon: TreeDeciduous, label: "Terrain",  suffix: "m²" },
+    { key: "bedrooms",       icon: Bed,           label: "Chambres", suffix: "" },
+    { key: "bathrooms",      icon: Bath,          label: "Sdb",      suffix: "" },
+    { key: "parking_spaces", icon: Car,           label: "Parking",  suffix: "" },
+  ],
+  duplex: [
+    { key: "surface_area",   icon: Maximize, label: "Surface",  suffix: "m²" },
+    { key: "bedrooms",       icon: Bed,      label: "Chambres", suffix: "" },
+    { key: "bathrooms",      icon: Bath,     label: "Sdb",      suffix: "" },
+    { key: "parking_spaces", icon: Car,      label: "Parking",  suffix: "" },
+  ],
+  bureau: [
+    { key: "surface_area",   icon: Maximize, label: "Surface",       suffix: "m²" },
+    { key: "floor_number",   icon: Layers,   label: "Étage",         suffix: "" },
+    { key: "total_floors",   icon: Layers,   label: "Nb d'étages",   suffix: "" },
+    { key: "parking_spaces", icon: Car,      label: "Parking",       suffix: "" },
+  ],
+  commerce: [
+    { key: "surface_area",   icon: Maximize, label: "Surface",  suffix: "m²" },
+    { key: "floor_number",   icon: Layers,   label: "Étage",    suffix: "" },
+    { key: "parking_spaces", icon: Car,      label: "Parking",  suffix: "" },
+  ],
+  entrepot: [
+    { key: "surface_area",   icon: Maximize,   label: "Surface au sol", suffix: "m²" },
+    { key: "land_area",      icon: Warehouse,  label: "Parcelle",       suffix: "m²" },
+    { key: "parking_spaces", icon: Car,        label: "Quais / Places", suffix: "" },
+  ],
+};
+
+const DEFAULT_STATS = [
+  { key: "surface_area",   icon: Maximize, label: "Surface",  suffix: "m²" },
+  { key: "bedrooms",       icon: Bed,      label: "Chambres", suffix: "" },
+  { key: "bathrooms",      icon: Bath,     label: "Sdb",      suffix: "" },
+  { key: "parking_spaces", icon: Car,      label: "Parking",  suffix: "" },
+];
+
+/* ─── Champs "Infos détaillées" selon le type ─────────────────────── */
+const DETAIL_FIELDS_BY_TYPE = {
+  terrain:    ["property_type", "land_area", "currency", "published_at", "ref"],
+  appartement:["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"],
+  studio:     ["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"],
+  villa:      ["property_type", "land_area", "year_built", "currency", "published_at", "ref"],
+  duplex:     ["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"],
+  bureau:     ["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"],
+  commerce:   ["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"],
+  entrepot:   ["property_type", "year_built", "currency", "published_at", "ref"],
+};
+const DEFAULT_DETAIL_FIELDS = ["property_type", "floor_number", "total_floors", "year_built", "currency", "published_at", "ref"];
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
 import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
@@ -35,6 +113,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toMediaUrl } from "../utils/media";
 import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
+import AddressMap from "../components/ui/AddressMap";
 
 const PropertyDetails = () => {
   const { uuid } = useParams();
@@ -298,6 +377,20 @@ const PropertyDetails = () => {
   format(new Date(property.created_at), "dd MMMM yyyy", { locale: fr }) :
   "Non spécifiée";
 
+  /* ── Logique d'affichage dynamique selon le type ── */
+  const typeSlug = normalizeSlug(property.property_type?.slug || property.property_type?.name || "");
+  const activeStats = (STATS_BY_TYPE[typeSlug] || DEFAULT_STATS)
+    .filter((s) => Number(property[s.key]) > 0);
+  const activeDetailFields = DETAIL_FIELDS_BY_TYPE[typeSlug] || DEFAULT_DETAIL_FIELDS;
+  const isTerrain = typeSlug === "terrain";
+  const hasRooms = activeStats.some(s => s.key === "bedrooms");
+  const propertyAddress = [
+    property.address,
+    property.quartier,
+    property.commune,
+    property.city,
+  ].filter(Boolean).join(", ");
+
   return (
     <div className="min-h-screen bg-gray-50">
  <MediaSplitShowcase
@@ -371,14 +464,16 @@ const PropertyDetails = () => {
  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
  {property.title}
  </h1>
- <div className="flex items-center text-gray-600 mb-4">
- <MapPin size={20} className="mr-2 flex-shrink-0" />
- <span className="truncate">
+ <div className="mb-4 rounded-2xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-gray-700">
+ <div className="flex min-w-0 items-start gap-3">
+ <MapPin size={20} className="mt-0.5 flex-shrink-0 text-blue-600" />
+ <span className="min-w-0 whitespace-normal break-words text-sm leading-6">
  {property.address && `${property.address}, `}
  {property.quartier && `${property.quartier}, `}
  {property.commune && `${property.commune}, `}
  {property.city}
  </span>
+ </div>
  </div>
  <div className="md:text-left mb-4">
  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">
@@ -404,62 +499,34 @@ const PropertyDetails = () => {
  </div>
  </div>
 
- {/* Features Grid */}
- <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-6 border-y border-gray-200">
- <div className="text-center group">
- <div className="flex items-center justify-center space-x-2 mb-2">
- <Bed
-                          className="text-blue-600 group-hover:scale-110 transition-transform"
-                          size={24} />
+ {/* Stats dynamiques selon le type de bien */}
+ {activeStats.length > 0 && (
+   <div className={`grid gap-4 py-6 border-y border-gray-200 ${
+     activeStats.length <= 2 ? "grid-cols-2" :
+     activeStats.length === 3 ? "grid-cols-3" :
+     "grid-cols-2 md:grid-cols-4"}`}>
+     {activeStats.map((stat) => {
+       const Icon = stat.icon;
+       return (
+         <div key={stat.key} className="text-center group">
+           <div className="flex items-center justify-center space-x-2 mb-2">
+             <Icon className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
+             <span className="text-2xl font-bold text-gray-900">
+               {property[stat.key]}
+               {stat.suffix && <span className="text-base font-normal text-gray-500 ml-0.5">{stat.suffix}</span>}
+             </span>
+           </div>
+           <div className="text-sm text-gray-600">{stat.label}</div>
+         </div>
+       );
+     })}
+   </div>
+ )}
+ </div>
+ </div>
+ </div>
 
- <span className="text-2xl font-bold text-gray-900">
- {property.bedrooms || 0}
- </span>
- </div>
- <div className="text-sm text-gray-600">Chambres</div>
- </div>
- <div className="text-center group">
- <div className="flex items-center justify-center space-x-2 mb-2">
- <Bath
-                          className="text-blue-600 group-hover:scale-110 transition-transform"
-                          size={24} />
-
- <span className="text-2xl font-bold text-gray-900">
- {property.bathrooms || 0}
- </span>
- </div>
- <div className="text-sm text-gray-600">
- Salles de bain
- </div>
- </div>
- <div className="text-center group">
- <div className="flex items-center justify-center space-x-2 mb-2">
- <Maximize
-                          className="text-blue-600 group-hover:scale-110 transition-transform"
-                          size={24} />
-
- <span className="text-2xl font-bold text-gray-900">
- {property.surface_area || 0}
- </span>
- </div>
- <div className="text-sm text-gray-600">m² Surface</div>
- </div>
- <div className="text-center group">
- <div className="flex items-center justify-center space-x-2 mb-2">
- <Car
-                          className="text-blue-600 group-hover:scale-110 transition-transform"
-                          size={24} />
-
- <span className="text-2xl font-bold text-gray-900">
- {property.parking_spaces || 0}
- </span>
- </div>
- <div className="text-sm text-gray-600">Parkings</div>
- </div>
- </div>
- </div>
- </div>
- </div>
+ <AddressMap address={propertyAddress} title={property.title} />
 
  {/* Description */}
  <div className="bg-white shadow-xl p-6 mb-6 border border-gray-100">
@@ -503,75 +570,88 @@ const PropertyDetails = () => {
  </div>
             }
 
- {/* Additional Info */}
+ {/* Informations détaillées — dynamiques selon le type */}
  <div className="bg-white shadow-xl p-6 border border-gray-100">
- <h2 className="text-2xl font-bold text-gray-900 mb-6">
- Informations détaillées
- </h2>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div className="space-y-4">
- <div className="flex items-center space-x-3">
- <Building2 className="text-gray-400" size={20} />
- <div>
- <div className="text-sm text-gray-500">Type de bien</div>
- <div className="font-medium">
- {property.property_type?.name || "Non spécifié"}
- </div>
- </div>
- </div>
- <div className="flex items-center space-x-3">
- <Layers className="text-gray-400" size={20} />
- <div>
- <div className="text-sm text-gray-500">Étage</div>
- <div className="font-medium">
- {property.floor_number ?
-                        `Étage ${property.floor_number}` :
-                        "Rez-de-chaussée"}
- {property.total_floors &&
-                        ` sur ${property.total_floors}`}
- </div>
- </div>
- </div>
- <div className="flex items-center space-x-3">
- <Calendar className="text-gray-400" size={20} />
- <div>
- <div className="text-sm text-gray-500">
- Année de construction
- </div>
- <div className="font-medium">
- {property.year_built || "Non spécifiée"}
- </div>
- </div>
- </div>
+ <h2 className="text-2xl font-bold text-gray-900 mb-6">Informations détaillées</h2>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+   {/* Type de bien — toujours affiché */}
+   {activeDetailFields.includes("property_type") && (
+     <div className="flex items-center space-x-3">
+       <Building2 className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Type de bien</div>
+         <div className="font-medium">{property.property_type?.name || "Non spécifié"}</div>
+       </div>
+     </div>
+   )}
+
+   {/* Terrain / Superficie */}
+   {activeDetailFields.includes("land_area") && property.land_area > 0 && (
+     <div className="flex items-center space-x-3">
+       <TreeDeciduous className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Surface terrain</div>
+         <div className="font-medium">{property.land_area} m²</div>
+       </div>
+     </div>
+   )}
+
+   {/* Étage */}
+   {activeDetailFields.includes("floor_number") && (property.floor_number || property.total_floors) && (
+     <div className="flex items-center space-x-3">
+       <Layers className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Étage</div>
+         <div className="font-medium">
+           {property.floor_number ? `Étage ${property.floor_number}` : "Rez-de-chaussée"}
+           {property.total_floors ? ` / ${property.total_floors} étages` : ""}
+         </div>
+       </div>
+     </div>
+   )}
+
+   {/* Année de construction */}
+   {activeDetailFields.includes("year_built") && property.year_built && (
+     <div className="flex items-center space-x-3">
+       <Calendar className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Année de construction</div>
+         <div className="font-medium">{property.year_built}</div>
+       </div>
+     </div>
+   )}
+
+   {/* Devise */}
+   {activeDetailFields.includes("currency") && (
+     <div className="flex items-center space-x-3">
+       <DollarSign className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Devise</div>
+         <div className="font-medium">{property.currency || "XOF"}</div>
+       </div>
+     </div>
+   )}
+
+   {/* Publié le */}
+   {activeDetailFields.includes("published_at") && (
+     <div className="flex items-center space-x-3">
+       <Clock className="text-gray-400 flex-shrink-0" size={20} />
+       <div>
+         <div className="text-sm text-gray-500">Publié le</div>
+         <div className="font-medium">{formattedDate}</div>
+       </div>
+     </div>
+   )}
  </div>
 
- <div className="space-y-4">
- <div className="flex items-center space-x-3">
- <DollarSign className="text-gray-400" size={20} />
- <div>
- <div className="text-sm text-gray-500">Devise</div>
- <div className="font-medium">
- {property.currency || "XOF"}
- </div>
- </div>
- </div>
- <div className="flex items-center space-x-3">
- <Clock className="text-gray-400" size={20} />
- <div>
- <div className="text-sm text-gray-500">Publié le</div>
- <div className="font-medium">{formattedDate}</div>
- </div>
- </div>
- </div>
- </div>
-
- {/* Property ID */}
- <div className="mt-8 pt-6 border-t border-gray-200">
- <div className="text-sm text-gray-500">Référence du bien</div>
- <div className="font-mono font-bold text-lg text-gray-900">
- {property.uuid}
- </div>
- </div>
+ {/* Référence */}
+ {activeDetailFields.includes("ref") && (
+   <div className="mt-6 pt-5 border-t border-gray-200">
+     <div className="text-sm text-gray-500">Référence du bien</div>
+     <div className="font-mono font-bold text-base text-gray-900 mt-0.5">{property.uuid}</div>
+   </div>
+ )}
  </div>
  </div>
 
@@ -806,17 +886,23 @@ const PropertyDetails = () => {
  <MapPin size={14} className="mr-1" />
  <span className="truncate">{relatedProp.city}</span>
  </div>
- <div className="flex items-center justify-between">
+ <div className="flex items-center justify-between flex-wrap gap-2">
  <div className="text-xl font-bold text-blue-600">
  {formatPrice(relatedProp.price)}
  </div>
- <div className="flex items-center space-x-2 text-sm text-gray-500">
- <Bed size={14} />
- <span>{relatedProp.bedrooms || 0}</span>
- <Bath size={14} />
- <span>{relatedProp.bathrooms || 0}</span>
- <Maximize size={14} />
- <span>{relatedProp.surface_area || 0}m²</span>
+ <div className="flex items-center space-x-2 text-sm text-gray-500 flex-wrap">
+   {relatedProp.surface_area > 0 && (
+     <><Maximize size={13} /><span>{relatedProp.surface_area}m²</span></>
+   )}
+   {relatedProp.bedrooms > 0 && (
+     <><Bed size={13} /><span>{relatedProp.bedrooms}</span></>
+   )}
+   {relatedProp.bathrooms > 0 && (
+     <><Bath size={13} /><span>{relatedProp.bathrooms}</span></>
+   )}
+   {!relatedProp.bedrooms && !relatedProp.bathrooms && relatedProp.parking_spaces > 0 && (
+     <><Car size={13} /><span>{relatedProp.parking_spaces}</span></>
+   )}
  </div>
  </div>
  </div>

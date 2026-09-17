@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Compass,
   FileText,
+  Globe,
   Hammer,
   Handshake,
   Home,
@@ -26,6 +27,8 @@ import {
   X } from
 "lucide-react";
 import { logout } from "../../api/axios";
+import CountryMenuDropdown from "./CountryMenuDropdown";
+import { AFRICAN_COUNTRIES, getCountryByCode, getSelectedCountryCode, setSelectedCountryCode } from "../../utils/countries";
 
 const Header = () => {
   const topBannerMessage =
@@ -35,11 +38,25 @@ const Header = () => {
   const [openDesktopMenu, setOpenDesktopMenu] = useState(null);
   const [openMobileMenu, setOpenMobileMenu] = useState(null);
   const [openMobileSubmenu, setOpenMobileSubmenu] = useState(null);
+  const [openCountryMenu, setOpenCountryMenu] = useState(false);
+  const [openMobileCountry, setOpenMobileCountry] = useState(false);
+  const [selectedLang, setSelectedLang] = useState("fr");
+  const [selectedCountry, setSelectedCountry] = useState(() => getSelectedCountryCode());
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const selectedCountryData = getCountryByCode(selectedCountry);
+
+  const handleSelectCountry = useCallback((countryCode) => {
+    if (countryCode === selectedCountry) return;
+    setSelectedCountry(countryCode);
+    setSelectedCountryCode(countryCode);
+    setOpenCountryMenu(false);
+    setOpenMobileCountry(false);
+    setTimeout(() => window.location.reload(), 120);
+  }, [selectedCountry]);
 
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -267,9 +284,9 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[86px]">
-          <Link to="/" className="flex items-center gap-3 min-w-[260px] shrink-0">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="relative flex items-center h-[86px]">
+          <Link to="/" className="shrink-0 flex items-center gap-3">
             <img
               src="/images/logoabi.svg"
               alt="ABI logo"
@@ -277,12 +294,12 @@ const Header = () => {
 
           </Link>
 
-          <nav className="hidden lg:flex flex-1 items-center justify-center gap-8">
+          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
             {navGroups.map((group) =>
             <div
               key={group.key}
               className="relative"
-              onMouseEnter={() => setOpenDesktopMenu(group.key)}>
+              onMouseEnter={() => { setOpenDesktopMenu(group.key); setOpenCountryMenu(false); }}>
 
                 <button
                 type="button"
@@ -308,9 +325,32 @@ const Header = () => {
                 </button>
               </div>
             )}
+
+            {/* Country menu button */}
+            <div
+              className="relative"
+              onMouseEnter={() => { setOpenCountryMenu(true); setOpenDesktopMenu(null); }}>
+
+              <button
+                type="button"
+                onClick={() => setOpenCountryMenu((v) => !v)}
+                className={`flex items-center gap-2 rounded-[8px] px-3 py-2 text-[15px] font-medium transition ${
+                openCountryMenu ?
+                "text-[#0d63c9]" :
+                "text-[#6f6f6f] hover:bg-[#f7f9fc] hover:text-[#0d63c9]"}`}>
+
+                <Globe size={16} className="shrink-0" />
+                <span>{selectedCountryData ? `${selectedCountryData.flag} ${selectedCountryData.code}` : "COUNTRY"}</span>
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${openCountryMenu ? "rotate-180" : ""}`} />
+              </button>
+
+              {openCountryMenu && null}
+            </div>
           </nav>
 
-          <div className="hidden lg:flex min-w-[360px] items-center justify-end gap-4 pl-8">
+          <div className="hidden lg:flex items-center gap-4 ml-auto shrink-0">
             <Link
               to="/partnership"
               className="inline-flex items-center gap-2 rounded-[6px] border border-[#d7deea] bg-white px-4 py-3 text-[14px] font-semibold text-[#2f3b4a] transition hover:border-[#0d63c9] hover:text-[#0d63c9]">
@@ -378,7 +418,7 @@ const Header = () => {
           </div>
 
           <button
-            className="lg:hidden p-2"
+            className="lg:hidden p-2 ml-auto"
             onClick={() => setIsMenuOpen((v) => !v)}
             aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}>
 
@@ -459,6 +499,24 @@ const Header = () => {
                 })}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      {openCountryMenu &&
+      <div
+        className="hidden lg:block absolute left-0 right-0 top-full bg-white shadow-[0_18px_44px_rgba(15,23,42,0.12)] border-t border-[#e5e7eb]"
+        onMouseEnter={() => setOpenCountryMenu(true)}
+        onMouseLeave={() => setOpenCountryMenu(false)}>
+
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="rounded-[8px] bg-white px-10 py-5">
+              <CountryMenuDropdown
+                selectedLang={selectedLang}
+                onSelectLang={setSelectedLang}
+                selectedCountry={selectedCountry}
+                onSelectCountry={handleSelectCountry} />
             </div>
           </div>
         </div>
@@ -558,6 +616,63 @@ const Header = () => {
             }
               </div>
           )}
+
+            {/* Country mobile section */}
+            <div className="border border-gray-100">
+              <button
+                type="button"
+                onClick={() => setOpenMobileCountry((v) => !v)}
+                className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left text-gray-800 hover:bg-gray-50">
+                <span className="flex items-center gap-2">
+                  <Globe size={18} />
+                  {selectedCountryData ? `${selectedCountryData.flag} ${selectedCountryData.name}` : "COUNTRY"}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${openMobileCountry ? "rotate-180" : ""}`} />
+              </button>
+
+              {openMobileCountry &&
+              <div className="border-t border-gray-100 bg-gray-50 px-3 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#9aa0a6] mb-2">Langue</p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[
+                    { code: "ar", label: "Arabe", flag: "🇸🇦" },
+                    { code: "en", label: "Anglais", flag: "🇬🇧" },
+                    { code: "es", label: "Espagnole", flag: "🇪🇸" },
+                    { code: "zh", label: "Chinois", flag: "🇨🇳" },
+                    { code: "fr", label: "Français", flag: "🇫🇷" },
+                  ].map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => setSelectedLang(lang.code)}
+                      className={`flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[13px] font-medium transition ${
+                        selectedLang === lang.code
+                          ? "bg-[#dff1ff] text-[#0d63c9]"
+                          : "bg-white text-[#374151] hover:bg-[#f7f9fc]"}`}>
+                      <span>{lang.flag}</span>
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#9aa0a6] mb-2">Pays d'Afrique</p>
+                <div className="grid grid-cols-3 gap-1.5 max-h-[260px] overflow-y-auto">
+                  {AFRICAN_COUNTRIES.map((country) => (
+                    <button
+                      key={country.code}
+                      onClick={() => handleSelectCountry(selectedCountry === country.code ? null : country.code)}
+                      className={`flex flex-col items-center gap-0.5 rounded-[6px] px-1 py-2 transition ${
+                        selectedCountry === country.code
+                          ? "bg-[#dff1ff] ring-1 ring-[#0d63c9]"
+                          : "bg-white hover:bg-[#f7f9fc]"}`}>
+                      <span className="text-[20px] leading-none">{country.flag}</span>
+                      <span className={`text-[10px] font-medium text-center leading-[1.2] ${selectedCountry === country.code ? "text-[#0d63c9]" : "text-[#555]"}`}>{country.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>}
+            </div>
 
             <Link
             to="/partnership"

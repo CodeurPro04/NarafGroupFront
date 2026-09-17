@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import AIChatWidget from './components/chat/AIChatWidget';
 import Home from './pages/Home';
 import Properties from './pages/Properties';
 import PropertyDetails from './pages/PropertyDetails';
@@ -263,6 +264,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <AIChatWidget />
       </div>
     </Router>);
 

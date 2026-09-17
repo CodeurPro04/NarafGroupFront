@@ -254,7 +254,8 @@ const Properties = () => {
         bedrooms: filters.bedrooms || undefined,
         min_surface: filters.areaMin || undefined,
         sort_by: getSortField(),
-        sort_order: getSortOrder()
+        sort_order: getSortOrder(),
+        per_page: 60
       };
 
       Object.keys(params).forEach(

@@ -150,7 +150,7 @@ const Construction = () => {
       setIsLoading(true);
       setLoadError("");
       try {
-        const response = await api.get("/construction-projects");
+        const response = await api.get("/construction-projects", { params: { per_page: 60 } });
         const list = response?.data?.data || response?.data || [];
         const spotlight = response?.data?.spotlight;
         const normalized = Array.isArray(list) ?

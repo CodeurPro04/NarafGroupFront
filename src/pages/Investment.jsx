@@ -20,6 +20,7 @@ import {
   Hammer,
   ChevronDown,
   Mail,
+  Landmark,
   Briefcase,
   Layers3,
   ShieldCheck } from
@@ -65,6 +66,10 @@ const Investment = () => {
     const location = project.location || project.city || "";
     const totalInvestment = Number(project.total_investment || 0);
     const currentFunding = Number(project.current_funding || 0);
+    const partner =
+    project.creator?.approved_financial_partnership ||
+    project.approved_financial_partnership ||
+    null;
 
     let fundedPercentage = null;
     if (
@@ -115,6 +120,13 @@ const Investment = () => {
       status: project.status || "open",
       description: project.description || "",
       reference: project.reference_code || project.uuid || project.id || "",
+      financialPartner: partner ?
+      {
+        name: partner.company_name || partner.name || "Partenaire financier",
+        type: partner.company_type || "Partenaire financier",
+        logo: partner.logo_url || partner.logo_path || partner.logo?.file_path || ""
+      } :
+      null,
       raw: project
     };
   };
@@ -125,7 +137,7 @@ const Investment = () => {
       setIsLoading(true);
       setLoadError("");
       try {
-        const response = await api.get("/investments");
+        const response = await api.get("/investments", { params: { per_page: 60 } });
         const list = response?.data?.data?.data || response?.data?.data || [];
         const normalized = Array.isArray(list) ?
         list.map(normalizeProject) :
@@ -657,6 +669,7 @@ const Investment = () => {
               );
               const fundedValue =
               typeof project.funded === "number" ? project.funded : null;
+              const partnerLogo = toMediaUrl(project.financialPartner?.logo);
 
               return (
                 <div
@@ -719,6 +732,25 @@ const Investment = () => {
                     }
                     </div>
                     <div className="p-5 sm:p-6">
+                      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                        {partnerLogo ?
+                        <img
+                          src={partnerLogo}
+                          alt={project.financialPartner?.name}
+                          className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                            <Landmark size={18} />
+                          </div>
+                        }
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                            Partenaire financier
+                          </p>
+                          <p className="truncate text-sm font-semibold text-gray-900">
+                            {project.financialPartner?.name || "Africa Build Investment"}
+                          </p>
+                        </div>
+                      </div>
                       <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-blue-700">
                         {project.title}
                       </h3>

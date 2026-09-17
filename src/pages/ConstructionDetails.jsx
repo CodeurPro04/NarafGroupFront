@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toMediaUrl } from "../utils/media";
 import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
+import AddressMap from "../components/ui/AddressMap";
 const ConstructionDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const ConstructionDetails = () => {
   };
   const fetchRelated = async () => {
     try {
-      const response = await api.get("/construction-projects");
+      const response = await api.get("/construction-projects", { params: { per_page: 60 } });
       const list = response?.data?.data || response?.data || [];
       const items = Array.isArray(list?.data) ? list.data : list;
       const filtered = Array.isArray(items) ?
@@ -245,6 +246,7 @@ const ConstructionDetails = () => {
   const formattedDate = project.created_at ?
   format(new Date(project.created_at), "dd MMMM yyyy", { locale: fr }) :
   "Non specifiee";
+  const projectAddress = [project.location, project.city].filter(Boolean).join(", ");
   return (
     <div className="min-h-screen bg-gray-50">
       {" "}
@@ -283,15 +285,17 @@ const ConstructionDetails = () => {
                     {" "}
                     {project.title || "Projet de construction"}{" "}
                   </h1>{" "}
-                  <div className="flex items-center text-gray-600 mb-4">
+                  <div className="mb-4 rounded-2xl border border-green-100 bg-green-50/70 px-4 py-3 text-gray-700">
                     {" "}
-                    <MapPin size={20} className="mr-2 flex-shrink-0" />{" "}
-                    <span className="truncate">
+                    <div className="flex min-w-0 items-start gap-3">
+                    <MapPin size={20} className="mt-0.5 flex-shrink-0 text-green-600" />{" "}
+                    <span className="min-w-0 whitespace-normal break-words text-sm leading-6">
                       {" "}
                       {project.location ||
                       project.city ||
                       "Localisation non specifiee"}{" "}
                     </span>{" "}
+                    </div>
                   </div>{" "}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-6 border-y border-gray-200">
                     {" "}
@@ -366,6 +370,9 @@ const ConstructionDetails = () => {
                 {project.description || "Aucune description disponible."}{" "}
               </p>{" "}
             </div>{" "}
+            <AddressMap
+              address={projectAddress}
+              title={project.title || "Projet de construction"} />
             {resolvedPlans.length > 0 &&
             <div
               id="plans-section"
@@ -461,13 +468,13 @@ const ConstructionDetails = () => {
                       </div>{" "}
                     </div>{" "}
                   </div>{" "}
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-start space-x-3">
                     {" "}
-                    <MapPin className="text-gray-400" size={20} />{" "}
-                    <div>
+                    <MapPin className="mt-0.5 shrink-0 text-gray-400" size={20} />{" "}
+                    <div className="min-w-0">
                       {" "}
                       <div className="text-sm text-gray-500">Ville</div>{" "}
-                      <div className="font-medium">
+                      <div className="whitespace-normal break-words font-medium">
                         {project.city || "Non specifiee"}
                       </div>{" "}
                     </div>{" "}

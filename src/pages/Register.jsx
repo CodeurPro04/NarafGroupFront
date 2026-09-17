@@ -7,6 +7,7 @@ import {
   Eye,
   EyeOff,
   Phone,
+  Globe,
   Building,
   Briefcase,
   CheckCircle,
@@ -14,6 +15,7 @@ import {
   Shield } from
 "lucide-react";
 import { register } from "../api/axios";
+import { AFRICAN_COUNTRIES, getSelectedCountryCode, setSelectedCountryCode } from "../utils/countries";
 
 const PasswordStrength = ({ password }) => {
   if (!password) return null;
@@ -115,12 +117,14 @@ const Register = () => {
     lastName: "",
     email: "",
     phone: "",
+    countryCode: getSelectedCountryCode() || "CI",
     password: "",
     confirmPassword: "",
     licenseNumber: "",
     agency: "",
     terms: false
   });
+  const [interests, setInterests] = useState([]);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -207,6 +211,10 @@ const Register = () => {
       newErrors.phone = "Format de téléphone invalide";
     }
 
+    if (!formData.countryCode) {
+      newErrors.countryCode = "Le pays est requis";
+    }
+
     // Validation mot de passe
     if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
@@ -230,6 +238,11 @@ const Register = () => {
     // Validation conditions générales
     if (!formData.terms) {
       newErrors.terms = "Vous devez accepter les conditions";
+    }
+
+    // Validation intérêts (visiteur)
+    if (userType === "visitor" && interests.length === 0) {
+      newErrors.interests = "Sélectionnez au moins un centre d'intérêt";
     }
 
     return newErrors;
@@ -267,9 +280,11 @@ const Register = () => {
         last_name: formData.lastName.trim(),
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
+        country_code: formData.countryCode,
         password: formData.password,
         password_confirmation: formData.confirmPassword,
-        role: roleMapping[userType]
+        role: roleMapping[userType],
+        ...(userType === "visitor" && interests.length > 0 ? { interests } : {}),
       };
 
       // Appel API avec la fonction register qui gère CSRF
@@ -327,7 +342,8 @@ const Register = () => {
           password: "password",
           license_number: "licenseNumber",
           agency: "agency",
-          role: "role"
+          role: "role",
+          interests: "interests"
         };
 
         Object.keys(laravelErrors).forEach((key) => {
@@ -367,6 +383,9 @@ const Register = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "countryCode") {
+      setSelectedCountryCode(value);
+    }
 
     // Effacer l'erreur du champ modifié
     if (errors[field]) {
@@ -604,6 +623,35 @@ const Register = () => {
                 <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
                 }
               </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Pays de rattachement
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Globe className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    value={formData.countryCode}
+                    onChange={(e) => handleChange("countryCode", e.target.value)}
+                    className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all bg-white ${
+                    errors.countryCode ?
+                    "border-red-500 focus:border-red-500" :
+                    "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
+                    }
+                    disabled={isLoading}>
+                    {AFRICAN_COUNTRIES.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.flag} {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors.countryCode &&
+                <p className="mt-2 text-sm text-red-600">{errors.countryCode}</p>
+                }
+              </div>
             </div>
 
             {/* Mot de passe */}
@@ -698,6 +746,58 @@ const Register = () => {
                 </div>
               </div>
             </div>
+
+            {/* Intérêts — visible uniquement pour les visiteurs */}
+            {userType === "visitor" && (
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800 mb-1">
+                    Quels sont vos centres d&apos;intérêt ? <span className="text-blue-600">*</span>
+                  </p>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Sélectionnez au moins un domaine — nous personnaliserons votre expérience.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { value: "immobilier",    label: "Immobilier",    desc: "Acheter, vendre ou louer un bien",            icon: "🏠", color: "blue" },
+                    { value: "construction",  label: "Construction",  desc: "Construire ou rénover un projet",             icon: "🏗️", color: "amber" },
+                    { value: "investissement",label: "Investissement",desc: "Investir et faire fructifier son capital",    icon: "📈", color: "emerald" },
+                  ].map((interest) => {
+                    const selected = interests.includes(interest.value);
+                    const toggle = () => setInterests(prev =>
+                      selected ? prev.filter(i => i !== interest.value) : [...prev, interest.value]
+                    );
+                    return (
+                      <button
+                        key={interest.value}
+                        type="button"
+                        onClick={toggle}
+                        className={`relative p-4 border-2 rounded-xl text-left transition-all duration-200 hover:scale-[1.02] ${
+                          selected
+                            ? interest.color === "blue"    ? "border-blue-500 bg-blue-50"
+                            : interest.color === "amber"   ? "border-amber-500 bg-amber-50"
+                            : "border-emerald-500 bg-emerald-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        {selected && (
+                          <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
+                            <CheckCircle size={12} className="text-white" />
+                          </span>
+                        )}
+                        <span className="text-2xl mb-2 block">{interest.icon}</span>
+                        <p className="text-sm font-semibold text-gray-900">{interest.label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{interest.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+                {interests.length === 0 && errors.interests && (
+                  <p className="text-sm text-red-600">{errors.interests}</p>
+                )}
+              </div>
+            )}
 
             {/* Terms */}
             <div className="flex items-start">

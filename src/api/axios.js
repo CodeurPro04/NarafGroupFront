@@ -1,4 +1,5 @@
 ﻿import axios from 'axios';
+import { getSelectedCountryCode } from '../utils/countries';
 
 // URL de base de ton API Laravel
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.africabuildinvest.com';
@@ -20,6 +21,14 @@ api.interceptors.request.use(
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    const countryCode = getSelectedCountryCode();
+    if (countryCode) {
+      config.headers['X-Country-Code'] = countryCode;
+      if ((config.method || 'get').toLowerCase() === 'get') {
+        config.params = { country_code: countryCode, ...(config.params || {}) };
+      }
     }
 
     return config;
@@ -86,7 +95,7 @@ export const login = async (email, password) => {
   }
 };
 
-// Fonction de dÃ©connexion
+// Fonction de déconnexion
 export const logout = async () => {
   try {
     await api.post('/auth/logout');
