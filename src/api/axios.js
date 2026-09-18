@@ -157,6 +157,7 @@ export const getPartnerById = (uuid) => api.get(`/partnerships/${uuid}`);
 
 // Modeles de maison (public)
 export const getHouseModels = () => api.get('/house-models');
+export const getPresentationVideo = () => api.get('/presentation-video');
 export const getHouseModelById = (identifier) => api.get(`/house-models/${identifier}`);
 
 export default api;

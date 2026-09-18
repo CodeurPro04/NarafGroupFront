@@ -5,6 +5,7 @@ import api, {
   getApprovedPartners,
   getCurrentUser,
   getHouseModels,
+  getPresentationVideo,
   isAuthenticated,
 } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
@@ -143,6 +144,12 @@ const Home = () => {
       "Decouvrez nos modèles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
     videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
     showcaseSections: defaultShowcaseSections,
+  });
+  const [presentationVideoSection, setPresentationVideoSection] = useState({
+    title: "Videos de présentation",
+    description:
+      "Consulte les contenus video ajoutes depuis l'espace administrateur pour decouvrir l'univers ABI et ses modèles.",
+    videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
   });
 
   const stats = [
@@ -418,6 +425,38 @@ const Home = () => {
   useEffect(() => {
     let isMounted = true;
 
+    const loadPresentationVideo = async () => {
+      try {
+        const response = await getPresentationVideo();
+        const data = response?.data?.data ?? {};
+
+        if (isMounted) {
+          setPresentationVideoSection({
+            title: data?.title || "Videos de présentation",
+            description:
+              data?.description ||
+              "Consulte les contenus video ajoutes depuis l'espace administrateur pour decouvrir l'univers ABI et ses modèles.",
+            videos:
+              Array.isArray(data?.videos) && data.videos.length
+                ? data.videos
+                : ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
+          });
+        }
+      } catch (error) {
+        console.error("Erreur chargement section videos de presentation:", error);
+      }
+    };
+
+    loadPresentationVideo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
     const loadShowcaseSections = async () => {
       try {
         setShowcaseSectionsLoading(true);
@@ -531,7 +570,7 @@ const Home = () => {
 
   useEffect(() => {
     setActiveVideoIndex(0);
-  }, [houseModelsSection.videos]);
+  }, [presentationVideoSection.videos]);
 
   useEffect(() => {
     if (!sliderImages.length) return undefined;
@@ -543,7 +582,7 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [sliderImages.length]);
 
-  const videoEmbeds = (houseModelsSection.videos || [])
+  const videoEmbeds = (presentationVideoSection.videos || [])
     .map((video) => ({
       source: video,
       embed: toEmbedVideoUrl(video),
@@ -836,11 +875,10 @@ const Home = () => {
           <div className="mx-auto max-w-5xl">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
-                Videos de présentation
+                {presentationVideoSection.title}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
-                Consulte les contenus video ajoutes depuis l'espace
-                administrateur pour decouvrir l'univers ABI et ses modèles.
+                {presentationVideoSection.description}
               </p>
             </div>
 
