@@ -29,9 +29,11 @@ import api from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroInvest from "../assets/heroinvest.jpg";
 
 const Investment = () => {
+  const { countryCode, country: selectedCountryInfo } = useSelectedCountry();
   const [activeFilter, setActiveFilter] = useState("tous");
   const [sortBy, setSortBy] = useState("roi_desc");
   const [favorites, setFavorites] = useState([]);
@@ -159,7 +161,7 @@ const Investment = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [countryCode]);
 
   useEffect(() => {
     const params = new URLSearchParams(pageLocation.search);
@@ -584,6 +586,12 @@ const Investment = () => {
               }
               {loadError &&
               <p className="mt-2 text-sm text-red-600">{loadError}</p>
+              }
+              {selectedCountryInfo &&
+              <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+                  <span>{selectedCountryInfo.flag}</span>
+                  <span>Resultats priorises pour {selectedCountryInfo.name}</span>
+                </div>
               }
             </div>
 

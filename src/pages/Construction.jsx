@@ -20,10 +20,12 @@ import { isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroConstru1 from "../assets/heroconstru1.jpg";
 import heroConstru2 from "../assets/heroconstru2.jpg";
 
 const Construction = () => {
+  const { countryCode, country: selectedCountryInfo } = useSelectedCountry();
   const [constructionProjects, setConstructionProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -198,7 +200,7 @@ const Construction = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [countryCode]);
 
   useEffect(() => {
     const params = new URLSearchParams(pageLocation.search);
@@ -519,6 +521,12 @@ const Construction = () => {
             }
             {loadError &&
             <p className="text-sm text-red-600 mt-3">{loadError}</p>
+            }
+            {selectedCountryInfo &&
+            <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+                <span>{selectedCountryInfo.flag}</span>
+                <span>Resultats priorises pour {selectedCountryInfo.name}</span>
+              </div>
             }
           </div>
 

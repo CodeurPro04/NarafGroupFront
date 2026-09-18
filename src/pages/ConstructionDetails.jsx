@@ -335,10 +335,10 @@ const ConstructionDetails = () => {
                         {" "}
                         <span className="text-2xl font-bold text-gray-900">
                           {" "}
-                          {formatPrice(project.budget_min)}{" "}
+                          {formatPrice(project.budget_max)}{" "}
                         </span>{" "}
                       </div>{" "}
-                      <div className="text-sm text-gray-600">Budget</div>{" "}
+                      <div className="text-sm text-gray-600">Budget max</div>{" "}
                     </div>{" "}
                   </div>{" "}
                 </div>{" "}

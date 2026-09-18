@@ -29,10 +29,12 @@ import {
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { toMediaUrl } from "../utils/media";
+import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroImobi from "../assets/heroimobi.jpg";
 
 const Properties = () => {
   const location = useLocation();
+  const { countryCode, country: selectedCountryInfo } = useSelectedCountry();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("tous");
   const [viewMode, setViewMode] = useState("grid");
@@ -336,6 +338,20 @@ const Properties = () => {
     return "appartement";
   };
 
+  // Types de biens qui n'ont pas de chambres/salles de bain (terrain, local pro...)
+  const normalizeTypeSlug = (value) =>
+  (value || "").
+  toLowerCase().
+  normalize("NFD").
+  replace(/[̀-ͯ]/g, "").
+  replace(/\s+/g, "");
+  const TYPES_WITHOUT_BEDROOMS = ["terrain", "studio", "bureau", "commerce", "entrepot"];
+  const TYPES_WITHOUT_BATHROOMS = ["terrain", "bureau", "commerce", "entrepot"];
+  const propertyHasBedrooms = (property) =>
+  !TYPES_WITHOUT_BEDROOMS.includes(normalizeTypeSlug(getPropertyType(property)));
+  const propertyHasBathrooms = (property) =>
+  !TYPES_WITHOUT_BATHROOMS.includes(normalizeTypeSlug(getPropertyType(property)));
+
   const getPropertyTypeLabel = (property) => {
     if (property.property_type?.name) return property.property_type.name;
 
@@ -463,7 +479,7 @@ const Properties = () => {
   useEffect(() => {
     if (!hasSyncedFilters) return;
     fetchProperties();
-  }, [filters, sortBy, hasSyncedFilters]);
+  }, [filters, sortBy, hasSyncedFilters, countryCode]);
 
   useEffect(() => {
     if (activeTab === "tous") {
@@ -716,6 +732,12 @@ const Properties = () => {
               <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
                 ABI vous aide a filtrer plus vite, comparer plus clairement et avancer sur des biens mieux documentes.
               </p>
+              {selectedCountryInfo &&
+              <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+                  <span>{selectedCountryInfo.flag}</span>
+                  <span>Resultats priorises pour {selectedCountryInfo.name}</span>
+                </div>
+              }
             </div>
             <div className="mt-8 sm:mt-10 border border-gray-200 bg-white p-4 shadow-md sm:p-6">
               <div className="flex flex-col xl:flex-row gap-4">
@@ -1015,14 +1037,18 @@ const Properties = () => {
                         </div>
 
                         <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#5e6878]">
+                          {propertyHasBedrooms(property) &&
                           <div className="flex items-center gap-1.5">
-                            <Bed size={16} className="text-[#7b8797]" />
-                            <span>{property.bedrooms}</span>
-                          </div>
+                              <Bed size={16} className="text-[#7b8797]" />
+                              <span>{property.bedrooms}</span>
+                            </div>
+                          }
+                          {propertyHasBathrooms(property) &&
                           <div className="flex items-center gap-1.5">
-                            <Bath size={16} className="text-[#7b8797]" />
-                            <span>{property.bathrooms}</span>
-                          </div>
+                              <Bath size={16} className="text-[#7b8797]" />
+                              <span>{property.bathrooms}</span>
+                            </div>
+                          }
                           <div className="flex items-center gap-1.5">
                             <Maximize size={16} className="text-[#7b8797]" />
                             <span>{property.area}m²</span>
@@ -1088,18 +1114,22 @@ const Properties = () => {
                           </div>
 
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            {propertyHasBedrooms(property) &&
                             <div className="flex items-center">
-                              <Bed className="text-blue-600 mr-2" size={18} />
-                              <span className="text-gray-700">
-                                {property.bedrooms} chambres
-                              </span>
-                            </div>
+                                <Bed className="text-blue-600 mr-2" size={18} />
+                                <span className="text-gray-700">
+                                  {property.bedrooms} chambres
+                                </span>
+                              </div>
+                            }
+                            {propertyHasBathrooms(property) &&
                             <div className="flex items-center">
-                              <Bath className="text-blue-600 mr-2" size={18} />
-                              <span className="text-gray-700">
-                                {property.bathrooms} bains
-                              </span>
-                            </div>
+                                <Bath className="text-blue-600 mr-2" size={18} />
+                                <span className="text-gray-700">
+                                  {property.bathrooms} bains
+                                </span>
+                              </div>
+                            }
                             <div className="flex items-center">
                               <Maximize
                           className="text-blue-600 mr-2"

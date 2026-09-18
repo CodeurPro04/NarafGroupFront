@@ -12,8 +12,8 @@ const MediaBadge = ({ label, className = "" }) =>
   </span>;
 
 
-const SecondaryMediaCard = ({ title, image, alt, emptyLabel, onOpen }) =>
-<div className="relative h-[220px] overflow-hidden bg-slate-100 md:h-[252px] lg:h-[302px]">
+const SecondaryMediaCard = ({ title, image, alt, emptyLabel, onOpen, fill }) =>
+<div className={`relative overflow-hidden bg-slate-100 ${fill ? "h-[360px] md:h-[520px] lg:h-[620px]" : "h-[220px] md:h-[252px] lg:h-[302px]"}`}>
     {image ?
   <button
     type="button"
@@ -45,6 +45,10 @@ const MediaSplitShowcase = ({
   const [lightbox, setLightbox] = useState(null);
   const hasImages = Array.isArray(images) && images.length > 0;
   const activeImage = hasImages ? images[currentIndex] || images[0] : null;
+  const hasPlan = Boolean(planImage);
+  const hasRender3D = Boolean(render3DImage);
+  const secondaryCount = (hasPlan ? 1 : 0) + (hasRender3D ? 1 : 0);
+  const hasSecondary = secondaryCount > 0;
 
   useEffect(() => {
     if (!lightbox) return undefined;
@@ -68,7 +72,7 @@ const MediaSplitShowcase = ({
     <>
       <div className="w-full px-4 pt-20 sm:pt-24 lg:pt-28">
         <div className="overflow-hidden bg-white p-3 shadow-sm ring-1 ring-slate-200/80 md:p-4">
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+          <div className={`grid gap-4 ${hasSecondary ? "lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]" : ""}`}>
             <div className="relative h-[360px] overflow-hidden bg-slate-100 md:h-[520px] lg:h-[620px]">
               {activeImage ?
               <button
@@ -129,22 +133,30 @@ const MediaSplitShowcase = ({
               }
             </div>
 
-            <div className="grid gap-4 lg:grid-rows-2">
+            {hasSecondary &&
+            <div className={`grid gap-4 ${secondaryCount > 1 ? "lg:grid-rows-2" : "lg:grid-rows-1"}`}>
+                {hasPlan &&
               <SecondaryMediaCard
                 title="Plans de construction"
                 image={planImage}
                 alt="Plan de construction"
                 emptyLabel="Plan non disponible"
-                onOpen={openLightbox} />
+                onOpen={openLightbox}
+                fill={secondaryCount === 1} />
 
+              }
+                {hasRender3D &&
               <SecondaryMediaCard
                 title="Representations 3D"
                 image={render3DImage}
                 alt="Representation 3D"
                 emptyLabel="Representation 3D non disponible"
-                onOpen={openLightbox} />
+                onOpen={openLightbox}
+                fill={secondaryCount === 1} />
 
-            </div>
+              }
+              </div>
+            }
           </div>
         </div>
       </div>

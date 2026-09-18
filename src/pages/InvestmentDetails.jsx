@@ -300,6 +300,9 @@ const InvestmentDetails = () => {
     Number(project.totalInvestment || 0) - Number(project.currentFunding || 0)
   );
   const fundedValue = typeof project.funded === "number" ? project.funded : 0;
+  const isInvestmentClosed =
+  ["closed", "completed"].includes((project.status || "").toLowerCase()) ||
+  fundedValue >= 100;
   const simulatorAmount = Math.max(
     0,
     Number(simAmount || project.minInvestment || 0)
@@ -479,11 +482,19 @@ const InvestmentDetails = () => {
                   <div className="text-gray-600">Ticket minimum</div>{" "}
                   <div className="mt-4">
                     {" "}
+                    {isInvestmentClosed ?
+                    <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-gray-100 text-gray-600">
+                      {" "}
+                      <CheckCircle size={14} className="mr-1" /> Investissement
+                      complet{" "}
+                    </span> :
+
                     <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800">
                       {" "}
                       <CheckCircle size={14} className="mr-1" /> Investissement
                       ouvert{" "}
-                    </span>{" "}
+                    </span>
+                    }
                   </div>{" "}
                 </div>{" "}
               </div>{" "}
@@ -833,33 +844,46 @@ const InvestmentDetails = () => {
               {" "}
               <div className="flex items-center space-x-3 mb-6">
                 {" "}
-                <div className="bg-blue-100 p-3">
+                <div className={isInvestmentClosed ? "bg-gray-100 p-3" : "bg-blue-100 p-3"}>
                   {" "}
-                  <Users className="text-blue-600" size={24} />{" "}
+                  {isInvestmentClosed ?
+                  <CheckCircle className="text-gray-500" size={24} /> :
+
+                  <Users className="text-blue-600" size={24} />
+                  }{" "}
                 </div>{" "}
                 <div>
                   {" "}
                   <h3 className="text-xl font-bold text-gray-900">
-                    Investir maintenant
+                    {isInvestmentClosed ? "Investissement complet" : "Investir maintenant"}
                   </h3>{" "}
                   <p className="text-gray-600 text-sm">
-                    Soumettez votre proposition.
+                    {isInvestmentClosed ?
+                    "Cet objectif de financement a été atteint." :
+                    "Soumettez votre proposition."
+                    }
                   </p>{" "}
                 </div>{" "}
               </div>{" "}
-              {investError &&
-              <div className="px-4 py-3 text-sm border border-red-200 bg-red-50 text-red-700">
-                  {" "}
-                  {investError}{" "}
-                </div>
-              }{" "}
-              {investSuccess &&
-              <div className="px-4 py-3 text-sm border border-blue-200 bg-blue-50 text-blue-700">
-                  {" "}
-                  {investSuccess}{" "}
-                </div>
-              }{" "}
-              <form onSubmit={handleInvestSubmit} className="space-y-4">
+              {isInvestmentClosed ?
+              <div className="border border-gray-200 bg-gray-50 px-4 py-5 text-center text-sm text-gray-600">
+                  Ce projet n'accepte plus de nouvelles propositions d'investissement pour le moment.
+                </div> :
+
+              <>
+                  {investError &&
+                <div className="px-4 py-3 text-sm border border-red-200 bg-red-50 text-red-700">
+                      {" "}
+                      {investError}{" "}
+                    </div>
+                }{" "}
+                  {investSuccess &&
+                <div className="px-4 py-3 text-sm border border-blue-200 bg-blue-50 text-blue-700">
+                      {" "}
+                      {investSuccess}{" "}
+                    </div>
+                }{" "}
+                  <form onSubmit={handleInvestSubmit} className="space-y-4">
                 {" "}
                 <div>
                   {" "}
@@ -959,7 +983,9 @@ const InvestmentDetails = () => {
                   {" "}
                   Investir{" "}
                 </Button>{" "}
-              </form>{" "}
+              </form>
+                </>
+              }
             </div>{" "}
           </div>{" "}
         </div>{" "}

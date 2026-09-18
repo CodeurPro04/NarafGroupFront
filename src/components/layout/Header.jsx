@@ -55,7 +55,6 @@ const Header = () => {
     setSelectedCountryCode(countryCode);
     setOpenCountryMenu(false);
     setOpenMobileCountry(false);
-    setTimeout(() => window.location.reload(), 120);
   }, [selectedCountry]);
 
   useEffect(() => {
