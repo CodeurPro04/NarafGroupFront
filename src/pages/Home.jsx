@@ -16,6 +16,7 @@ import AgentsSection from "../components/home/AgentsSection";
 import StatsSection from "../components/home/StatsSection";
 import NewProjectsSection from "../components/home/NewProjectsSection";
 import InvestmentRiskSection from "../components/home/InvestmentRiskSection";
+import PropertiesMapSection from "../components/home/PropertiesMapSection";
 import {
   Shield,
   Phone,
@@ -1112,6 +1113,10 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Carte interactive des biens */}
+      <PropertiesMapSection />
+
       {/* Section 13 — Risques d'investissement */}
       <InvestmentRiskSection approvedPartners={partners} />
 

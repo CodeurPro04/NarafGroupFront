@@ -19,8 +19,8 @@ const Footer = () => {
             <div className="mb-6 flex items-center space-x-3">
               <Link to="/" className="flex items-center space-x-3 bg-white px-4 py-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
                 <img
-                  src="/images/logoabi.svg"
-                  alt="ABI logo"
+                  src="/images/logonaraf.png"
+                  alt="Naraf Groupe logo"
                   className="h-12 w-auto object-contain"
                 />
               </Link>

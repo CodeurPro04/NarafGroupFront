@@ -412,8 +412,8 @@ const Register = () => {
             className="inline-flex items-center justify-center w-32 h-32">
 
             <img
-              src="/images/logoabi.svg"
-              alt="ABI logo"
+              src="/images/logonaraf.png"
+              alt="Naraf Groupe logo"
               className="h-14 w-auto object-contain" />
 
           </Link>

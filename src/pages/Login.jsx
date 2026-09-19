@@ -82,8 +82,8 @@ const Login = () => {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
           <img
-            src="/images/logoabi.svg"
-            alt="ABI logo"
+            src="/images/logonaraf.png"
+            alt="Naraf Groupe logo"
             className="mx-auto h-14 w-auto object-contain"
           />
           <h1 className="text-2xl mt-4 font-bold">Connexion</h1>

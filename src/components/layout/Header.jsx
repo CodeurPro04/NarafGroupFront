@@ -287,8 +287,8 @@ const Header = () => {
         <div className="relative flex items-center h-[86px]">
           <Link to="/" className="shrink-0 flex items-center gap-3">
             <img
-              src="/images/logoabi.svg"
-              alt="ABI logo"
+              src="/images/logonaraf.png"
+              alt="Naraf Groupe logo"
               className="h-14 w-auto object-contain" />
 
           </Link>

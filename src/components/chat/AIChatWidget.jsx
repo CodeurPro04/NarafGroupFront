@@ -149,6 +149,28 @@ const AIChatWidget = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* Echap pour fermer + on bloque le scroll de la page en plein ecran mobile */
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    if (isMobile) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        window.removeEventListener("keydown", onKeyDown);
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || loading) return;
@@ -207,16 +229,47 @@ const AIChatWidget = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3">
+      {/* ── Arriere-plan estompe ──────────────────────────── */}
+      <div
+        onClick={() => setIsOpen(false)}
+        aria-hidden="true"
+        className={`fixed inset-0 z-[9998] bg-slate-950/50 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
 
-      {/* ── Panneau de chat ─────────────────────────────── */}
-      {isOpen && (
-        <div
-          className="w-[360px] sm:w-[400px] bg-white/85 backdrop-blur rounded-3xl shadow-[0_28px_80px_rgba(2,6,23,0.35)] border border-white/40 flex flex-col overflow-hidden"
-          style={{ height: 560 }}
-        >
+      {/* ── Bouton flottant ──────────────────────────────── */}
+      <button
+        type="button"
+        onClick={() => { setIsOpen((v) => !v); }}
+        className={`fixed bottom-6 left-6 z-[9999] flex h-14 w-14 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition-all duration-300
+          ${isOpen ? "bg-slate-900 hover:bg-slate-800" : "bg-blue-600 hover:bg-blue-700"}
+          text-white overflow-hidden`}
+        aria-label="Assistant IA ABI"
+      >
+        <span className="absolute inset-0 opacity-30" style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.55) 0%, transparent 40%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.25) 0%, transparent 45%)",
+        }} />
+        {isOpen ? <X size={22} /> : <Bot size={22} />}
+
+        {/* Pulse animation quand fermé */}
+        {!isOpen && (
+          <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20" />
+        )}
+      </button>
+
+      {/* ── Panneau de chat — slide depuis la gauche, plein ecran en mobile ── */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!isOpen}
+        aria-label={`Assistant IA ${agent.name}`}
+        className={`fixed inset-y-0 left-0 z-[9999] flex h-full w-full flex-col overflow-hidden bg-white/95 shadow-[0_28px_80px_rgba(2,6,23,0.35)] backdrop-blur transition-transform duration-300 ease-out sm:w-[400px] sm:border-r sm:border-white/40 sm:bg-white/85
+          ${isOpen ? "translate-x-0" : "pointer-events-none -translate-x-full"}`}
+      >
           {/* Cadre futuriste */}
-          <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-slate-900/5" />
+          <div className="pointer-events-none absolute inset-0 ring-1 ring-slate-900/5" />
 
           {/* Header */}
           <div className={`${c.header} px-4 py-3.5 flex items-center justify-between flex-shrink-0 relative overflow-hidden`}>
@@ -334,31 +387,8 @@ const AIChatWidget = () => {
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
             </button>
           </div>
-        </div>
-      )}
+      </div>
 
-      {/* ── Bouton flottant ──────────────────────────────── */}
-      <button
-        type="button"
-        onClick={() => { setIsOpen((v) => !v); }}
-        className={`relative flex h-14 w-14 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition-all duration-300
-          ${isOpen ? "bg-slate-900 hover:bg-slate-800" : "bg-blue-600 hover:bg-blue-700"}
-          text-white overflow-hidden`}
-        aria-label="Assistant IA ABI"
-      >
-        <span className="absolute inset-0 opacity-30" style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.55) 0%, transparent 40%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.25) 0%, transparent 45%)",
-        }} />
-        {isOpen ? <X size={22} /> : <Bot size={22} />}
-
-        {/* Pulse animation quand fermé */}
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20" />
-        )}
-      </button>
-
-    </div>
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
