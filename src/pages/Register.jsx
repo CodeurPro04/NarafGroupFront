@@ -12,7 +12,11 @@ import {
   Briefcase,
   CheckCircle,
   AlertCircle,
-  Shield } from
+  Shield,
+  ChevronDown,
+  Home,
+  HardHat,
+  TrendingUp } from
 "lucide-react";
 import { register } from "../api/axios";
 import { AFRICAN_COUNTRIES, getSelectedCountryCode, setSelectedCountryCode } from "../utils/countries";
@@ -629,13 +633,13 @@ const Register = () => {
                   Pays de rattachement
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                     <Globe className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
                     value={formData.countryCode}
                     onChange={(e) => handleChange("countryCode", e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all bg-white ${
+                    className={`w-full appearance-none pl-12 pr-10 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all bg-white truncate ${
                     errors.countryCode ?
                     "border-red-500 focus:border-red-500" :
                     "border-gray-200 focus:border-blue-500 hover:border-gray-300"}`
@@ -647,6 +651,9 @@ const Register = () => {
                       </option>
                     ))}
                   </select>
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                  </div>
                 </div>
                 {errors.countryCode &&
                 <p className="mt-2 text-sm text-red-600">{errors.countryCode}</p>
@@ -760,14 +767,19 @@ const Register = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { value: "immobilier",    label: "Immobilier",    desc: "Acheter, vendre ou louer un bien",            icon: "🏠", color: "blue" },
-                    { value: "construction",  label: "Construction",  desc: "Construire ou rénover un projet",             icon: "🏗️", color: "amber" },
-                    { value: "investissement",label: "Investissement",desc: "Investir et faire fructifier son capital",    icon: "📈", color: "emerald" },
+                    { value: "immobilier",    label: "Immobilier",    desc: "Acheter, vendre ou louer un bien",            icon: Home,     color: "blue" },
+                    { value: "construction",  label: "Construction",  desc: "Construire ou rénover un projet",             icon: HardHat,  color: "amber" },
+                    { value: "investissement",label: "Investissement",desc: "Investir et faire fructifier son capital",    icon: TrendingUp, color: "emerald" },
                   ].map((interest) => {
                     const selected = interests.includes(interest.value);
                     const toggle = () => setInterests(prev =>
                       selected ? prev.filter(i => i !== interest.value) : [...prev, interest.value]
                     );
+                    const Icon = interest.icon;
+                    const iconColorClass =
+                      interest.color === "blue" ? "text-blue-600"
+                      : interest.color === "amber" ? "text-amber-600"
+                      : "text-emerald-600";
                     return (
                       <button
                         key={interest.value}
@@ -786,7 +798,7 @@ const Register = () => {
                             <CheckCircle size={12} className="text-white" />
                           </span>
                         )}
-                        <span className="text-2xl mb-2 block">{interest.icon}</span>
+                        <Icon size={24} className={`mb-2 ${iconColorClass}`} />
                         <p className="text-sm font-semibold text-gray-900">{interest.label}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{interest.desc}</p>
                       </button>

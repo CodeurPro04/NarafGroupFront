@@ -285,7 +285,7 @@ const Header = () => {
 
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="relative flex items-center h-[86px]">
-          <Link to="/" className="shrink-0 flex items-center gap-3">
+          <Link to="/" className="shrink-0 flex items-center gap-3 cursor-pointer">
             <img
               src="/images/logonaraf.png"
               alt="Naraf Groupe logo"

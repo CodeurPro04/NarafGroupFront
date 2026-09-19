@@ -169,9 +169,9 @@ const ProfilePage = () => {
       setLoading((prev) => ({ ...prev, profile: false }));
     }
   };
-  const loadMessages = async () => {
+  const loadMessages = async ({ silent = false } = {}) => {
     if (!role) return;
-    setLoading((prev) => ({ ...prev, messages: true }));
+    if (!silent) setLoading((prev) => ({ ...prev, messages: true }));
     try {
       const response = await visitorService.getMessagesByRole(role);
       setMessages(visitorService.extractList(response));
@@ -179,40 +179,40 @@ const ProfilePage = () => {
     } catch (error) {
       showNotice("error", "Impossible de charger les messages.");
     } finally {
-      setLoading((prev) => ({ ...prev, messages: false }));
+      if (!silent) setLoading((prev) => ({ ...prev, messages: false }));
     }
   };
-  const loadSearchRequests = async () => {
-    setLoading((prev) => ({ ...prev, search: true }));
+  const loadSearchRequests = async ({ silent = false } = {}) => {
+    if (!silent) setLoading((prev) => ({ ...prev, search: true }));
     try {
       const response = await visitorService.getSearchRequests();
       setSearchRequests(visitorService.extractList(response));
     } catch (error) {
       showNotice("error", "Impossible de charger les demandes.");
     } finally {
-      setLoading((prev) => ({ ...prev, search: false }));
+      if (!silent) setLoading((prev) => ({ ...prev, search: false }));
     }
   };
-  const loadConstructionRequests = async () => {
-    setLoading((prev) => ({ ...prev, construction: true }));
+  const loadConstructionRequests = async ({ silent = false } = {}) => {
+    if (!silent) setLoading((prev) => ({ ...prev, construction: true }));
     try {
       const response = await visitorService.getConstructionRequests();
       setConstructionRequests(visitorService.extractList(response));
     } catch (error) {
       showNotice("error", "Impossible de charger les projets.");
     } finally {
-      setLoading((prev) => ({ ...prev, construction: false }));
+      if (!silent) setLoading((prev) => ({ ...prev, construction: false }));
     }
   };
-  const loadPropertyRequests = async () => {
-    setLoading((prev) => ({ ...prev, property: true }));
+  const loadPropertyRequests = async ({ silent = false } = {}) => {
+    if (!silent) setLoading((prev) => ({ ...prev, property: true }));
     try {
       const response = await visitorService.getPropertyRequests();
       setPropertyRequests(visitorService.extractList(response));
     } catch (error) {
       showNotice("error", "Impossible de charger les demandes.");
     } finally {
-      setLoading((prev) => ({ ...prev, property: false }));
+      if (!silent) setLoading((prev) => ({ ...prev, property: false }));
     }
   };
   const loadPropertyTypes = async () => {
@@ -350,7 +350,7 @@ const ProfilePage = () => {
         surface_min: "",
         additional_requirements: ""
       });
-      loadSearchRequests();
+      loadSearchRequests({ silent: true });
     } catch (error) {
       showNotice("error", "Erreur lors de la demande.");
     } finally {
@@ -381,7 +381,7 @@ const ProfilePage = () => {
         location: "",
         city: ""
       });
-      loadConstructionRequests();
+      loadConstructionRequests({ silent: true });
     } catch (error) {
       showNotice("error", "Erreur lors de la demande.");
     } finally {
@@ -401,7 +401,7 @@ const ProfilePage = () => {
       });
       showNotice("success", "Demande envoyee.");
       setPropertyRequestText("");
-      loadPropertyRequests();
+      loadPropertyRequests({ silent: true });
     } catch (error) {
       showNotice("error", "Erreur lors de la demande.");
     } finally {
@@ -418,7 +418,7 @@ const ProfilePage = () => {
       });
       setReplyDrafts((prev) => ({ ...prev, [messageUuid]: "" }));
       showNotice("success", "Reponse envoyee.");
-      loadMessages();
+      loadMessages({ silent: true });
     } catch (error) {
       showNotice("error", "Erreur lors de la reponse.");
     } finally {

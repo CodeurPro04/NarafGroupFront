@@ -100,9 +100,9 @@ const PartnerProductsManager = ({ partnerType }) => {
   const [error, setError]       = useState("");
   const [success, setSuccess]   = useState("");
 
-  const load = async () => {
+  const load = async ({ silent = false } = {}) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await api.get(config.listEndpoint);
       const raw = res?.data?.data ?? res?.data ?? [];
       const list = Array.isArray(raw) ? raw : raw?.data ?? [];
@@ -110,7 +110,7 @@ const PartnerProductsManager = ({ partnerType }) => {
     } catch {
       setItems([]);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -181,7 +181,7 @@ const PartnerProductsManager = ({ partnerType }) => {
 
       setShowForm(false);
       setEditing(null);
-      await load();
+      await load({ silent: true });
     } catch (err) {
       setError(err?.response?.data?.message || "Une erreur est survenue.");
     } finally {

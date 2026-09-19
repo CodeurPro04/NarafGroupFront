@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   MapPin,
@@ -146,10 +146,22 @@ const Construction = () => {
     };
   };
 
+  const isFirstConstructionFetchRef = useRef(true);
+  const prevConstructionCountryRef = useRef(countryCode);
+
   useEffect(() => {
     let isMounted = true;
+    // Seul un veritable changement de pays (pas le double-appel de
+    // React.StrictMode en developpement, qui invoque cet effet deux fois de
+    // suite avec la meme valeur) rafraichit la grille silencieusement ;
+    // le tout premier chargement garde son squelette normal.
+    const silent =
+    !isFirstConstructionFetchRef.current &&
+    countryCode !== prevConstructionCountryRef.current;
+    prevConstructionCountryRef.current = countryCode;
+    isFirstConstructionFetchRef.current = false;
     const fetchProjects = async () => {
-      setIsLoading(true);
+      if (!silent) setIsLoading(true);
       setLoadError("");
       try {
         const response = await api.get("/construction-projects", { params: { per_page: 60 } });
@@ -191,7 +203,7 @@ const Construction = () => {
           setLoadError("Impossible de charger les projets.");
         }
       } finally {
-        if (isMounted) {
+        if (isMounted && !silent) {
           setIsLoading(false);
         }
       }

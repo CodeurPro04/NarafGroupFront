@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   MapPin,
@@ -242,10 +242,13 @@ const Properties = () => {
     }
   };
 
+  const propertiesRequestIdRef = useRef(0);
+
   // Fonction pour récupérer les propriétés
-  const fetchProperties = async () => {
+  const fetchProperties = async ({ silent = false } = {}) => {
+    const requestId = ++propertiesRequestIdRef.current;
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const params = {
         search: filters.search || undefined,
         city: filters.city || undefined,
@@ -265,6 +268,11 @@ const Properties = () => {
       );
 
       const response = await api.get("/properties", { params });
+
+      // Une frappe rapide peut declencher plusieurs requetes en parallele ;
+      // si une reponse plus recente est deja arrivee, on ignore celle-ci
+      // pour eviter d'afficher un resultat perime.
+      if (requestId !== propertiesRequestIdRef.current) return;
 
       if (response.data.success) {
         const propertiesData =
@@ -296,11 +304,14 @@ const Properties = () => {
         setTotalProperties(formattedProperties.length);
       }
     } catch (error) {
+      if (requestId !== propertiesRequestIdRef.current) return;
       console.error("Erreur propriétés:", error);
       setProperties([]);
       setTotalProperties(0);
     } finally {
-      setLoading(false);
+      if (requestId === propertiesRequestIdRef.current && !silent) {
+        setLoading(false);
+      }
     }
   };
 
@@ -476,15 +487,35 @@ const Properties = () => {
     fetchPropertyFeatures();
   }, []);
 
+  const prevCountryCodeRef = useRef(countryCode);
+  const isFirstFetchRef = useRef(true);
+
   useEffect(() => {
     if (!hasSyncedFilters) return;
-    fetchProperties();
+    // Un changement de pays (depuis l'entete) ne doit pas faire clignoter
+    // toute la grille deja affichee ; seul le tout premier chargement (ou un
+    // changement de filtre/tri) affiche le squelette de chargement.
+    const isCountryOnlyChange =
+    !isFirstFetchRef.current && countryCode !== prevCountryCodeRef.current;
+    const isFirst = isFirstFetchRef.current;
+    prevCountryCodeRef.current = countryCode;
+    isFirstFetchRef.current = false;
+    // On laisse un court delai pour eviter d'interroger l'API a chaque
+    // frappe dans le champ de recherche (le garde-fou requestId protege
+    // deja contre les reponses qui arriveraient dans le desordre).
+    const timer = setTimeout(
+      () => fetchProperties({ silent: isCountryOnlyChange }),
+      isFirst ? 0 : 350
+    );
+    return () => clearTimeout(timer);
   }, [filters, sortBy, hasSyncedFilters, countryCode]);
 
   useEffect(() => {
     if (activeTab === "tous") {
+      // pendingTypeId encore en attente = synchronisation initiale depuis
+      // l'URL en cours ; ne pas reinitialiser le type avant qu'elle finisse.
       if (pendingTypeId) return;
-      if (filters.type) return;
+      if (!filters.type) return;
       setFilters((prev) => ({ ...prev, type: "" }));
     } else {
       const propertyType = propertyTypes.find((t) => t.slug === activeTab);
@@ -828,9 +859,17 @@ const Properties = () => {
                       </label>
                       <select
                       value={filters.type}
-                      onChange={(e) =>
-                      handleFilterChange("type", e.target.value)
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (!value) {
+                          setActiveTab("tous");
+                          return;
+                        }
+                        const matchingType = propertyTypes.find(
+                          (t) => String(t.id) === value
+                        );
+                        setActiveTab(matchingType?.slug || "tous");
+                      }}
                       className="w-full px-4 py-2.5 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
 
                         <option value="">Tous les types</option>
@@ -913,12 +952,13 @@ const Properties = () => {
                       {[1, 2, 3, 4, "5+"].map((num) =>
                     <button
                       key={num}
-                      onClick={() =>
-                      handleFilterChange(
-                        "bedrooms",
-                        num === "5+" ? "5" : num.toString()
-                      )
-                      }
+                      onClick={() => {
+                        const value = num === "5+" ? "5" : num.toString();
+                        handleFilterChange(
+                          "bedrooms",
+                          filters.bedrooms === value ? "" : value
+                        );
+                      }}
                       className={`px-4 py-2.5 font-medium transition-all ${filters.bedrooms === (num === "5+" ? "5" : num.toString()) ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200"}`}>
 
                           {num}
