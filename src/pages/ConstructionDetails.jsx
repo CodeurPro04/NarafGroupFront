@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   MapPin,
   Ruler,
@@ -10,7 +10,8 @@ import {
   CheckCircle,
   Home,
   Clock,
-  Building2 } from
+  Building2,
+  Handshake } from
 "lucide-react";
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
@@ -19,11 +20,14 @@ import { SkeletonBlock } from "../components/ui/Skeleton";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
 import AddressMap from "../components/ui/AddressMap";
+import { useToast } from "../components/ui/Toast";
 const ConstructionDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [project, setProject] = useState(null);
   const [relatedProjects, setRelatedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +41,6 @@ const ConstructionDetails = () => {
     project_description: "",
     consent: false
   });
-  const [planNotice, setPlanNotice] = useState({ type: "", message: "" });
   const [isPlanSubmitting, setIsPlanSubmitting] = useState(false);
   const [createdAccount, setCreatedAccount] = useState(null);
   const [plansUnlocked, setPlansUnlocked] = useState(false);
@@ -133,13 +136,9 @@ const ConstructionDetails = () => {
   };
   const handlePlanSubmit = async (e) => {
     e.preventDefault();
-    setPlanNotice({ type: "", message: "" });
     setCreatedAccount(null);
     if (!planForm.consent) {
-      setPlanNotice({
-        type: "error",
-        message: "Veuillez accepter la politique de confidentialité."
-      });
+      toast.warning("Veuillez accepter la politique de confidentialité.");
       return;
     }
     try {
@@ -163,27 +162,32 @@ const ConstructionDetails = () => {
       });
       if (response.data.success) {
         const account = response.data.account;
-        setPlanNotice({
-          type: "success",
-          message: account ?
+        toast.success(
+          account ?
           "Merci ! Vous pouvez consulter le plan. Votre compte visiteur a été créé." :
           "Merci ! Vous pouvez consulter le plan."
-        });
-        if (account?.default_password) {
+        );
+        if (account?.password_sent_by_email) {
           setCreatedAccount({
             email: account.email,
-            defaultPassword: account.default_password
+            passwordSentByEmail: true
           });
         }
         setPlansUnlocked(true);
+        setPlanForm({
+          email: user?.email || "",
+          phone: user?.phone || "",
+          sector: "",
+          department: "",
+          project_description: "",
+          consent: false
+        });
       }
     } catch (err) {
-      setPlanNotice({
-        type: "error",
-        message:
+      toast.error(
         err.response?.data?.message ||
         "Erreur lors de l'envoi du formulaire."
-      });
+      );
     } finally {
       setIsPlanSubmitting(false);
     }
@@ -266,6 +270,13 @@ const ConstructionDetails = () => {
           </span>]
         }
         planImage={resolvedPlans[0] || null}
+        planLocked={!plansUnlocked}
+        onPlanLockedClick={() => {
+          toast.warning(
+            "Veuillez remplir le formulaire pour voir le plan de construction."
+          );
+          scrollToSection("contact-section");
+        }}
         render3DImage={resolvedRender3D[0] || null} />
 
 
@@ -297,9 +308,50 @@ const ConstructionDetails = () => {
                     </span>{" "}
                     </div>
                   </div>{" "}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-6 border-y border-gray-200">
+                  <div className="md:text-left mb-4">
+                    <div className="text-3xl md:text-4xl font-bold text-green-600 mb-1">
+                      {formatPrice(project.budget_min)}
+                    </div>
+                    <div className="text-gray-600 text-sm">Budget minimum</div>
+                    {project.budget_max &&
+                    <div className="text-sm text-gray-500 mt-2">
+                        Jusqu'à {formatPrice(project.budget_max)}
+                      </div>
+                    }
+                    <div className="mt-4">
+                      <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800">
+                        <CheckCircle size={14} className="mr-1" />
+                        Projet disponible
+                      </span>
+                    </div>
+                  </div>
+                  {project.partner &&
+                  <Link
+                    to={`/partners/${project.partner.uuid}`}
+                    className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 transition hover:border-green-200 hover:bg-green-50/50">
+                    {project.partner.logo_url || project.partner.logo_path ?
+                    <img
+                      src={toMediaUrl(project.partner.logo_url || project.partner.logo_path)}
+                      alt={project.partner.company_name}
+                      className="h-12 w-12 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                      <Handshake size={20} />
+                    </div>
+                    }
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                        {getPartnerTypeLabel(project.partner)}
+                      </p>
+                      <p className="truncate text-base font-semibold text-gray-900">
+                        {project.partner.company_name}
+                      </p>
+                    </div>
+                    <ChevronRight size={18} className="shrink-0 text-gray-400" />
+                  </Link>
+                  }
+                  <div className="flex flex-wrap justify-center gap-x-8 gap-y-5 py-6 border-y border-gray-200">
                     {" "}
-                    <div className="text-center">
+                    <div className="text-center min-w-[110px]">
                       {" "}
                       <div className="flex items-center justify-center space-x-2 mb-2">
                         {" "}
@@ -313,7 +365,7 @@ const ConstructionDetails = () => {
                         m2 Surface
                       </div>{" "}
                     </div>{" "}
-                    <div className="text-center">
+                    <div className="text-center min-w-[110px]">
                       {" "}
                       <div className="flex items-center justify-center space-x-2 mb-2">
                         {" "}
@@ -325,37 +377,6 @@ const ConstructionDetails = () => {
                       </div>{" "}
                       <div className="text-sm text-gray-600">Ville</div>{" "}
                     </div>{" "}
-                    <div className="text-center">
-                      {" "}
-                      <div className="flex items-center justify-center space-x-2 mb-2">
-                        {" "}
-                        <CheckCircle
-                          className="text-green-600"
-                          size={24} />
-                        {" "}
-                        <span className="text-2xl font-bold text-gray-900">
-                          {" "}
-                          {formatPrice(project.budget_max)}{" "}
-                        </span>{" "}
-                      </div>{" "}
-                      <div className="text-sm text-gray-600">Budget max</div>{" "}
-                    </div>{" "}
-                  </div>{" "}
-                </div>{" "}
-                <div className="md:text-right">
-                  {" "}
-                  <div className="text-3xl md:text-4xl font-bold text-green-600 mb-1">
-                    {" "}
-                    {formatPrice(project.budget_min)}{" "}
-                  </div>{" "}
-                  <div className="text-gray-600">Budget minimum</div>{" "}
-                  <div className="mt-4">
-                    {" "}
-                    <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800">
-                      {" "}
-                      <CheckCircle size={14} className="mr-1" /> Projet
-                      disponible{" "}
-                    </span>{" "}
                   </div>{" "}
                 </div>{" "}
               </div>{" "}
@@ -407,11 +428,9 @@ const ConstructionDetails = () => {
                       className="relative overflow-hidden border border-gray-200 text-left focus:outline-none focus:ring-2 focus:ring-green-500"
                       onClick={() => {
                         if (!plansUnlocked) {
-                          setPlanNotice({
-                            type: "error",
-                            message:
+                          toast.warning(
                             "Veuillez remplir le formulaire pour voir le plan de construction."
-                          });
+                          );
                           scrollToSection("contact-section");
                           return;
                         }
@@ -531,14 +550,6 @@ const ConstructionDetails = () => {
                   </p>{" "}
                 </div>{" "}
               </div>{" "}
-              {planNotice.message &&
-              <div
-                className={` px-4 py-3 text-sm border ${planNotice.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}>
-
-                  {" "}
-                  {planNotice.message}{" "}
-                </div>
-              }{" "}
               <form onSubmit={handlePlanSubmit} className="space-y-4">
                 {" "}
                 <div>
@@ -709,50 +720,74 @@ const ConstructionDetails = () => {
               return (
                 <div
                   key={item.uuid}
-                  className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
+                  className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                   onClick={() => navigate(`/construction/${item.uuid}`)}>
 
-                    {" "}
-                    <div className="relative h-48">
-                      {" "}
+                    <div className="relative h-56 overflow-hidden">
                       <img
                       src={cover}
                       alt={item.title}
-                      className="w-full h-full object-cover" />
-                    {" "}
-                      <div className="absolute top-3 left-3">
-                        {" "}
-                        <span className="px-3 py-1 text-xs font-semibold bg-green-600 text-white">
-                          {" "}
-                          Projet{" "}
-                        </span>{" "}
-                      </div>{" "}
-                    </div>{" "}
-                    <div className="p-4">
-                      {" "}
-                      <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">
-                        {" "}
-                        {item.title || "Projet de construction"}{" "}
-                      </h3>{" "}
-                      <div className="flex items-center text-gray-600 text-sm mb-3">
-                        {" "}
-                        <MapPin size={14} className="mr-1" />{" "}
-                        <span className="truncate">
-                          {item.city || item.location || "Localisation"}
-                        </span>{" "}
-                      </div>{" "}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute top-4 left-4 flex items-center space-x-2">
+                        <span className="bg-red-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                          Disponible
+                        </span>
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="mb-1 text-xl font-bold text-white line-clamp-1">
+                          {item.title || "Projet de construction"}
+                        </h3>
+                        <div className="flex items-center text-sm text-white/90">
+                          <MapPin size={14} className="mr-1 flex-shrink-0" />
+                          <span className="truncate">
+                            {item.city || item.location || "Localisation"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-5 sm:p-6">
+                      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                        {item.partner?.logo_url || item.partner?.logo_path ?
+                      <img
+                        src={getStorageUrl(item.partner.logo_url || item.partner.logo_path)}
+                        alt={item.partner.company_name}
+                        className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                            <Handshake size={18} />
+                          </div>
+                      }
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                            {getPartnerTypeLabel(item.partner, "Partenaire constructeur")}
+                          </p>
+                          <p className="truncate text-sm font-semibold text-gray-900">
+                            {item.partner?.company_name || "Africa Build Investment"}
+                          </p>
+                        </div>
+                      </div>
                       <div className="flex items-center justify-between">
-                        {" "}
-                        <div className="text-xl font-bold text-green-600">
-                          {" "}
-                          {formatPrice(item.budget_min)}{" "}
-                        </div>{" "}
-                        <div className="text-sm text-gray-500">
-                          {" "}
-                          {item.surface_area || 0} m2{" "}
-                        </div>{" "}
-                      </div>{" "}
-                    </div>{" "}
+                        <div>
+                          <div className="mb-1 text-xs text-gray-500">
+                            À partir de
+                          </div>
+                          <div className="text-2xl font-bold text-red-600">
+                            {formatPrice(item.budget_min)}
+                          </div>
+                        </div>
+                        <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/construction/${item.uuid}`);
+                        }}
+                        className="bg-red-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-red-700">
+
+                          Details
+                        </button>
+                      </div>
+                    </div>
                   </div>);
 
             })}{" "}

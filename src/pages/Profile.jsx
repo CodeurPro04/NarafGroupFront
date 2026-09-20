@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   User,
@@ -10,19 +10,82 @@ import {
   FileText,
   Key,
   Send,
-  AlertCircle,
   MapPin,
   CheckCircle,
   ExternalLink,
   Building2,
-  TrendingUp } from
+  TrendingUp,
+  Home,
+  Plus,
+  ArrowLeft,
+  Check,
+  CheckCheck,
+  Loader2 } from
 "lucide-react";
 import { visitorService } from "../services/visitorService";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import PartnerProductsManager from "../components/partner/PartnerProductsManager";
 import InvestorDashboard from "../components/investor/InvestorDashboard";
+import { toMediaUrl } from "../utils/media";
+import { useToast } from "../components/ui/Toast";
 const emptyList = [];
-const MESSAGES_PER_PAGE = 3;
+const AGENT_TYPE_LABELS = {
+  constructeur: "Agent Construction",
+  immobilier: "Agent Immobilier",
+  investissement: "Agent Investissement"
+};
+const AGENT_TYPE_COLORS = {
+  constructeur: "bg-amber-100 text-amber-700",
+  immobilier: "bg-blue-100 text-blue-700",
+  investissement: "bg-emerald-100 text-emerald-700"
+};
+const AgentTypeBadge = ({ agentType, className = "" }) => {
+  if (!agentType || !AGENT_TYPE_LABELS[agentType]) return null;
+  return (
+    <span
+      className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${AGENT_TYPE_COLORS[agentType]} ${className}`}>
+
+      {AGENT_TYPE_LABELS[agentType]}
+    </span>);
+
+};
+const ROLE_LABELS = {
+  admin: "Administrateur",
+  administrateur: "Administrateur",
+  gestionnaire: "Gestionnaire"
+};
+// Libelle affiche sous une bulle de message : nom + role (administrateur,
+// gestionnaire, ou specialite de l'agent) pour que l'utilisateur sache
+// toujours precisement qui lui repond.
+const getSenderLabel = (senderUser) => {
+  if (!senderUser) return "Agent";
+  const name = senderUser.full_name || "Agent";
+  const roleSlug = senderUser.role?.slug;
+  if (ROLE_LABELS[roleSlug]) return `${name} · ${ROLE_LABELS[roleSlug]}`;
+  if (roleSlug === "agent") {
+    const typeLabel = AGENT_TYPE_LABELS[senderUser.agent_type];
+    return typeLabel ? `${name} · ${typeLabel}` : `${name} · Agent`;
+  }
+  return name;
+};
+const getInitials = (name) => {
+  if (!name) return "?";
+  return name.
+  trim().
+  split(/\s+/).
+  slice(0, 2).
+  map((part) => part[0]?.toUpperCase() || "").
+  join("");
+};
+const formatMessageTime = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  const now = new Date();
+  const sameDay = date.toDateString() === now.toDateString();
+  const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  if (sameDay) return time;
+  return `${date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })} ${time}`;
+};
 const parseNumber = (value) => {
   if (value === "" || value === null || value === undefined) return null;
   const parsed = Number(value);
@@ -45,7 +108,19 @@ const ProfilePage = () => {
     new_password_confirmation: ""
   });
   const [messages, setMessages] = useState(emptyList);
-  const [messagesPage, setMessagesPage] = useState(1);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [threadMessages, setThreadMessages] = useState(emptyList);
+  const [threadLoading, setThreadLoading] = useState(false);
+  const [chatDraft, setChatDraft] = useState("");
+  const [sendingChat, setSendingChat] = useState(false);
+  const [showNewChat, setShowNewChat] = useState(false);
+  const [messageableAgents, setMessageableAgents] = useState(emptyList);
+  const [agentsLoading, setAgentsLoading] = useState(false);
+  const [newChatAgent, setNewChatAgent] = useState(null);
+  const [newChatDraft, setNewChatDraft] = useState("");
+  const [startingChat, setStartingChat] = useState(false);
+  const chatContainerRef = useRef(null);
+  const prevThreadLengthRef = useRef(0);
   const [searchRequests, setSearchRequests] = useState(emptyList);
   const [constructionRequests, setConstructionRequests] = useState(emptyList);
   const [propertyRequests, setPropertyRequests] = useState(emptyList);
@@ -70,7 +145,6 @@ const ProfilePage = () => {
     city: ""
   });
   const [propertyRequestText, setPropertyRequestText] = useState("");
-  const [replyDrafts, setReplyDrafts] = useState({});
   const [loading, setLoading] = useState({
     profile: true,
     messages: false,
@@ -79,7 +153,7 @@ const ProfilePage = () => {
     property: false,
     action: false
   });
-  const [notice, setNotice] = useState({ type: "", message: "" });
+  const toast = useToast();
   const isAuthenticated = useMemo(() => {
     const token = localStorage.getItem("auth_token");
     return Boolean(token);
@@ -91,6 +165,40 @@ const ProfilePage = () => {
   const isManager = role === "gestionnaire";
   const isAgent = role === "agent";
   const isAdmin = role === "admin" || role === "administrateur";
+  const conversations = useMemo(() => {
+    const myId = profile?.id;
+    if (!myId || !Array.isArray(messages) || messages.length === 0) return emptyList;
+
+    const groups = new Map();
+    messages.forEach((message) => {
+      const key = message.parent_message_id || message.id;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(message);
+    });
+
+    const list = [];
+    groups.forEach((groupMessages) => {
+      const root = groupMessages.find((item) => !item.parent_message_id) || groupMessages[0];
+      const sorted = [...groupMessages].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+      const last = sorted[sorted.length - 1];
+      const otherParty = last.sender_id === myId ? last.recipient : last.sender;
+      const unread = groupMessages.some(
+        (item) => item.recipient_id === myId && !item.is_read
+      );
+      list.push({
+        uuid: root.uuid,
+        otherParty: otherParty || { full_name: "Utilisateur" },
+        lastMessage: last,
+        unread
+      });
+    });
+
+    return list.sort(
+      (a, b) => new Date(b.lastMessage.created_at) - new Date(a.lastMessage.created_at)
+    );
+  }, [messages, profile?.id]);
   const tabs = useMemo(() => {
     const baseTabs = [
     { id: "profil", label: "Profil", icon: <User size={18} /> },
@@ -146,8 +254,8 @@ const ProfilePage = () => {
   }, [location.pathname, location.state, navigate, tabs]);
 
   const showNotice = (type, message) => {
-    setNotice({ type, message });
-    setTimeout(() => setNotice({ type: "", message: "" }), 4000);
+    const notify = toast[type] || toast.info;
+    notify(message);
   };
   const loadProfile = async () => {
     setLoading((prev) => ({ ...prev, profile: true }));
@@ -175,11 +283,99 @@ const ProfilePage = () => {
     try {
       const response = await visitorService.getMessagesByRole(role);
       setMessages(visitorService.extractList(response));
-      setMessagesPage(1);
     } catch (error) {
-      showNotice("error", "Impossible de charger les messages.");
+      if (!silent) showNotice("error", "Impossible de charger les messages.");
     } finally {
       if (!silent) setLoading((prev) => ({ ...prev, messages: false }));
+    }
+  };
+  const openConversation = async (conversation) => {
+    setSelectedConversation(conversation);
+    setThreadMessages(emptyList);
+    setThreadLoading(true);
+    try {
+      const response = await visitorService.getThreadByRole(role, conversation.uuid);
+      setThreadMessages(visitorService.extractThread(response));
+      loadMessages({ silent: true });
+    } catch (error) {
+      showNotice("error", "Impossible de charger la conversation.");
+    } finally {
+      setThreadLoading(false);
+    }
+  };
+  const refreshThread = async (uuid, { silentList = true } = {}) => {
+    try {
+      const response = await visitorService.getThreadByRole(role, uuid);
+      setThreadMessages(visitorService.extractThread(response));
+      if (!silentList) loadMessages({ silent: true });
+    } catch (error) {
+      // Rafraichissement silencieux : on ignore les echecs ponctuels.
+    }
+  };
+  const sendChatMessage = async () => {
+    const text = chatDraft.trim();
+    if (!text || !selectedConversation || sendingChat) return;
+    setSendingChat(true);
+    try {
+      await visitorService.replyMessageByRole(role, selectedConversation.uuid, {
+        message: text
+      });
+      setChatDraft("");
+      await refreshThread(selectedConversation.uuid);
+      loadMessages({ silent: true });
+    } catch (error) {
+      showNotice("error", "Erreur lors de l'envoi du message.");
+    } finally {
+      setSendingChat(false);
+    }
+  };
+  const handleChatKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendChatMessage();
+    }
+  };
+  const openNewChatPanel = async () => {
+    setShowNewChat(true);
+    setNewChatAgent(null);
+    setNewChatDraft("");
+    setAgentsLoading(true);
+    try {
+      const response = await visitorService.listMessageableAgents();
+      setMessageableAgents(visitorService.extractList(response));
+    } catch (error) {
+      showNotice("error", "Impossible de charger la liste des agents.");
+    } finally {
+      setAgentsLoading(false);
+    }
+  };
+  const startNewConversation = async () => {
+    const text = newChatDraft.trim();
+    if (!newChatAgent || !text || startingChat) return;
+    setStartingChat(true);
+    try {
+      const response = await visitorService.startConversationByRole(role, {
+        recipient_id: newChatAgent.id,
+        message: text
+      });
+      const created = response?.data?.data;
+      setShowNewChat(false);
+      showNotice("success", "Conversation demarree.");
+      await loadMessages({ silent: true });
+      if (created?.uuid) {
+        openConversation({
+          uuid: created.uuid,
+          otherParty: {
+            id: newChatAgent.id,
+            full_name: newChatAgent.full_name,
+            avatar: newChatAgent.avatar
+          }
+        });
+      }
+    } catch (error) {
+      showNotice("error", "Erreur lors de l'envoi du message.");
+    } finally {
+      setStartingChat(false);
     }
   };
   const loadSearchRequests = async ({ silent = false } = {}) => {
@@ -248,6 +444,30 @@ const ProfilePage = () => {
       loadPropertyRequests();
     }
   }, [activeTab, isAuthenticated, isOwner, loading.profile, role]);
+  useEffect(() => {
+    if (activeTab !== "messages" || !isAuthenticated) return;
+    const interval = setInterval(() => loadMessages({ silent: true }), 8000);
+    return () => clearInterval(interval);
+  }, [activeTab, isAuthenticated, role]);
+  useEffect(() => {
+    if (activeTab !== "messages" || !selectedConversation) return;
+    const interval = setInterval(() => {
+      refreshThread(selectedConversation.uuid);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [activeTab, selectedConversation, role]);
+  useEffect(() => {
+    prevThreadLengthRef.current = 0;
+  }, [selectedConversation?.uuid]);
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+    const hasNewMessage = threadMessages.length > prevThreadLengthRef.current;
+    prevThreadLengthRef.current = threadMessages.length;
+    if (hasNewMessage) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [threadMessages]);
   const handleProfileChange = (event) => {
     const { name, value } = event.target;
     setProfileForm((prev) => ({ ...prev, [name]: value }));
@@ -279,7 +499,7 @@ const ProfilePage = () => {
   const updateProfile = async (event) => {
     event.preventDefault();
     if (isVisitor && (!Array.isArray(profileForm.interests) || profileForm.interests.length === 0)) {
-      showNotice("error", "Veuillez sélectionner au moins un centre d'intérêt.");
+      showNotice("warning", "Veuillez sélectionner au moins un centre d'intérêt.");
       return;
     }
     setLoading((prev) => ({ ...prev, action: true }));
@@ -391,7 +611,7 @@ const ProfilePage = () => {
   const submitPropertyRequest = async (event) => {
     event.preventDefault();
     if (!propertyRequestText.trim()) {
-      showNotice("error", "Veuillez saisir votre demande.");
+      showNotice("warning", "Veuillez saisir votre demande.");
       return;
     }
     setLoading((prev) => ({ ...prev, action: true }));
@@ -404,23 +624,6 @@ const ProfilePage = () => {
       loadPropertyRequests({ silent: true });
     } catch (error) {
       showNotice("error", "Erreur lors de la demande.");
-    } finally {
-      setLoading((prev) => ({ ...prev, action: false }));
-    }
-  };
-  const submitReply = async (messageUuid) => {
-    const replyText = replyDrafts[messageUuid];
-    if (!replyText) return;
-    setLoading((prev) => ({ ...prev, action: true }));
-    try {
-      await visitorService.replyMessageByRole(role, messageUuid, {
-        message: replyText
-      });
-      setReplyDrafts((prev) => ({ ...prev, [messageUuid]: "" }));
-      showNotice("success", "Reponse envoyee.");
-      loadMessages({ silent: true });
-    } catch (error) {
-      showNotice("error", "Erreur lors de la reponse.");
     } finally {
       setLoading((prev) => ({ ...prev, action: false }));
     }
@@ -542,19 +745,6 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-        {notice.message &&
-        <div
-          className={`mb-6 border px-4 py-3 flex items-center gap-3 ${notice.type === "error" ? "border-red-200 bg-red-50 text-red-700" : "border-green-200 bg-green-50 text-green-700"}`}>
-
-            {" "}
-            {notice.type === "error" ?
-          <AlertCircle size={18} /> :
-
-          <CheckCircle size={18} />
-          }{" "}
-            <span className="text-sm font-medium">{notice.message}</span>{" "}
-          </div>
-        }{" "}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           {" "}
           <div className="lg:col-span-1 space-y-4">
@@ -653,6 +843,7 @@ const ProfilePage = () => {
                     value={profileForm.first_name}
                     onChange={handleProfileChange}
                     className="mt-2 w-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Votre prénom"
                     required />
                   {" "}
                   </div>{" "}
@@ -666,6 +857,7 @@ const ProfilePage = () => {
                     value={profileForm.last_name}
                     onChange={handleProfileChange}
                     className="mt-2 w-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Votre nom"
                     required />
                   {" "}
                   </div>{" "}
@@ -677,6 +869,7 @@ const ProfilePage = () => {
                     <input
                     value={profile?.email || ""}
                     disabled
+                    placeholder="Adresse email"
                     className="mt-2 w-full border border-gray-200 bg-gray-50 px-4 py-3 text-gray-500" />
                   {" "}
                   </div>{" "}
@@ -689,6 +882,7 @@ const ProfilePage = () => {
                     name="phone"
                     value={profileForm.phone}
                     onChange={handleProfileChange}
+                    placeholder="Ex: +225 07 00 00 00 00"
                     className="mt-2 w-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   {" "}
                   </div>{" "}
@@ -702,11 +896,12 @@ const ProfilePage = () => {
                       </p>
                       <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {[
-                          { value: "immobilier", label: "Immobilier", icon: "🏠" },
-                          { value: "construction", label: "Construction", icon: "🏗️" },
-                          { value: "investissement", label: "Investissement", icon: "📈" }
+                          { value: "immobilier", label: "Immobilier", icon: Home },
+                          { value: "construction", label: "Construction", icon: Hammer },
+                          { value: "investissement", label: "Investissement", icon: TrendingUp }
                         ].map((interest) => {
                           const selected = Array.isArray(profileForm.interests) && profileForm.interests.includes(interest.value);
+                          const InterestIcon = interest.icon;
                           return (
                             <button
                               key={interest.value}
@@ -719,9 +914,15 @@ const ProfilePage = () => {
                               }`}
                             >
                               <div className="flex items-center justify-between gap-3">
-                                <div>
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                                      selected ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                                    }`}
+                                  >
+                                    <InterestIcon size={16} />
+                                  </span>
                                   <div className="text-sm font-semibold text-gray-900">
-                                    <span className="mr-2">{interest.icon}</span>
                                     {interest.label}
                                   </div>
                                 </div>
@@ -753,132 +954,269 @@ const ProfilePage = () => {
               </div>
             }{" "}
             {activeTab === "messages" &&
-            <div className="bg-white border border-gray-200 shadow-lg p-6">
-                {" "}
-                <div className="flex items-center gap-3 mb-6">
-                  {" "}
-                  <MessageSquare className="text-blue-600" />{" "}
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Messages
-                  </h3>{" "}
-                </div>{" "}
-                {loading.messages ?
-              <div className="space-y-4">
-                    {" "}
-                    {Array.from({ length: 3 }).map((_, idx) =>
-                <div
-                  key={`message-skeleton-${idx}`}
-                  className="border border-gray-200 p-4 space-y-3">
-
-                        {" "}
-                        <SkeletonBlock className="h-4 w-32" />{" "}
-                        <SkeletonBlock className="h-3 w-48" />{" "}
-                        <SkeletonBlock className="h-20 w-full" />{" "}
-                        <SkeletonBlock className="h-9 w-full" />{" "}
-                      </div>
-                )}{" "}
-                  </div> :
-              messages.length === 0 ?
-              <div className="text-center py-12 text-gray-500">
-                    {" "}
-                    Aucun message pour le moment.{" "}
-                  </div> :
-
-              <div className="space-y-4">
-                    {" "}
-                    {messages.
-                slice(
-                  (messagesPage - 1) * MESSAGES_PER_PAGE,
-                  messagesPage * MESSAGES_PER_PAGE
-                ).
-                map((message) =>
-                <div
-                  key={message.uuid}
-                  className="border border-gray-200 p-4 space-y-3">
-
-                        {" "}
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                          {" "}
-                          <div>
-                            {" "}
-                            <p className="text-sm font-semibold text-gray-900">
-                              {" "}
-                              {message.subject || "Sans objet"}{" "}
-                            </p>{" "}
-                            <p className="text-xs text-gray-500">
-                              {" "}
-                              {message.sender?.full_name ||
-                        "Service NARAF"}{" "}
-                            </p>{" "}
-                          </div>{" "}
-                          <span className="text-xs text-gray-400">
-                            {" "}
-                            {message.created_at ?
-                      new Date(
-                        message.created_at
-                      ).toLocaleDateString() :
-                      ""}{" "}
-                          </span>{" "}
-                        </div>{" "}
-                        <p className="text-sm text-gray-700 whitespace-pre-line">
-                          {" "}
-                          {message.message}{" "}
-                        </p>{" "}
-                        <div className="flex flex-col md:flex-row md:items-center gap-2">
-                          {" "}
-                          <input
-                      value={replyDrafts[message.uuid] || ""}
-                      onChange={(event) =>
-                      setReplyDrafts((prev) => ({
-                        ...prev,
-                        [message.uuid]: event.target.value
-                      }))
-                      }
-                      className="flex-1 border border-gray-300 px-3 py-2 text-sm"
-                      placeholder="Ecrire une reponse..." />
-                    {" "}
-                          <button
-                      onClick={() => submitReply(message.uuid)}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm hover:bg-blue-700">
-
-                            {" "}
-                            <Send size={16} /> Repondre{" "}
-                          </button>{" "}
-                        </div>{" "}
-                      </div>
-                )}{" "}
-                    {messages.length > MESSAGES_PER_PAGE && (
-                  <div className="flex items-center justify-between pt-2">
-                        <button
-                      type="button"
-                      onClick={() =>
-                      setMessagesPage((prev) => Math.max(1, prev - 1))
-                      }
-                      disabled={messagesPage <= 1}
-                      className="px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                          Precedent
-                        </button>
-                        <p className="text-sm text-gray-500">
-                          Page {messagesPage} / {Math.max(1, Math.ceil(messages.length / MESSAGES_PER_PAGE))}
-                        </p>
-                        <button
-                      type="button"
-                      onClick={() =>
-                      setMessagesPage((prev) =>
-                      Math.min(
-                        Math.ceil(messages.length / MESSAGES_PER_PAGE),
-                        prev + 1
-                      )
-                      )
-                      }
-                      disabled={messagesPage >= Math.ceil(messages.length / MESSAGES_PER_PAGE)}
-                      className="px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                          Suivant
-                        </button>
-                      </div>
-                )}{" "}
+            <div className="bg-white border border-gray-200 shadow-lg overflow-hidden">
+                <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 sm:px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <MessageSquare className="text-blue-600" />
+                    <h3 className="text-xl font-semibold text-gray-900">Messages</h3>
                   </div>
-              }{" "}
+                  <button
+                  type="button"
+                  onClick={openNewChatPanel}
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">
+
+                    <Plus size={16} /> <span className="hidden sm:inline">Nouvelle conversation</span>
+                  </button>
+                </div>
+                <div className="flex h-[560px] max-h-[75vh]">
+                  <div
+                  className={`w-full sm:w-80 shrink-0 border-r border-gray-200 overflow-y-auto ${
+                  selectedConversation ? "hidden sm:block" : "block"}`
+                  }>
+
+                    {loading.messages ?
+                  <div className="p-4 space-y-4">
+                        {Array.from({ length: 4 }).map((_, idx) =>
+                    <div key={`conv-skeleton-${idx}`} className="flex items-center gap-3">
+                            <SkeletonBlock className="h-10 w-10 rounded-full" />
+                            <div className="flex-1 space-y-2">
+                              <SkeletonBlock className="h-3 w-2/3" />
+                              <SkeletonBlock className="h-3 w-full" />
+                            </div>
+                          </div>
+                    )}
+                      </div> :
+                  conversations.length === 0 ?
+                  <div className="text-center py-12 px-4 text-gray-500 text-sm">
+                        Aucune conversation pour le moment. Cliquez sur "Nouvelle conversation" pour écrire à un agent.
+                      </div> :
+
+                  conversations.map((conversation) =>
+                  <button
+                    key={conversation.uuid}
+                    type="button"
+                    onClick={() => openConversation(conversation)}
+                    className={`w-full text-left px-4 py-3 border-b border-gray-100 flex items-center gap-3 hover:bg-gray-50 transition ${
+                    selectedConversation?.uuid === conversation.uuid ? "bg-blue-50" : ""}`
+                    }>
+
+                        {conversation.otherParty?.avatar ?
+                    <img
+                      src={toMediaUrl(conversation.otherParty.avatar)}
+                      alt={conversation.otherParty.full_name}
+                      className="h-10 w-10 rounded-full object-cover shrink-0" /> :
+
+
+                    <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold shrink-0">
+                            {getInitials(conversation.otherParty?.full_name)}
+                          </div>
+                    }
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className={`text-sm truncate min-w-0 ${conversation.unread ? "font-bold text-gray-900" : "font-semibold text-gray-900"}`}>
+                              {conversation.otherParty?.full_name || "Agent"}
+                            </p>
+                            <span className="text-[11px] text-gray-400 shrink-0">
+                              {formatMessageTime(conversation.lastMessage.created_at)}
+                            </span>
+                          </div>
+                          <AgentTypeBadge agentType={conversation.otherParty?.agent_type} className="mt-0.5" />
+                          <p className={`text-xs truncate ${conversation.unread ? "font-semibold text-gray-900" : "text-gray-500"}`}>
+                            {conversation.lastMessage.message}
+                          </p>
+                        </div>
+                        {conversation.unread &&
+                    <span className="h-2.5 w-2.5 rounded-full bg-blue-600 shrink-0" />
+                    }
+                      </button>
+                  )}
+                  </div>
+                  <div className={`flex-1 flex-col ${selectedConversation ? "flex" : "hidden sm:flex"}`}>
+                    {!selectedConversation ?
+                  <div className="flex-1 flex items-center justify-center text-gray-400 text-sm px-6 text-center">
+                        Sélectionnez une conversation ou démarrez-en une nouvelle pour écrire à un agent.
+                      </div> :
+
+                  <>
+                        <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3">
+                          <button
+                        type="button"
+                        onClick={() => setSelectedConversation(null)}
+                        className="sm:hidden text-gray-500 hover:text-gray-700">
+
+                            <ArrowLeft size={18} />
+                          </button>
+                          {selectedConversation.otherParty?.avatar ?
+                      <img
+                        src={toMediaUrl(selectedConversation.otherParty.avatar)}
+                        alt={selectedConversation.otherParty.full_name}
+                        className="h-9 w-9 rounded-full object-cover" /> :
+
+
+                      <div className="h-9 w-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold">
+                              {getInitials(selectedConversation.otherParty?.full_name)}
+                            </div>
+                      }
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate">
+                              {selectedConversation.otherParty?.full_name || "Agent"}
+                            </p>
+                            <AgentTypeBadge agentType={selectedConversation.otherParty?.agent_type} className="mt-0.5" />
+                          </div>
+                        </div>
+                        <div ref={chatContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-2 bg-gray-50">
+                          {threadLoading ?
+                      <div className="space-y-3">
+                              <SkeletonBlock className="h-10 w-2/3" />
+                              <SkeletonBlock className="h-10 w-1/2 ml-auto" />
+                              <SkeletonBlock className="h-10 w-3/5" />
+                            </div> :
+
+                      threadMessages.map((message) => {
+                            const isOwn = message.sender_id === profile?.id;
+                            const senderName = isOwn ?
+                            "Vous" :
+                            getSenderLabel(message.sender || selectedConversation.otherParty);
+                            return (
+                              <div key={message.uuid} className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
+                                <div
+                                className={`max-w-[78%] px-3.5 py-2.5 text-sm leading-relaxed shadow-sm rounded-2xl ${
+                                isOwn ?
+                                "bg-blue-600 text-white rounded-br-sm" :
+                                "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"}`
+                                }>
+
+                                  <p className="whitespace-pre-line">{message.message}</p>
+                                  <span
+                                  className={`mt-1 flex items-center gap-1 text-[10px] ${
+                                  isOwn ? "text-blue-100 justify-end" : "text-gray-400"}`
+                                  }>
+
+                                    {formatMessageTime(message.created_at)}
+                                    {isOwn &&
+                                    (message.is_read ?
+                                    <CheckCheck size={13} /> :
+
+                                    <Check size={13} />)
+                                    }
+                                  </span>
+                                </div>
+                                <span className="mt-1 px-1 text-[11px] text-gray-400">{senderName}</span>
+                              </div>);
+
+                          })
+                      }
+                        </div>
+                        <div className="border-t border-gray-200 p-3 flex items-end gap-2">
+                          <textarea
+                        rows={1}
+                        value={chatDraft}
+                        onChange={(event) => setChatDraft(event.target.value)}
+                        onKeyDown={handleChatKeyDown}
+                        placeholder="Écrire un message..."
+                        className="flex-1 resize-none rounded-2xl border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                          <button
+                        type="button"
+                        onClick={sendChatMessage}
+                        disabled={!chatDraft.trim() || sendingChat}
+                        className="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed">
+
+                            {sendingChat ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                          </button>
+                        </div>
+                      </>
+                  }
+                  </div>
+                </div>
+              </div>
+            }{" "}
+            {showNewChat &&
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                <div className="bg-white w-full max-w-md shadow-xl">
+                  <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+                    <h4 className="text-lg font-semibold text-gray-900">Nouvelle conversation</h4>
+                    <button
+                    type="button"
+                    onClick={() => setShowNewChat(false)}
+                    className="text-gray-400 hover:text-gray-600">
+
+                      ✕
+                    </button>
+                  </div>
+                  <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Choisir un agent</label>
+                      {agentsLoading ?
+                    <div className="mt-2 space-y-2">
+                          <SkeletonBlock className="h-10 w-full" />
+                          <SkeletonBlock className="h-10 w-full" />
+                        </div> :
+                    messageableAgents.length === 0 ?
+                    <p className="mt-2 text-sm text-gray-500">Aucun agent disponible pour le moment.</p> :
+
+                    <div className="mt-2 space-y-2 max-h-56 overflow-y-auto">
+                          {messageableAgents.map((agent) =>
+                      <button
+                        key={agent.id}
+                        type="button"
+                        onClick={() => setNewChatAgent(agent)}
+                        className={`w-full flex items-center gap-3 border px-3 py-2 text-left transition ${
+                        newChatAgent?.id === agent.id ?
+                        "border-blue-500 bg-blue-50" :
+                        "border-gray-200 hover:border-gray-300 hover:bg-gray-50"}`
+                        }>
+
+                              {agent.avatar ?
+                        <img
+                          src={toMediaUrl(agent.avatar)}
+                          alt={agent.full_name}
+                          className="h-9 w-9 rounded-full object-cover shrink-0" /> :
+
+
+                        <div className="h-9 w-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
+                                  {getInitials(agent.full_name)}
+                                </div>
+                        }
+                              <span className="min-w-0">
+                                <span className="block text-sm font-medium text-gray-900 truncate">{agent.full_name}</span>
+                                <AgentTypeBadge agentType={agent.agent_type} className="mt-0.5" />
+                              </span>
+                            </button>
+                      )}
+                        </div>
+                    }
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Votre message</label>
+                      <textarea
+                      rows={4}
+                      value={newChatDraft}
+                      onChange={(event) => setNewChatDraft(event.target.value)}
+                      placeholder="Bonjour, j'aimerais avoir des informations sur..."
+                      className="mt-2 w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 border-t border-gray-200 px-5 py-4">
+                    <button
+                    type="button"
+                    onClick={() => setShowNewChat(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300">
+
+                      Annuler
+                    </button>
+                    <button
+                    type="button"
+                    onClick={startNewConversation}
+                    disabled={!newChatAgent || !newChatDraft.trim() || startingChat}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed">
+
+                      {startingChat ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                      Envoyer
+                    </button>
+                  </div>
+                </div>
               </div>
             }{" "}
             {activeTab === "investisseur" && isVisitor &&
@@ -949,6 +1287,7 @@ const ProfilePage = () => {
                       name="budget_min"
                       value={searchForm.budget_min}
                       onChange={handleSearchFormChange}
+                      placeholder="Ex: 50 000 000"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -961,6 +1300,7 @@ const ProfilePage = () => {
                       name="budget_max"
                       value={searchForm.budget_max}
                       onChange={handleSearchFormChange}
+                      placeholder="Ex: 150 000 000"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -973,6 +1313,7 @@ const ProfilePage = () => {
                       name="bedrooms_min"
                       value={searchForm.bedrooms_min}
                       onChange={handleSearchFormChange}
+                      placeholder="Ex: 3"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -985,6 +1326,7 @@ const ProfilePage = () => {
                       name="surface_min"
                       value={searchForm.surface_min}
                       onChange={handleSearchFormChange}
+                      placeholder="Ex: 120"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1013,6 +1355,7 @@ const ProfilePage = () => {
                       value={searchForm.additional_requirements}
                       onChange={handleSearchFormChange}
                       rows={3}
+                      placeholder="Précisez vos besoins spécifiques (piscine, garage, proximité écoles...)"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1110,6 +1453,7 @@ const ProfilePage = () => {
                       name="title"
                       value={constructionForm.title}
                       onChange={handleConstructionFormChange}
+                      placeholder="Ex: Villa moderne 4 pièces"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1124,6 +1468,7 @@ const ProfilePage = () => {
                       onChange={handleConstructionFormChange}
                       rows={4}
                       required
+                      placeholder="Décrivez votre projet de construction..."
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1136,6 +1481,7 @@ const ProfilePage = () => {
                       name="budget_min"
                       value={constructionForm.budget_min}
                       onChange={handleConstructionFormChange}
+                      placeholder="Ex: 20 000 000"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1148,6 +1494,7 @@ const ProfilePage = () => {
                       name="budget_max"
                       value={constructionForm.budget_max}
                       onChange={handleConstructionFormChange}
+                      placeholder="Ex: 80 000 000"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1160,6 +1507,7 @@ const ProfilePage = () => {
                       name="surface_area"
                       value={constructionForm.surface_area}
                       onChange={handleConstructionFormChange}
+                      placeholder="Ex: 200"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1172,6 +1520,7 @@ const ProfilePage = () => {
                       name="city"
                       value={constructionForm.city}
                       onChange={handleConstructionFormChange}
+                      placeholder="Ex: Abidjan"
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1184,6 +1533,7 @@ const ProfilePage = () => {
                       name="location"
                       value={constructionForm.location}
                       onChange={handleConstructionFormChange}
+                      placeholder="Quartier, adresse précise..."
                       className="mt-2 w-full border border-gray-300 px-4 py-3" />
                     {" "}
                     </div>{" "}
@@ -1371,6 +1721,7 @@ const ProfilePage = () => {
                     value={passwordForm.current_password}
                     onChange={handlePasswordChange}
                     className="mt-2 w-full border border-gray-300 px-4 py-3"
+                    placeholder="••••••••"
                     required />
                   {" "}
                   </div>{" "}
@@ -1385,6 +1736,7 @@ const ProfilePage = () => {
                     value={passwordForm.new_password}
                     onChange={handlePasswordChange}
                     className="mt-2 w-full border border-gray-300 px-4 py-3"
+                    placeholder="••••••••"
                     required />
                   {" "}
                   </div>{" "}
@@ -1400,6 +1752,7 @@ const ProfilePage = () => {
                     value={passwordForm.new_password_confirmation}
                     onChange={handlePasswordChange}
                     className="mt-2 w-full border border-gray-300 px-4 py-3"
+                    placeholder="••••••••"
                     required />
                   {" "}
                   </div>{" "}

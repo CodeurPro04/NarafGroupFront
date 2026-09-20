@@ -9,6 +9,7 @@ import { toMediaUrl } from "../utils/media";
 /* ─── Détecte le kind du partenaire ─────────────────── */
 const resolveKind = (companyType) => {
   const t = (companyType || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  if (t.includes("jurid") || t.includes("notair") || t.includes("avocat") || t.includes("huissier")) return "juridique";
   if (t.includes("constructeur") || t.includes("construction")) return "constructeur";
   if (t.includes("investiss")) return "investisseur";
   if (t.includes("financier"))  return "financier";
@@ -292,6 +293,11 @@ const PartnerDetails = () => {
     let mounted = true;
 
     const kind = resolveKind(partner.company_type);
+    if (kind === "juridique") {
+      setProducts([]);
+      setProductsLoading(false);
+      return () => { mounted = false; };
+    }
     const endpoint =
       kind === "constructeur"  ? `/partnerships/${uuid}/construction` :
       kind === "investisseur"  ? `/partnerships/${uuid}/investments`  :

@@ -12,8 +12,6 @@ import {
   MapPin,
   Filter,
   Search,
-  Eye,
-  Heart,
   Zap,
   FileText,
   Home,
@@ -29,6 +27,7 @@ import api from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroInvest from "../assets/heroinvest.jpg";
 
@@ -36,7 +35,6 @@ const Investment = () => {
   const { countryCode, country: selectedCountryInfo } = useSelectedCountry();
   const [activeFilter, setActiveFilter] = useState("tous");
   const [sortBy, setSortBy] = useState("roi_desc");
-  const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [budgetFilter, setBudgetFilter] = useState("tous");
   const [investmentProjects, setInvestmentProjects] = useState([]);
@@ -68,7 +66,11 @@ const Investment = () => {
     const location = project.location || project.city || "";
     const totalInvestment = Number(project.total_investment || 0);
     const currentFunding = Number(project.current_funding || 0);
+    // Le partenaire rattache directement au projet (partner_id) prime sur le
+    // partenariat financier approuve du createur ; sans les deux, la carte
+    // retombe sur "Africa Build Investment" par defaut (voir plus bas).
     const partner =
+    project.partner ||
     project.creator?.approved_financial_partnership ||
     project.approved_financial_partnership ||
     null;
@@ -126,7 +128,9 @@ const Investment = () => {
       {
         name: partner.company_name || partner.name || "Partenaire financier",
         type: partner.company_type || "Partenaire financier",
-        logo: partner.logo_url || partner.logo_path || partner.logo?.file_path || ""
+        legalSpecialty: partner.legal_specialty || null,
+        logo: partner.logo_url || partner.logo_path || partner.logo?.file_path || "",
+        uuid: partner.uuid || null
       } :
       null,
       raw: project
@@ -434,24 +438,10 @@ const Investment = () => {
     }
   });
 
-  const toggleFavorite = (projectId) => {
-    setFavorites((prev) =>
-    prev.includes(projectId) ?
-    prev.filter((id) => id !== projectId) :
-    [...prev, projectId]
-    );
-  };
-
   const calculateAnnualReturn = (investment, roi) => {
     const investmentValue = Number(investment || 0);
     const roiValue = parseFloat(roi) || 0;
     return formatPrice(investmentValue * (roiValue / 100));
-  };
-
-  const getExcerpt = (text, maxLength = 140) => {
-    if (!text) return "Description indisponible pour le moment.";
-    if (text.length <= maxLength) return text;
-    return `${text.slice(0, maxLength).trim()}...`;
   };
 
   const filterOptions = [
@@ -682,7 +672,6 @@ const Investment = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
               {filteredProjects.map((project) => {
-              const isFavorite = favorites.includes(project.id);
               const annualReturn = calculateAnnualReturn(
                 project.minInvestment,
                 project.roi
@@ -696,7 +685,10 @@ const Investment = () => {
                   key={project.id}
                   className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
 
-                    <div className="relative h-56 overflow-hidden">
+                    <div
+                    className="relative h-56 overflow-hidden cursor-pointer"
+                    onClick={() => navigate(`/investment/${project.id}`)}>
+
                       <img
                       src={project.image}
                       alt={project.title}
@@ -712,27 +704,6 @@ const Investment = () => {
                             Complet
                           </span>
                       }
-                      </div>
-                      <div className="absolute top-4 right-4 flex flex-col gap-2">
-                        <button
-                        onClick={() => toggleFavorite(project.id)}
-                        className={`p-2.5 backdrop-blur-sm transition-all ${
-                        isFavorite ?
-                        "bg-rose-500 text-white" :
-                        "bg-white/90 text-gray-700 hover:bg-white"}`
-                        }>
-
-                          <Heart
-                          size={18}
-                          fill={isFavorite ? "currentColor" : "none"} />
-
-                        </button>
-                        <button
-                        onClick={() => navigate(`/investment/${project.id}`)}
-                        className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white transition-colors">
-
-                          <Eye size={18} />
-                        </button>
                       </div>
                       {fundedValue !== null &&
                     <div className="absolute bottom-4 left-4 right-4">
@@ -764,7 +735,10 @@ const Investment = () => {
                         }
                         <div className="min-w-0">
                           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
-                            Partenaire financier
+                            {project.financialPartner ? getPartnerTypeLabel({
+                              company_type: project.financialPartner.type,
+                              legal_specialty: project.financialPartner.legalSpecialty
+                            }) : "Partenaire financier"}
                           </p>
                           <p className="truncate text-sm font-semibold text-gray-900">
                             {project.financialPartner?.name || "Africa Build Investment"}
@@ -778,9 +752,6 @@ const Investment = () => {
                         <MapPin size={14} className="mr-1 flex-shrink-0" />
                         <span className="text-sm">{project.location}</span>
                       </div>
-                      <p className="text-sm text-gray-600 leading-relaxed mb-5">
-                        {getExcerpt(project.description)}
-                      </p>
                       <div className="space-y-4">
                         <div className="bg-gray-50 p-3 text-center">
                           <div className="text-sm text-gray-600 mb-1">

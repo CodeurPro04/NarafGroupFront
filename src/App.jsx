@@ -22,6 +22,7 @@ import Profile from './pages/Profile';
 import Maintenance from './pages/Maintenance';
 import LegalNotice from './pages/LegalNotice';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Terms from './pages/Terms';
 import AbiAboutPage from './pages/AbiAboutPage';
 import AbiRealEstatePlatformPage from './pages/AbiRealEstatePlatformPage';
 import AbiInvestPage from './pages/AbiInvestPage';
@@ -210,6 +211,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/legal" element={<LegalNotice />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="/articles/:sectionKey" element={<ShowcaseArticlesList />} />
             <Route path="/articles/:sectionKey/:articleSlug" element={<ShowcaseArticleDetails />} />
             <Route path="/abi/qui-sommes-nous" element={<AbiAboutPage />} />

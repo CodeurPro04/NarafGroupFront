@@ -26,7 +26,7 @@ import {
   WalletCards,
   X } from
 "lucide-react";
-import { logout } from "../../api/axios";
+import { logout, getNavAds } from "../../api/axios";
 import CountryMenuDropdown from "./CountryMenuDropdown";
 import { AFRICAN_COUNTRIES, getCountryByCode, getSelectedCountryCode, setSelectedCountryCode } from "../../utils/countries";
 
@@ -45,6 +45,7 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [navAds, setNavAds] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
   const selectedCountryData = getCountryByCode(selectedCountry);
@@ -74,6 +75,27 @@ const Header = () => {
     setOpenMobileMenu(null);
     setOpenMobileSubmenu(null);
   }, [location.pathname]);
+
+  useEffect(() => {
+    let isMounted = true;
+    getNavAds()
+      .then((response) => {
+        if (!isMounted) return;
+        const list = response?.data?.data;
+        if (!Array.isArray(list)) return;
+        const byKey = {};
+        list.forEach((slot) => {
+          byKey[slot.key] = slot;
+        });
+        setNavAds(byKey);
+      })
+      .catch((error) => {
+        console.error("Erreur chargement publicites navbar:", error);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLogout = useCallback(async () => {
     if (isLoggingOut) return;
@@ -287,7 +309,7 @@ const Header = () => {
         <div className="relative flex items-center h-[86px]">
           <Link to="/" className="shrink-0 flex items-center gap-3 cursor-pointer">
             <img
-              src="/images/logonaraf.png"
+              src="/images/logovfnaraf-white.png"
               alt="Naraf Groupe logo"
               className="h-14 w-auto object-contain" />
 
@@ -439,9 +461,18 @@ const Header = () => {
                   <h2 className="text-[18px] font-medium text-[#111111]">
                     {activeDesktopGroup.label}
                   </h2>
+                  {navAds[activeDesktopGroup.key]?.mode === "image" &&
+                  navAds[activeDesktopGroup.key]?.image_url ?
+                  <img
+                    src={navAds[activeDesktopGroup.key].image_url}
+                    alt={activeDesktopGroup.label}
+                    className="mt-6 w-full max-w-[285px] rounded-[6px] object-cover"
+                    style={{ maxHeight: "200px" }} /> :
+
                   <p className="mt-10 max-w-[285px] text-[17px] leading-[1.78] text-[#171717]">
-                    {activeDesktopGroup.summary}
+                    {navAds[activeDesktopGroup.key]?.text || activeDesktopGroup.summary}
                   </p>
+                  }
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-16 gap-y-8">

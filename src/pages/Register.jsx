@@ -20,6 +20,7 @@ import {
 "lucide-react";
 import { register } from "../api/axios";
 import { AFRICAN_COUNTRIES, getSelectedCountryCode, setSelectedCountryCode } from "../utils/countries";
+import { useToast } from "../components/ui/Toast";
 
 const PasswordStrength = ({ password }) => {
   if (!password) return null;
@@ -111,11 +112,11 @@ const UserTypeCard = ({ type, isSelected, onSelect }) =>
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
   const isMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === "true";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [manualUserType, setManualUserType] = useState(null);
-  const [message, setMessage] = useState({ type: "", text: "" });
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -152,12 +153,15 @@ const Register = () => {
     const noticeText = location.state?.messageText;
     if (!noticeText) return;
 
-    setMessage({
-      type: location.state?.messageType || "info",
-      text: noticeText
-    });
+    const noticeType = location.state?.messageType;
+    const toastFn =
+      noticeType && typeof toast[noticeType] === "function" ?
+      toast[noticeType] :
+      toast.info;
+    toastFn(noticeText);
 
     navigate(location.pathname + location.search, { replace: true, state: {} });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search, location.state, navigate]);
 
   const userTypes = [
@@ -256,17 +260,13 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
-    setMessage({ type: "", text: "" });
 
     // Validation du formulaire
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false);
-      setMessage({
-        type: "error",
-        text: "Veuillez corriger les erreurs du formulaire"
-      });
+      toast.warning("Veuillez corriger les erreurs du formulaire");
       return;
     }
 
@@ -313,20 +313,14 @@ const Register = () => {
           return;
         }
 
-        setMessage({
-          type: "success",
-          text: "Inscription reussie ! Redirection..."
-        });
+        toast.success("Inscription reussie ! Redirection...");
 
         // Redirection vers la page d'accueil apres 1.5s
         setTimeout(() => {
           navigate("/", { replace: true });
         }, 1500);
       } else {
-        setMessage({
-          type: "error",
-          text: response.message || "Une erreur s'est produite"
-        });
+        toast.error(response.message || "Une erreur s'est produite");
         setIsLoading(false);
       }
     } catch (error) {
@@ -356,29 +350,17 @@ const Register = () => {
         });
 
         setErrors(serverErrors);
-        setMessage({
-          type: "error",
-          text: "Veuillez corriger les erreurs signalées"
-        });
+        toast.error("Veuillez corriger les erreurs signalées");
       }
       // Erreur générale
       else if (error.response?.data?.message) {
-        setMessage({
-          type: "error",
-          text: error.response.data.message
-        });
+        toast.error(error.response.data.message);
       }
       // Erreur réseau ou autre
       else if (error.message) {
-        setMessage({
-          type: "error",
-          text: "Erreur de connexion. Vérifiez votre connexion internet."
-        });
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
       } else {
-        setMessage({
-          type: "error",
-          text: "Erreur lors de l'inscription. Veuillez réessayer."
-        });
+        toast.error("Erreur lors de l'inscription. Veuillez réessayer.");
       }
 
       console.error("Erreur inscription:", error);
@@ -399,11 +381,6 @@ const Register = () => {
         return newErrors;
       });
     }
-
-    // Effacer le message d'erreur général
-    if (message.type === "error") {
-      setMessage({ type: "", text: "" });
-    }
   };
 
   return (
@@ -416,7 +393,7 @@ const Register = () => {
             className="inline-flex items-center justify-center w-32 h-32">
 
             <img
-              src="/images/logonaraf.png"
+              src="/images/logovfnaraf-white.png"
               alt="Naraf Groupe logo"
               className="h-14 w-auto object-contain" />
 
@@ -457,38 +434,6 @@ const Register = () => {
 
         {/* Form Card */}
         <div className="bg-white shadow-2xl p-8 border border-gray-200">
-          {/* Message de succès/erreur */}
-          {message.text &&
-          <div
-            className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
-            message.type === "success" ?
-            "bg-green-50 border border-green-200" :
-            message.type === "info" ?
-            "bg-blue-50 border border-blue-200" :
-            "bg-red-50 border border-red-200"}`
-            }>
-
-              {message.type === "success" ?
-            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" /> :
-            message.type === "info" ?
-            <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" /> :
-
-            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-            }
-              <p
-              className={`text-sm font-medium ${
-              message.type === "success" ?
-              "text-green-800" :
-              message.type === "info" ?
-              "text-blue-800" :
-              "text-red-800"}`
-              }>
-
-                {message.text}
-              </p>
-            </div>
-          }
-
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Informations de base */}
             <div>

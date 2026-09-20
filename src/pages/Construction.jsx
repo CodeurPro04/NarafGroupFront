@@ -13,13 +13,15 @@ import {
   Award,
   Play,
   ArrowRight,
-  Search } from
+  Search,
+  Handshake } from
 "lucide-react";
 import api from "../api/axios";
 import { isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonBlock, PropertyCardSkeleton } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroConstru1 from "../assets/heroconstru1.jpg";
 import heroConstru2 from "../assets/heroconstru2.jpg";
@@ -142,7 +144,8 @@ const Construction = () => {
       project.pieces ??
       project.number_of_rooms ??
       null,
-      createdAt: project.created_at || null
+      createdAt: project.created_at || null,
+      partner: project.partner || null
     };
   };
 
@@ -720,7 +723,10 @@ const Construction = () => {
               key={project.id}
               className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
-                  <div className="relative h-56 overflow-hidden">
+                  <div
+                className="relative h-56 overflow-hidden cursor-pointer"
+                onClick={() => navigate(`/construction/${project.id}`)}>
+
                     <img
                   src={project.image}
                   alt={project.title}
@@ -743,6 +749,26 @@ const Construction = () => {
                     </div>
                   </div>
                   <div className="p-5 sm:p-6">
+                    <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                      {project.partner?.logo_url || project.partner?.logo_path ?
+                    <img
+                      src={getStorageUrl(project.partner.logo_url || project.partner.logo_path)}
+                      alt={project.partner.company_name}
+                      className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                          <Handshake size={18} />
+                        </div>
+                    }
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                          {getPartnerTypeLabel(project.partner, "Partenaire constructeur")}
+                        </p>
+                        <p className="truncate text-sm font-semibold text-gray-900">
+                          {project.partner?.company_name || "Africa Build Investment"}
+                        </p>
+                      </div>
+                    </div>
                     {project.progress != null &&
                 <div className="mb-4">
                         <div className="flex justify-between text-sm mb-2">

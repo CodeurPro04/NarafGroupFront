@@ -6,13 +6,13 @@ import {
   Eye,
   EyeOff,
   LogIn,
-  AlertCircle,
-  CheckCircle,
 } from "lucide-react";
 import { login as loginApi } from "../api/axios";
+import { useToast } from "../components/ui/Toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -58,19 +58,17 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       if (error.response?.status === 401) {
-        setErrors({ global: "Email ou mot de passe incorrect" });
+        toast.error("Email ou mot de passe incorrect");
       } else if (error.response?.status === 403) {
-        setErrors({
-          global:
-            error.response?.data?.message ||
-            "Votre compte est inactif et en attente d'activation.",
-        });
+        toast.error(
+          error.response?.data?.message ||
+            "Votre compte est inactif et en attente d'activation."
+        );
       } else {
-        setErrors({
-          global:
-            error.response?.data?.message ||
-            "Erreur serveur, veuillez reessayer plus tard.",
-        });
+        toast.error(
+          error.response?.data?.message ||
+            "Erreur serveur, veuillez reessayer plus tard."
+        );
       }
     } finally {
       setIsLoading(false);
@@ -82,19 +80,12 @@ const Login = () => {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         <div className="text-center mb-8">
           <img
-            src="/images/logonaraf.png"
+            src="/images/logovfnaraf-white.png"
             alt="Naraf Groupe logo"
             className="mx-auto h-14 w-auto object-contain"
           />
           <h1 className="text-2xl mt-4 font-bold">Connexion</h1>
         </div>
-
-        {errors.global && (
-          <div className="mb-4 text-red-600 flex items-center gap-2">
-            <AlertCircle size={18} />
-            {errors.global}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}

@@ -19,7 +19,7 @@ const Footer = () => {
             <div className="mb-6 flex items-center space-x-3">
               <Link to="/" className="flex items-center space-x-3 bg-white px-4 py-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
                 <img
-                  src="/images/logonaraf.png"
+                  src="/images/logovfnaraf-white.png"
                   alt="Naraf Groupe logo"
                   className="h-12 w-auto object-contain"
                 />
@@ -160,6 +160,10 @@ const Footer = () => {
             {" • "}
             <Link to="/privacy" className="transition-colors hover:text-gray-400">
               Politique de confidentialité
+            </Link>
+            {" • "}
+            <Link to="/terms" className="transition-colors hover:text-gray-400">
+              Conditions générales
             </Link>
           </p>
         </div>

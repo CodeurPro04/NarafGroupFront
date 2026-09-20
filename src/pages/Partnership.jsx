@@ -9,20 +9,27 @@ import {
   updatePartnership } from
 "../api/axios";
 import { SkeletonBlock } from "../components/ui/Skeleton";
+import { useToast } from "../components/ui/Toast";
+import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
 import {
   ArrowRight,
   BadgeCheck,
   Building2,
-  CheckCircle2,
-  Copy,
   Hammer,
   Landmark,
   Mail,
   MapPin,
   Phone,
-  Upload,
-  X } from
+  Scale,
+  Upload } from
 "lucide-react";
+
+const LEGAL_SPECIALTY_OPTIONS = [
+  "Notaire",
+  "Avocat",
+  "Huissier de justice",
+  "Conseil juridique",
+  "Autre"];
 
 const partnerTypes = {
   immobilier: {
@@ -78,11 +85,38 @@ const partnerTypes = {
     descriptionPlaceholder:
     "Expliquez vos solutions de financement, vos critères d'intervention, vos tickets, vos geographies et votre approche de gouvernance.",
     icon: Landmark
+  },
+  juridique: {
+    key: "juridique",
+    title: "Partenaire juridique",
+    backendValue: "Partenaire juridique",
+    shortTitle: "Juridique",
+    helper:
+    "Pour les notaires, avocats, huissiers et conseils juridiques qui accompagnent vos projets.",
+    requiresLegalSpecialty: true,
+    servicesLabel: "Prestations ou domaines de droit couverts",
+    servicesPlaceholder:
+    "Droit immobilier\nDroit des affaires\nRedaction et authentification d'actes\nContentieux",
+    certificationsLabel: "Barreau, chambre ou agrements",
+    certificationsPlaceholder:
+    "Inscription au barreau / a la chambre\nZones d'intervention\nLangues de travail",
+    descriptionLabel: "Présentation de votre activité juridique",
+    descriptionPlaceholder:
+    "Presentez votre cabinet ou étude, vos domaines d'expertise, votre équipe et votre approche d'accompagnement.",
+    icon: Scale
   }
 };
 
 const detectPartnerType = (value) => {
   const normalized = (value || "").toLowerCase();
+  if (
+  normalized.includes("jurid") ||
+  normalized.includes("notair") ||
+  normalized.includes("avocat") ||
+  normalized.includes("huissier"))
+  {
+    return "juridique";
+  }
   if (normalized.includes("construct")) return "constructeur";
   if (
   normalized.includes("finan") ||
@@ -105,6 +139,7 @@ filter(Boolean);
 
 const EmptyFormState = () => ({
   company_name: "",
+  legal_specialty: "",
   registration_number: "",
   tax_number: "",
   address: "",
@@ -119,7 +154,7 @@ const EmptyFormState = () => ({
 
 const EmptyAccountState = () => ({
   email: "",
-  defaultPassword: "",
+  passwordSentByEmail: false,
   requiresActivation: false
 });
 
@@ -136,15 +171,13 @@ const inputClassName =
 
 const Partnership = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [application, setApplication] = useState(null);
   const [selectedType, setSelectedType] = useState("");
   const [logoFile, setLogoFile] = useState(null);
   const [createdAccount, setCreatedAccount] = useState(EmptyAccountState);
-  const [copiedPassword, setCopiedPassword] = useState(false);
   const [formData, setFormData] = useState(EmptyFormState);
 
   const user = getCurrentUser();
@@ -166,6 +199,7 @@ const Partnership = () => {
           setSelectedType(detectPartnerType(payload.company_type) || "immobilier");
           setFormData({
             company_name: payload.company_name || "",
+            legal_specialty: payload.legal_specialty || "",
             registration_number: payload.registration_number || "",
             tax_number: payload.tax_number || "",
             address: payload.address || "",
@@ -211,39 +245,29 @@ const Partnership = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCopyPassword = async () => {
-    if (!createdAccount.defaultPassword) return;
-
-    try {
-      await navigator.clipboard.writeText(createdAccount.defaultPassword);
-      setCopiedPassword(true);
-    } catch (err) {
-      console.error("Erreur copie mot de passe:", err);
-      setCopiedPassword(false);
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
-    setSuccess("");
     setCreatedAccount(EmptyAccountState());
-    setCopiedPassword(false);
 
     if (authenticated && !isCompany) {
-      setError(
+      toast.warning(
         "Votre compte connecté n'est pas de type entreprise. Deconnectez-vous pour créer un nouveau compte partenaire ou utilisez un compte entreprise existant."
       );
       return;
     }
 
     if (!currentType) {
-      setError("Choisissez d'abord un type de partenaire.");
+      toast.warning("Choisissez d'abord un type de partenaire.");
       return;
     }
 
     if (!formData.email.trim()) {
-      setError("L'email professionnel est obligatoire pour créer le compte partenaire.");
+      toast.warning("L'email professionnel est obligatoire pour créer le compte partenaire.");
+      return;
+    }
+
+    if (currentType.requiresLegalSpecialty && !formData.legal_specialty.trim()) {
+      toast.warning("Precisez votre profession juridique (notaire, avocat, huissier...).");
       return;
     }
 
@@ -252,6 +276,9 @@ const Partnership = () => {
     const payload = new FormData();
     payload.append("company_name", formData.company_name);
     payload.append("company_type", currentType.backendValue);
+    if (currentType.requiresLegalSpecialty && formData.legal_specialty) {
+      payload.append("legal_specialty", formData.legal_specialty);
+    }
     payload.append("email", formData.email.trim());
     if (formData.registration_number) {
       payload.append("registration_number", formData.registration_number);
@@ -273,12 +300,12 @@ const Partnership = () => {
         const response = await updatePartnership(payload);
         const data = response?.data?.data ?? response?.data ?? null;
         setApplication(data || application);
-        setSuccess("Demande mise a jour. Votre compte repasse en attente de validation administrateur.");
+        toast.success("Demande mise a jour. Votre compte repasse en attente de validation administrateur.");
       } else if (authenticated && isCompany) {
         const response = await applyPartnership(payload);
         const data = response?.data?.data ?? response?.data ?? null;
         setApplication(data || null);
-        setSuccess("Demande envoyee avec succes. Elle sera activee après validation administrateur.");
+        toast.success("Demande envoyee avec succes. Elle sera activee après validation administrateur.");
       } else {
         const response = await submitPartnershipApplication(payload);
         const data = response?.data?.data ?? response?.data ?? null;
@@ -286,19 +313,19 @@ const Partnership = () => {
 
         setApplication(data || null);
         setLogoFile(null);
-        setSuccess("Demande envoyee. Votre compte entreprise a été créé et reste en attente de validation administrateur.");
+        toast.success("Demande envoyee. Votre compte entreprise a été créé et reste en attente de validation administrateur.");
 
         if (account) {
           setCreatedAccount({
             email: account.email || formData.email.trim(),
-            defaultPassword: account.default_password || "",
+            passwordSentByEmail: Boolean(account.password_sent_by_email),
             requiresActivation: Boolean(account.requires_activation)
           });
         }
       }
     } catch (err) {
       console.error("Erreur soumission partenariat:", err);
-      setError(err.response?.data?.message || "Une erreur est survenue.");
+      toast.error(err.response?.data?.message || "Une erreur est survenue.");
     } finally {
       setSaving(false);
     }
@@ -351,7 +378,7 @@ const Partnership = () => {
       Sélectionnez le profil qui correspond à votre activité pour afficher un formulaire adapté à votre candidature ABI.
      </p>
 
-     <div className="mt-10 grid gap-4 md:grid-cols-3">
+     <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {Object.values(partnerTypes).map((type) => {
               const Icon = type.icon;
               const isActive = selectedType === type.key;
@@ -426,18 +453,6 @@ const Partnership = () => {
       </div> :
           null}
 
-     {error ?
-          <div className="mb-6 border border-red-200 bg-red-50 px-6 py-5 text-sm text-red-600">
-       {error}
-      </div> :
-          null}
-
-     {success ?
-          <div className="mb-6 border border-emerald-200 bg-emerald-50 px-6 py-5 text-sm text-emerald-600">
-       {success}
-      </div> :
-          null}
-
      {!currentType ?
           <div className=" border border-dashed border-[#d8dfeb] bg-white px-8 py-16 text-center text-sm leading-7 text-slate-500">
        Choisissez votre types de partnaire pour afficher le formulaire.
@@ -474,6 +489,25 @@ const Partnership = () => {
 
          </Field>
         </div>
+
+        {currentType.requiresLegalSpecialty ?
+        <div className="md:col-span-2">
+         <Field label="Profession juridique">
+          <select
+                    name="legal_specialty"
+                    value={formData.legal_specialty}
+                    onChange={handleChange}
+                    className={inputClassName}
+                    required>
+
+           <option value="">Selectionnez votre profession</option>
+           {LEGAL_SPECIALTY_OPTIONS.map((option) =>
+                    <option key={option} value={option}>{option}</option>
+                    )}
+          </select>
+         </Field>
+        </div> :
+        null}
 
         <Field label="Numero d'enregistrement">
          <input
@@ -662,95 +696,18 @@ const Partnership = () => {
           }
     </div>
    </section>
-   {createdAccount.defaultPassword ?
-      <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/55 px-4 py-8">
-     <div className="w-full max-w-xl border border-[#d8dfeb] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.22)] sm:p-8">
-      <div className="flex items-start justify-between gap-4 border-b border-[#e4e8ef] pb-5">
-       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 items-center justify-center bg-[#e9f2ff] text-[#0f62c9]">
-         <CheckCircle2 size={22} />
-        </div>
-        <div>
-         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0f62c9]">
-          Compte créé
-         </p>
-         <h3 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-          Votre compte entreprise est pret.
-         </h3>
-         <p className="mt-3 text-sm leading-7 text-slate-600">
-          Conservez ce mot de passe temporaire. Il vous permettra de vous connecter pendant que votre compte reste en attente de validation administrateur.
-         </p>
-        </div>
-       </div>
-       <button
-              type="button"
-              onClick={() => {
-                setCreatedAccount(EmptyAccountState());
-                setCopiedPassword(false);
-              }}
-              className="flex h-10 w-10 items-center justify-center border border-[#d8dfeb] bg-white text-slate-500 transition hover:text-slate-950"
-              aria-label="Fermer">
+   <AccountCredentialsModal
+      account={createdAccount}
+      title="Votre compte entreprise est pret."
+      description="Votre compte reste en attente de validation administrateur."
+      activationMessage={
+      createdAccount.requiresActivation ?
+      "Votre compte entreprise peut déjà se connecter, mais il restera inactif tant qu'un administrateur n'aura pas valide votre candidature partenaire." :
+      ""
+      }
+      onClose={() => setCreatedAccount(EmptyAccountState())}
+      onLogin={() => navigate('/login')} />
 
-        <X size={18} />
-       </button>
-      </div>
-
-      <div className="mt-6 space-y-4">
-       <div className="border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-         Email de connexion
-        </p>
-        <p className="mt-2 text-base font-semibold text-slate-950">{createdAccount.email}</p>
-       </div>
-
-       <div className="border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-         Mot de passe temporaire
-        </p>
-        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-         <code className="break-all bg-white px-3 py-3 text-base font-semibold text-slate-950">
-          {createdAccount.defaultPassword}
-         </code>
-         <button
-                  type="button"
-                  onClick={handleCopyPassword}
-                  className="inline-flex items-center justify-center gap-2 border border-[#d8dfeb] bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f62c9] hover:text-[#0f62c9]">
-
-          <Copy size={16} />
-          {copiedPassword ? "Copie effectuee" : "Copier le mot de passe"}
-         </button>
-        </div>
-       </div>
-
-       {createdAccount.requiresActivation ?
-            <div className="border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">
-         Votre compte entreprise peut déjà se connecter, mais il restera inactif tant qu'un administrateur n'aura pas valide votre candidature partenaire.
-        </div> :
-            null}
-      </div>
-
-      <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-       <button
-              type="button"
-              onClick={() => {
-                setCreatedAccount(EmptyAccountState());
-                setCopiedPassword(false);
-              }}
-              className="border border-[#d8dfeb] bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-950">
-
-        Fermer
-       </button>
-       <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="bg-[#0f62c9] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0b4fa5]">
-
-        Aller à la connexion
-       </button>
-      </div>
-     </div>
-    </div> :
-      null}
   </div>);
 
 };

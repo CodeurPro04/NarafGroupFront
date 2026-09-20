@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   Bed,
   Bath,
@@ -28,7 +28,8 @@ import {
   Users,
   Shield,
   Award,
-  Check } from
+  Check,
+  Handshake } from
 "lucide-react";
 
 /* ─── Normalise un slug/nom de type (retire accents, espaces, casse) ── */
@@ -112,12 +113,15 @@ import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
 import AddressMap from "../components/ui/AddressMap";
+import { useToast } from "../components/ui/Toast";
 
 const PropertyDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,7 +135,6 @@ const PropertyDetails = () => {
     message: ""
   });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
-  const [contactNotice, setContactNotice] = useState({ type: "", message: "" });
   const [createdAccount, setCreatedAccount] = useState(null);
 
   useEffect(() => {
@@ -191,7 +194,6 @@ const PropertyDetails = () => {
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setContactNotice({ type: "", message: "" });
     setCreatedAccount(null);
     if (!property?.id && !property?.uuid) return;
 
@@ -209,16 +211,15 @@ const PropertyDetails = () => {
 
       if (response.data.success) {
         const account = response.data.account;
-        setContactNotice({
-          type: "success",
-          message: account ?
+        toast.success(
+          account ?
           "Votre demande a été envoyee. Votre compte visiteur a été créé." :
           "Votre demande a été envoyee avec succes."
-        });
-        if (account?.default_password) {
+        );
+        if (account?.password_sent_by_email) {
           setCreatedAccount({
             email: account.email,
-            defaultPassword: account.default_password
+            passwordSentByEmail: true
           });
         }
         const user = getCurrentUser();
@@ -231,11 +232,9 @@ const PropertyDetails = () => {
       }
     } catch (error) {
       console.error("Erreur envoi message:", error);
-      setContactNotice({
-        type: "error",
-        message:
+      toast.error(
         error.response?.data?.message || "Erreur lors de l'envoi du message."
-      });
+      );
     } finally {
       setIsSubmittingContact(false);
     }
@@ -333,7 +332,7 @@ const PropertyDetails = () => {
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert("Lien copié dans le presse-papier!");
+      toast.success("Lien copié dans le presse-papier!");
     }
   };
 
@@ -497,18 +496,39 @@ const PropertyDetails = () => {
  {property.negotiable ? "Prix négociable" : "Prix ferme"}
  </span>
  </div>
+ {property.partner &&
+ <Link
+   to={`/partners/${property.partner.uuid}`}
+   className="mt-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50/50">
+   {property.partner.logo_url || property.partner.logo_path ?
+   <img
+     src={toMediaUrl(property.partner.logo_url || property.partner.logo_path)}
+     alt={property.partner.company_name}
+     className="h-12 w-12 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+     <Handshake size={20} />
+   </div>
+   }
+   <div className="min-w-0 flex-1">
+     <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+       {getPartnerTypeLabel(property.partner)}
+     </p>
+     <p className="truncate text-base font-semibold text-gray-900">
+       {property.partner.company_name}
+     </p>
+   </div>
+   <ChevronRight size={18} className="shrink-0 text-gray-400" />
+ </Link>
+ }
  </div>
 
  {/* Stats dynamiques selon le type de bien */}
  {activeStats.length > 0 && (
-   <div className={`grid gap-4 py-6 border-y border-gray-200 ${
-     activeStats.length <= 2 ? "grid-cols-2" :
-     activeStats.length === 3 ? "grid-cols-3" :
-     "grid-cols-2 md:grid-cols-4"}`}>
+   <div className="flex flex-wrap justify-center gap-x-8 gap-y-5 py-6 border-y border-gray-200">
      {activeStats.map((stat) => {
        const Icon = stat.icon;
        return (
-         <div key={stat.key} className="text-center group">
+         <div key={stat.key} className="text-center group min-w-[110px]">
            <div className="flex items-center justify-center space-x-2 mb-2">
              <Icon className="text-blue-600 group-hover:scale-110 transition-transform" size={24} />
              <span className="text-2xl font-bold text-gray-900">
@@ -674,17 +694,6 @@ const PropertyDetails = () => {
  </div>
 
  <form onSubmit={handleContactSubmit} className="space-y-4">
- {contactNotice.message &&
-                <div
-                  className={` px-4 py-3 text-sm ${
-                  contactNotice.type === "success" ?
-                  "bg-green-50 text-green-700 border border-green-200" :
-                  "bg-red-50 text-red-700 border border-red-200"}`
-                  }>
-
- {contactNotice.message}
- </div>
-                }
  <div>
  <input
                     type="text"
@@ -851,59 +860,72 @@ const PropertyDetails = () => {
  {relatedProperties.map((relatedProp) =>
             <div
               key={relatedProp.uuid}
-              className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
+              className="group overflow-hidden border border-[#e6edf5] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.06)] transition-all duration-300 hover:shadow-[0_18px_36px_rgba(15,23,42,0.1)] cursor-pointer"
               onClick={() => navigate(`/property/${relatedProp.uuid}`)}>
 
- <div className="relative h-48">
+ <div className="relative h-[240px] overflow-hidden bg-[#eef3f7]">
  <img
                   src={
                   relatedProp.primary_image?.file_path ?
                   toMediaUrl(relatedProp.primary_image.file_path) :
-                  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80"
+                  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80"
                   }
                   alt={relatedProp.title}
-                  className="w-full h-full object-cover" />
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
 
- <div className="absolute top-3 left-3">
- <span
-                    className={`px-3 py-1 text-xs font-semibold ${
-                    relatedProp.transaction_type === "vente" ?
-                    "bg-blue-600 text-white" :
-                    "bg-purple-600 text-white"}`
-                    }>
-
+ <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+ <div className="absolute left-3 top-3 bg-white px-3 py-1 text-[11px] font-extrabold text-[#12a150] shadow-sm">
+ {formatPrice(relatedProp.price)}
+ </div>
+ <div className="absolute right-3 top-3 bg-[#101418] px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
  {relatedProp.transaction_type === "vente" ?
                     "À Vendre" :
                     "À Louer"}
- </span>
  </div>
- </div>
- <div className="p-4">
- <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">
+ <div className="absolute bottom-3 left-3 right-3">
+ <h3 className="text-lg font-bold leading-6 text-white line-clamp-2 drop-shadow-sm">
  {relatedProp.title}
  </h3>
- <div className="flex items-center text-gray-600 text-sm mb-3">
- <MapPin size={14} className="mr-1" />
+ <div className="mt-1.5 flex items-center gap-1.5 text-sm text-white/90">
+ <MapPin size={14} className="shrink-0" />
  <span className="truncate">{relatedProp.city}</span>
  </div>
- <div className="flex items-center justify-between flex-wrap gap-2">
- <div className="text-xl font-bold text-blue-600">
- {formatPrice(relatedProp.price)}
  </div>
- <div className="flex items-center space-x-2 text-sm text-gray-500 flex-wrap">
-   {relatedProp.surface_area > 0 && (
-     <><Maximize size={13} /><span>{relatedProp.surface_area}m²</span></>
-   )}
-   {relatedProp.bedrooms > 0 && (
-     <><Bed size={13} /><span>{relatedProp.bedrooms}</span></>
-   )}
-   {relatedProp.bathrooms > 0 && (
-     <><Bath size={13} /><span>{relatedProp.bathrooms}</span></>
-   )}
-   {!relatedProp.bedrooms && !relatedProp.bathrooms && relatedProp.parking_spaces > 0 && (
-     <><Car size={13} /><span>{relatedProp.parking_spaces}</span></>
-   )}
  </div>
+ <div className="p-4 sm:p-5">
+ <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                  {relatedProp.partner?.logo_url || relatedProp.partner?.logo_path ?
+                  <img
+                    src={toMediaUrl(relatedProp.partner.logo_url || relatedProp.partner.logo_path)}
+                    alt={relatedProp.partner.company_name}
+                    className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                      <Handshake size={18} />
+                    </div>
+                  }
+ <div className="min-w-0">
+ <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+ {getPartnerTypeLabel(relatedProp.partner, "Partenaire immobilier")}
+ </p>
+ <p className="truncate text-sm font-semibold text-gray-900">
+ {relatedProp.partner?.company_name || "Africa Build Investment"}
+ </p>
+ </div>
+ </div>
+
+ <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7788]">
+ {relatedProp.property_type?.name || "Bien immobilier"}
+ </p>
+
+ <div className="mt-5">
+ <Link
+                    to={`/property/${relatedProp.uuid}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex w-full items-center justify-center bg-blue-600 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-blue-700">
+
+ Voir les Détails
+ </Link>
  </div>
  </div>
  </div>

@@ -242,7 +242,7 @@ const AIChatWidget = () => {
       <button
         type="button"
         onClick={() => { setIsOpen((v) => !v); }}
-        className={`fixed bottom-6 left-6 z-[9999] flex h-14 w-14 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition-all duration-300
+        className={`fixed bottom-24 right-6 z-[9999] flex h-14 w-14 items-center justify-center rounded-full shadow-[0_16px_40px_rgba(2,6,23,0.35)] transition-all duration-300
           ${isOpen ? "bg-slate-900 hover:bg-slate-800" : "bg-blue-600 hover:bg-blue-700"}
           text-white overflow-hidden`}
         aria-label="Assistant IA ABI"
@@ -259,14 +259,14 @@ const AIChatWidget = () => {
         )}
       </button>
 
-      {/* ── Panneau de chat — slide depuis la gauche, plein ecran en mobile ── */}
+      {/* ── Panneau de chat — slide depuis la droite, plein ecran en mobile ── */}
       <div
         role="dialog"
         aria-modal="true"
         aria-hidden={!isOpen}
         aria-label={`Assistant IA ${agent.name}`}
-        className={`fixed inset-y-0 left-0 z-[9999] flex h-full w-full flex-col overflow-hidden bg-white/95 shadow-[0_28px_80px_rgba(2,6,23,0.35)] backdrop-blur transition-transform duration-300 ease-out sm:w-[400px] sm:border-r sm:border-white/40 sm:bg-white/85
-          ${isOpen ? "translate-x-0" : "pointer-events-none -translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-[9999] flex h-full w-full flex-col overflow-hidden bg-white/95 shadow-[0_28px_80px_rgba(2,6,23,0.35)] backdrop-blur transition-transform duration-300 ease-out sm:w-[400px] sm:border-l sm:border-white/40 sm:bg-white/85
+          ${isOpen ? "translate-x-0" : "pointer-events-none translate-x-full"}`}
       >
           {/* Cadre futuriste */}
           <div className="pointer-events-none absolute inset-0 ring-1 ring-slate-900/5" />

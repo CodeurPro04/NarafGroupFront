@@ -12,16 +12,28 @@ const MediaBadge = ({ label, className = "" }) =>
   </span>;
 
 
-const SecondaryMediaCard = ({ title, image, alt, emptyLabel, onOpen, fill }) =>
+const SecondaryMediaCard = ({ title, image, alt, emptyLabel, onOpen, fill, locked, onLockedClick }) =>
 <div className={`relative overflow-hidden bg-slate-100 ${fill ? "h-[360px] md:h-[520px] lg:h-[620px]" : "h-[220px] md:h-[252px] lg:h-[302px]"}`}>
     {image ?
   <button
     type="button"
-    onClick={() => onOpen?.(image, alt)}
+    onClick={() => locked ? onLockedClick?.() : onOpen?.(image, alt)}
     className="block h-full w-full bg-slate-50"
-    aria-label={`Ouvrir ${title.toLowerCase()} en grand`}>
+    aria-label={locked ? `Remplir le formulaire pour voir ${title.toLowerCase()}` : `Ouvrir ${title.toLowerCase()} en grand`}>
 
-        <img src={image} alt={alt} className="h-full w-full object-contain bg-slate-50" />
+        <img
+      src={image}
+      alt={alt}
+      className={`h-full w-full object-contain bg-slate-50 ${locked ? "blur-md scale-105" : ""}`} />
+
+        {locked &&
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-black/30 to-black/70 px-6 text-center">
+            <div className="text-white">
+              <p className="text-base font-semibold">Plan floute</p>
+              <p className="mt-1 text-xs text-white/80">Cliquez pour remplir le formulaire.</p>
+            </div>
+          </div>
+    }
       </button> :
 
   <div className={fallbackCardClassName}>{emptyLabel}</div>
@@ -40,6 +52,8 @@ const MediaSplitShowcase = ({
   onNext,
   onSelect,
   planImage,
+  planLocked,
+  onPlanLockedClick,
   render3DImage
 }) => {
   const [lightbox, setLightbox] = useState(null);
@@ -142,7 +156,9 @@ const MediaSplitShowcase = ({
                 alt="Plan de construction"
                 emptyLabel="Plan non disponible"
                 onOpen={openLightbox}
-                fill={secondaryCount === 1} />
+                fill={secondaryCount === 1}
+                locked={planLocked}
+                onLockedClick={onPlanLockedClick} />
 
               }
                 {hasRender3D &&

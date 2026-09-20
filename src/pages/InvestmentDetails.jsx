@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Building2,
   CheckCircle,
@@ -17,18 +17,22 @@ import {
   ChevronRight,
   Shield,
   Wallet,
-  Ruler } from
+  Ruler,
+  Handshake } from
 "lucide-react";
 import api, { getCurrentUser } from "../api/axios";
 import Button from "../components/ui/Button";
 import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import MediaSplitShowcase from "../components/ui/MediaSplitShowcase";
 import AddressMap from "../components/ui/AddressMap";
+import { useToast } from "../components/ui/Toast";
 const InvestmentDetails = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [project, setProject] = useState(null);
   const [relatedProjects, setRelatedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +47,6 @@ const InvestmentDetails = () => {
     message: ""
   });
   const [simAmount, setSimAmount] = useState("");
-  const [investError, setInvestError] = useState("");
-  const [investSuccess, setInvestSuccess] = useState("");
   const [createdAccount, setCreatedAccount] = useState(null);
   const defaultImage =
   "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80";
@@ -117,6 +119,7 @@ const InvestmentDetails = () => {
         uuid: partner.uuid || null
       } :
       null,
+      attachedPartner: raw.partner || null,
       createdAt: raw.created_at || null,
       raw
     };
@@ -199,8 +202,6 @@ const InvestmentDetails = () => {
   const handleInvestSubmit = async (e) => {
     e.preventDefault();
     if (!project?.id) return;
-    setInvestError("");
-    setInvestSuccess("");
     setCreatedAccount(null);
     try {
       const amount = Number(investData.amount || 0);
@@ -218,15 +219,15 @@ const InvestmentDetails = () => {
         message: combinedMessage
       });
       const account = response.data.account;
-      setInvestSuccess(
+      toast.success(
         account ?
         "Votre demande a été envoyee. Votre compte visiteur a été créé." :
         "Votre demande a été envoyee."
       );
-      if (account?.default_password) {
+      if (account?.password_sent_by_email) {
         setCreatedAccount({
           email: account.email,
-          defaultPassword: account.default_password
+          passwordSentByEmail: true
         });
       }
       const user = getCurrentUser();
@@ -240,7 +241,7 @@ const InvestmentDetails = () => {
         message: ""
       });
     } catch (err) {
-      setInvestError(
+      toast.error(
         err.response?.data?.message || "Impossible d'envoyer la demande."
       );
     }
@@ -383,6 +384,52 @@ const InvestmentDetails = () => {
                     </span>{" "}
                     </div>
                   </div>{" "}
+                  <div className="md:text-left mb-4">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">
+                      {formatPrice(project.minInvestment)}
+                    </div>
+                    <div className="text-gray-600 text-sm">Ticket minimum</div>
+                    {project.totalInvestment > 0 &&
+                    <div className="text-sm text-gray-500 mt-2">
+                        Investissement total: {formatPrice(project.totalInvestment)}
+                      </div>
+                    }
+                    <div className="mt-4">
+                      {isInvestmentClosed ?
+                      <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-gray-100 text-gray-600">
+                          <CheckCircle size={14} className="mr-1" /> Investissement complet
+                        </span> :
+
+                      <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800">
+                          <CheckCircle size={14} className="mr-1" /> Investissement ouvert
+                        </span>
+                      }
+                    </div>
+                  </div>
+                  {project.attachedPartner &&
+                  <Link
+                    to={`/partners/${project.attachedPartner.uuid}`}
+                    className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50/50">
+                    {project.attachedPartner.logo_url || project.attachedPartner.logo_path ?
+                    <img
+                      src={toMediaUrl(project.attachedPartner.logo_url || project.attachedPartner.logo_path)}
+                      alt={project.attachedPartner.company_name}
+                      className="h-12 w-12 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                      <Handshake size={20} />
+                    </div>
+                    }
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                        {getPartnerTypeLabel(project.attachedPartner)}
+                      </p>
+                      <p className="truncate text-base font-semibold text-gray-900">
+                        {project.attachedPartner.company_name}
+                      </p>
+                    </div>
+                    <ChevronRight size={18} className="shrink-0 text-gray-400" />
+                  </Link>
+                  }
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-6 border-y border-gray-200">
                     {" "}
                     <div className="text-center">
@@ -471,30 +518,6 @@ const InvestmentDetails = () => {
                         Mise a jour: {formatDate(project.createdAt)}{" "}
                       </p>{" "}
                     </div>{" "}
-                  </div>{" "}
-                </div>{" "}
-                <div className="md:text-right">
-                  {" "}
-                  <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">
-                    {" "}
-                    {formatPrice(project.minInvestment)}{" "}
-                  </div>{" "}
-                  <div className="text-gray-600">Ticket minimum</div>{" "}
-                  <div className="mt-4">
-                    {" "}
-                    {isInvestmentClosed ?
-                    <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-gray-100 text-gray-600">
-                      {" "}
-                      <CheckCircle size={14} className="mr-1" /> Investissement
-                      complet{" "}
-                    </span> :
-
-                    <span className="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800">
-                      {" "}
-                      <CheckCircle size={14} className="mr-1" /> Investissement
-                      ouvert{" "}
-                    </span>
-                    }
                   </div>{" "}
                 </div>{" "}
               </div>{" "}
@@ -871,18 +894,6 @@ const InvestmentDetails = () => {
                 </div> :
 
               <>
-                  {investError &&
-                <div className="px-4 py-3 text-sm border border-red-200 bg-red-50 text-red-700">
-                      {" "}
-                      {investError}{" "}
-                    </div>
-                }{" "}
-                  {investSuccess &&
-                <div className="px-4 py-3 text-sm border border-blue-200 bg-blue-50 text-blue-700">
-                      {" "}
-                      {investSuccess}{" "}
-                    </div>
-                }{" "}
                   <form onSubmit={handleInvestSubmit} className="space-y-4">
                 {" "}
                 <div>
@@ -1014,62 +1025,115 @@ const InvestmentDetails = () => {
               getStorageUrl(item.images[0]) :
               defaultImage;
               const itemPartnerLogo = toMediaUrl(item.financialPartner?.logo);
+              const isFullyFunded = item.funded !== null && item.funded >= 100;
               return (
                 <div
                   key={item.id}
-                  className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer"
+                  className="group overflow-hidden border border-gray-100 bg-white shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                   onClick={() => navigate(`/investment/${item.id}`)}>
 
-                    {" "}
-                    <div className="relative h-48">
-                      {" "}
+                    <div className="relative h-56 overflow-hidden">
                       <img
                       src={image}
                       alt={item.title}
-                      className="w-full h-full object-cover" />
-                    {" "}
-                      <div className="absolute top-3 left-3">
-                        {" "}
-                        <span className="px-3 py-1 text-xs font-semibold bg-blue-600 text-white">
-                          {" "}
-                          Investissement{" "}
-                        </span>{" "}
-                      </div>{" "}
-                    </div>{" "}
-                    <div className="p-4">
-                      {" "}
-                      <div className="mb-3 flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2">
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                        <span className="px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-blue-600">
+                          {item.type}
+                        </span>
+                        {isFullyFunded &&
+                      <span className="px-3 py-1.5 text-xs sm:text-sm font-bold text-white bg-slate-700">
+                            Complet
+                          </span>
+                      }
+                      </div>
+                      {item.funded !== null &&
+                    <div className="absolute bottom-4 left-4 right-4">
+                          <div className="mb-2">
+                            <div className="mb-1 flex justify-between text-xs text-white">
+                              <span>Financement</span>
+                              <span className="font-bold">{item.funded}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-white/30">
+                              <div
+                            className="h-2 bg-emerald-400 transition-all duration-1000"
+                            style={{ width: `${item.funded}%` }}>
+                          </div>
+                            </div>
+                          </div>
+                        </div>
+                    }
+                    </div>
+                    <div className="p-5 sm:p-6">
+                      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
                         {itemPartnerLogo ?
                         <img
                           src={itemPartnerLogo}
                           alt={item.financialPartner?.name}
-                          className="h-8 w-8 shrink-0 rounded-lg bg-white object-contain p-1" /> :
-                        <Landmark size={16} className="shrink-0 text-blue-600" />
+                          className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                            <Landmark size={18} />
+                          </div>
                         }
-                        <span className="truncate text-xs font-semibold text-gray-700">
-                          {item.financialPartner?.name || "Africa Build Investment"}
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                            {item.financialPartner ? getPartnerTypeLabel({
+                              company_type: item.financialPartner.type,
+                              legal_specialty: item.financialPartner.legalSpecialty
+                            }) : "Partenaire financier"}
+                          </p>
+                          <p className="truncate text-sm font-semibold text-gray-900">
+                            {item.financialPartner?.name || "Africa Build Investment"}
+                          </p>
+                        </div>
+                      </div>
+                      <h3 className="mb-2 text-xl font-bold text-gray-900 line-clamp-1 transition-colors group-hover:text-blue-700">
+                        {item.title}
+                      </h3>
+                      <div className="mb-4 flex items-center text-gray-600">
+                        <MapPin size={14} className="mr-1 flex-shrink-0" />
+                        <span className="truncate text-sm">
+                          {item.location || "Localisation"}
                         </span>
                       </div>
-                      <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">
-                        {item.title}
-                      </h3>{" "}
-                      <div className="flex items-center text-gray-600 text-sm mb-3">
-                        {" "}
-                        <MapPin size={14} className="mr-1" />{" "}
-                        <span className="truncate">
-                          {item.location || "Localisation"}
-                        </span>{" "}
-                      </div>{" "}
-                      <div className="flex items-center justify-between">
-                        {" "}
-                        <div className="text-xl font-bold text-blue-600">
-                          {" "}
-                          {formatPrice(item.minInvestment)}{" "}
-                        </div>{" "}
-                        <div className="text-sm text-gray-500">
-                          {item.durationMonths} mois
-                        </div>{" "}
-                      </div>{" "}
+                      <div className="space-y-4">
+                        <div className="bg-gray-50 p-3 text-center">
+                          <div className="mb-1 text-sm text-gray-600">
+                            Rendement annuel estime
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">
+                            {item.roi}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/investment/${item.id}`);
+                          }}
+                          disabled={isFullyFunded}
+                          className={`px-4 py-3 font-semibold transition-all ${
+                          isFullyFunded ?
+                          "bg-gray-200 text-gray-500 cursor-not-allowed" :
+                          "bg-blue-600 hover:bg-blue-700 text-white"}`
+                          }>
+
+                            {isFullyFunded ? "Complet" : "Investir"}
+                          </button>
+                          <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/investment/${item.id}`);
+                          }}
+                          className="border-2 border-gray-200 bg-white px-4 py-3 font-semibold text-gray-700 transition-all hover:border-blue-300">
+
+                            Details
+                          </button>
+                        </div>
+                      </div>
                     </div>{" "}
                   </div>);
 

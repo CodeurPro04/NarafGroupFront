@@ -24,11 +24,13 @@ import {
   Grid,
   List,
   ChevronLeft,
-  ChevronRight } from
+  ChevronRight,
+  Handshake } from
 "lucide-react";
 import api, { getCurrentUser, isAuthenticated } from "../api/axios";
 import EmptyState from "../components/ui/EmptyState";
 import { toMediaUrl } from "../utils/media";
+import { getPartnerTypeLabel } from "../utils/partner";
 import { useSelectedCountry } from "../hooks/useSelectedCountry";
 import heroImobi from "../assets/heroimobi.jpg";
 
@@ -297,7 +299,8 @@ const Properties = () => {
           year: property.year_built || new Date().getFullYear(),
           transaction_type: property.transaction_type || "vente",
           property_type_id: property.property_type_id,
-          property_type: property.property_type || null
+          property_type: property.property_type || null,
+          partner: property.partner || null
         }));
 
         setProperties(formattedProperties);
@@ -1054,46 +1057,49 @@ const Properties = () => {
                       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
                     }} />
 
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
                         <div className="absolute left-3 top-3 bg-white px-3 py-1 text-[11px] font-extrabold text-[#12a150] shadow-sm">
                           {formatPrice(property.price)}
                         </div>
                         <div className="absolute right-3 top-3 bg-[#101418] px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
                           {getTransactionLabel(property)}
                         </div>
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <h3 className="text-lg font-bold leading-6 text-white line-clamp-2 drop-shadow-sm">
+                            {property.title}
+                          </h3>
+                          <div className="mt-1.5 flex items-center gap-1.5 text-sm text-white/90">
+                            <MapPin size={14} className="shrink-0" />
+                            <span className="truncate">{property.location}</span>
+                          </div>
+                        </div>
                       </Link>
 
                       <div className="p-4 sm:p-5">
+                        <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                          {property.partner?.logo_url || property.partner?.logo_path ?
+                          <img
+                            src={toMediaUrl(property.partner.logo_url || property.partner.logo_path)}
+                            alt={property.partner.company_name}
+                            className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                              <Handshake size={18} />
+                            </div>
+                          }
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                              {getPartnerTypeLabel(property.partner, "Partenaire immobilier")}
+                            </p>
+                            <p className="truncate text-sm font-semibold text-gray-900">
+                              {property.partner?.company_name || "Africa Build Investment"}
+                            </p>
+                          </div>
+                        </div>
+
                         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6b7788]">
                           {getPropertyTypeLabel(property)}
                         </p>
-
-                        <h3 className="mt-2 min-h-[48px] text-lg font-semibold leading-6 text-[#16202a] line-clamp-2">
-                          {property.title}
-                        </h3>
-
-                        <div className="mt-3 flex items-center gap-2 text-sm text-[#6b7788]">
-                          <MapPin size={14} className="shrink-0 text-[#8a94a4]" />
-                          <span className="truncate">{property.location}</span>
-                        </div>
-
-                        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[#5e6878]">
-                          {propertyHasBedrooms(property) &&
-                          <div className="flex items-center gap-1.5">
-                              <Bed size={16} className="text-[#7b8797]" />
-                              <span>{property.bedrooms}</span>
-                            </div>
-                          }
-                          {propertyHasBathrooms(property) &&
-                          <div className="flex items-center gap-1.5">
-                              <Bath size={16} className="text-[#7b8797]" />
-                              <span>{property.bathrooms}</span>
-                            </div>
-                          }
-                          <div className="flex items-center gap-1.5">
-                            <Maximize size={16} className="text-[#7b8797]" />
-                            <span>{property.area}m²</span>
-                          </div>
-                        </div>
 
                         <div className="mt-5">
                           <Link
@@ -1118,29 +1124,50 @@ const Properties = () => {
                       <div className="flex flex-col md:flex-row">
                         <Link
                     to={`/property/${property.id}`}
-                    className="relative h-64 md:h-auto md:w-1/3">
+                    className="group relative block h-64 overflow-hidden md:h-auto md:w-1/3">
 
                           <img
                       src={property.images[0]}
                       alt={property.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       onError={(e) => {
                         e.target.src =
                         "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80";
                       }} />
 
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                          <div className="absolute bottom-4 left-4 right-4">
+                            <h3 className="text-xl font-bold leading-6 text-white line-clamp-2 drop-shadow-sm">
+                              {property.title}
+                            </h3>
+                            <div className="mt-1.5 flex items-center text-sm text-white/90">
+                              <MapPin size={14} className="mr-1.5 shrink-0" />
+                              <span className="truncate">{property.location}</span>
+                            </div>
+                          </div>
                         </Link>
                         <div className="md:w-2/3 p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                                {property.title}
-                              </h3>
-                              <div className="flex items-center text-gray-600 mb-3">
-                                <MapPin size={16} className="mr-2" />
-                                {property.location}
+                          <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2">
+                            {property.partner?.logo_url || property.partner?.logo_path ?
+                            <img
+                              src={toMediaUrl(property.partner.logo_url || property.partner.logo_path)}
+                              alt={property.partner.company_name}
+                              className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1.5 shadow-sm" /> :
+
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                <Handshake size={18} />
                               </div>
+                            }
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                                {getPartnerTypeLabel(property.partner, "Partenaire immobilier")}
+                              </p>
+                              <p className="truncate text-sm font-semibold text-gray-900">
+                                {property.partner?.company_name || "Africa Build Investment"}
+                              </p>
                             </div>
+                          </div>
+                          <div className="flex justify-end items-start mb-4">
                             <div className="text-right">
                               <div className="text-2xl font-bold text-blue-600 mb-2">
                                 {formatPrice(property.price)}

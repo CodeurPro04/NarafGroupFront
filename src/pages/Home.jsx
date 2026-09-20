@@ -93,7 +93,7 @@ const africanCountries = [
 
 const trustedPartnerLogos = [
   { src: "/images/logoabi.svg", alt: "ABI" },
-  { src: "/images/logonaraf.png", alt: "Naraf" },
+  { src: "/images/logovfnaraf-white.png", alt: "Naraf" },
 ];
 
 const Home = () => {
@@ -133,19 +133,13 @@ const Home = () => {
   const [partnersCanScrollRight, setPartnersCanScrollRight] = useState(false);
   const [houseModels, setHouseModels] = useState([]);
   const [houseModelsLoading, setHouseModelsLoading] = useState(true);
+  const [houseModelsSectionEnabled, setHouseModelsSectionEnabled] = useState(true);
   const [showcaseSectionsLoading, setShowcaseSectionsLoading] = useState(true);
   const [showcaseSections, setShowcaseSections] = useState(
     defaultShowcaseSections,
   );
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
-  const [houseModelsSection, setHouseModelsSection] = useState({
-    title: "Modèles de maison",
-    description:
-      "Decouvrez nos modèles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
-    videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
-    showcaseSections: defaultShowcaseSections,
-  });
   const [presentationVideoSection, setPresentationVideoSection] = useState({
     title: "Videos de présentation",
     description:
@@ -370,44 +364,12 @@ const Home = () => {
         if (isMounted) {
           const models = Array.isArray(list) ? list : [];
           setHouseModels(models);
-          setHouseModelsSection({
-            title: payload?.section?.title || "Modèles de maison",
-            description:
-              payload?.section?.description ||
-              "Decouvrez nos modèles de maison, pensés pour allier style, confort et fonctionnalite dans chaque projet.",
-            videos:
-              Array.isArray(payload?.section?.videos) &&
-              payload.section.videos.length
-                ? payload.section.videos
-                : ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
-            showcaseSections:
-              Array.isArray(payload?.section?.showcase_sections) &&
-              payload.section.showcase_sections.length >= 3
-                ? payload.section.showcase_sections.map((section) => ({
-                    title: section?.title || "",
-                    button_label: section?.button_label || "",
-                    button_link: section?.button_link || "",
-                    items: Array.isArray(section?.items)
-                      ? section.items.filter(
-                          (item) =>
-                            item?.title ||
-                            item?.excerpt ||
-                            item?.image_url ||
-                            item?.link,
-                        )
-                      : [],
-                  }))
-                : defaultShowcaseSections,
-          });
+          setHouseModelsSectionEnabled(payload?.section?.enabled !== false);
         }
       } catch (error) {
         console.error("Erreur chargement modèles maison:", error);
         if (isMounted) {
           setHouseModels([]);
-          setHouseModelsSection((prev) => ({
-            ...prev,
-            videos: ["https://www.youtube.com/watch?v=tgbNymZ7vqY"],
-          }));
         }
       } finally {
         if (isMounted) {
@@ -612,17 +574,9 @@ const Home = () => {
       </section>
 
       {/* Nos Services / Modeles */}
+      {houseModelsSectionEnabled && (
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 mx-auto max-w-3xl text-center">
-            <h2 className="text-4xl font-bold text-slate-900 leading-tight">
-              {houseModelsSection.title}
-            </h2>
-            <p className="mt-4 text-lg leading-relaxed text-slate-600">
-              {houseModelsSection.description}
-            </p>
-          </div>
-
           {houseModelsLoading ? (
             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center bg-slate-50 border border-slate-200 p-5 sm:p-8">
               <div>
@@ -732,6 +686,7 @@ const Home = () => {
           )}
         </div>
       </section>
+      )}
 
       {showcaseSections.length > 0 && (
         <section className="bg-white py-12 sm:py-14">

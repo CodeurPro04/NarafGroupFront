@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, Copy, X } from "lucide-react";
+import { CheckCircle2, Copy, Mail, X } from "lucide-react";
 
 const AccountCredentialsModal = ({
   account,
@@ -11,7 +11,7 @@ const AccountCredentialsModal = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  if (!account?.defaultPassword) return null;
+  if (!account?.defaultPassword && !account?.passwordSentByEmail) return null;
 
   const handleCopy = async () => {
     try {
@@ -62,24 +62,41 @@ const AccountCredentialsModal = ({
             </p>
           </div>
 
+          {account.defaultPassword ?
           <div className="border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-              Mot de passe temporaire
-            </p>
-            <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <code className="break-all bg-white px-3 py-3 text-base font-semibold text-slate-950">
-                {account.defaultPassword}
-              </code>
-              <button
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                Mot de passe temporaire
+              </p>
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <code className="break-all bg-white px-3 py-3 text-base font-semibold text-slate-950">
+                  {account.defaultPassword}
+                </code>
+                <button
                 type="button"
                 onClick={handleCopy}
                 className="inline-flex items-center justify-center gap-2 border border-[#d8dfeb] bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#0f62c9] hover:text-[#0f62c9]">
 
-                <Copy size={16} />
-                {copied ? "Copie effectuee" : "Copier le mot de passe"}
-              </button>
+                  <Copy size={16} />
+                  {copied ? "Copie effectuee" : "Copier le mot de passe"}
+                </button>
+              </div>
+            </div> :
+
+          <div className="flex items-start gap-3 border border-[#d8dfeb] bg-[#f8fbff] px-4 py-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#e9f2ff] text-[#0f62c9]">
+                <Mail size={18} />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Mot de passe temporaire
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-700">
+                  Pour votre sécurité, votre mot de passe temporaire vous a été envoyé par email à l'adresse
+                  ci-dessus. Consultez votre boîte de réception (et vos spams) pour le récupérer.
+                </p>
+              </div>
             </div>
-          </div>
+          }
 
           {activationMessage ?
           <div className="border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-7 text-amber-800">

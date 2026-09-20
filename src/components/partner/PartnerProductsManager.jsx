@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "luci
 import api from "../../api/axios";
 import { toMediaUrl } from "../../utils/media";
 import { SkeletonBlock } from "../ui/Skeleton";
+import { useToast } from "../ui/Toast";
 import ImmobilierProductForm   from "./ImmobilierProductForm";
 import ConstructionProductForm from "./ConstructionProductForm";
 import InvestmentProductForm   from "./InvestmentProductForm";
@@ -12,6 +13,7 @@ import InvestmentProductForm   from "./InvestmentProductForm";
 ──────────────────────────────────────────────────────── */
 const resolvePartnerKind = (partnerType) => {
   const t = (partnerType || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  if (t.includes("jurid") || t.includes("notair") || t.includes("avocat") || t.includes("huissier")) return "juridique";
   if (t.includes("immobilier")) return "immobilier";
   if (t.includes("constructeur") || t.includes("construction")) return "constructeur";
   if (t.includes("investiss")) return "investisseur";
@@ -89,18 +91,22 @@ const normalizeItem = (item, kind) => {
 
 /* ─── Composant principal ────────────────────────────── */
 const PartnerProductsManager = ({ partnerType }) => {
+  const toast   = useToast();
   const kind    = resolvePartnerKind(partnerType);
   const config  = KIND_CONFIG[kind] || KIND_CONFIG.immobilier;
+  const isLegalPartner = kind === "juridique";
 
   const [items, setItems]       = useState([]);
   const [loading, setLoading]   = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing]   = useState(null);
   const [saving, setSaving]     = useState(false);
-  const [error, setError]       = useState("");
-  const [success, setSuccess]   = useState("");
 
   const load = async ({ silent = false } = {}) => {
+    if (isLegalPartner) {
+      setLoading(false);
+      return;
+    }
     try {
       if (!silent) setLoading(true);
       const res = await api.get(config.listEndpoint);
@@ -116,10 +122,26 @@ const PartnerProductsManager = ({ partnerType }) => {
 
   useEffect(() => { load(); }, [kind]);
 
+  if (isLegalPartner) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-xl font-bold text-slate-900">Mes publications</h3>
+          <p className="text-sm text-slate-500 mt-0.5">
+            Les partenaires juridiques n'ont pas de publications de biens ou de projets.
+          </p>
+        </div>
+        <div className="text-center py-12 bg-slate-50 rounded-xl border border-slate-200">
+          <p className="text-slate-500 text-sm">Aucune publication a gerer pour ce type de partenariat.</p>
+          <p className="text-slate-400 text-xs mt-1">Vos coordonnees et votre profil restent visibles sur votre page partenaire.</p>
+        </div>
+      </div>
+    );
+  }
+
   /* ── Soumission selon le kind ── */
   const handleSave = async (formData, images = [], planFiles = [], render3dFiles = [], documents = []) => {
     setSaving(true);
-    setError("");
     try {
       const fd = new FormData();
 
@@ -173,17 +195,17 @@ const PartnerProductsManager = ({ partnerType }) => {
         } else {
           await api.post(`${config.updatePrefix}${editing.uuid}?_method=PUT`, fd, { headers });
         }
-        setSuccess("Mis à jour — repassera en validation.");
+        toast.success("Mis à jour — repassera en validation.");
       } else {
         await api.post(config.createEndpoint, fd, { headers });
-        setSuccess("Soumis avec succès. En attente de validation.");
+        toast.success("Soumis avec succès. En attente de validation.");
       }
 
       setShowForm(false);
       setEditing(null);
       await load({ silent: true });
     } catch (err) {
-      setError(err?.response?.data?.message || "Une erreur est survenue.");
+      toast.error(err?.response?.data?.message || "Une erreur est survenue.");
     } finally {
       setSaving(false);
     }
@@ -194,23 +216,20 @@ const PartnerProductsManager = ({ partnerType }) => {
     try {
       await api.delete(`${config.deletePrefix}${uuid}`);
       setItems((p) => p.filter((x) => x.uuid !== uuid));
+      toast.success("Élément supprimé.");
     } catch {
-      setError("Impossible de supprimer.");
+      toast.error("Impossible de supprimer.");
     }
   };
 
   const openEdit = (item) => {
     setEditing(item.raw);
     setShowForm(true);
-    setError("");
-    setSuccess("");
   };
 
   const openCreate = () => {
     setEditing(null);
     setShowForm(true);
-    setError("");
-    setSuccess("");
   };
 
   /* ── Sélection du formulaire selon le kind ── */
@@ -241,10 +260,6 @@ const PartnerProductsManager = ({ partnerType }) => {
           <Plus size={16} /> Ajouter
         </button>
       </div>
-
-      {/* Feedback */}
-      {error   && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>}
-      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-3 rounded-lg">{success}</div>}
 
       {/* Alerte validation */}
       <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-lg flex items-start gap-2">
