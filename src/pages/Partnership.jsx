@@ -11,13 +11,19 @@ import {
 import { SkeletonBlock } from "../components/ui/Skeleton";
 import { useToast } from "../components/ui/Toast";
 import AccountCredentialsModal from "../components/ui/AccountCredentialsModal";
+import { useAddressLocation } from "../hooks/useAddressLocation";
+import { AFRICAN_COUNTRIES, getSelectedCountryCode } from "../utils/countries";
 import {
   ArrowRight,
   BadgeCheck,
   Building2,
+  ChevronDown,
+  Globe2,
   Hammer,
   Landmark,
+  LocateFixed,
   Mail,
+  Map as MapIcon,
   MapPin,
   Phone,
   Scale,
@@ -144,6 +150,7 @@ const EmptyFormState = () => ({
   tax_number: "",
   address: "",
   city: "",
+  country_code: getSelectedCountryCode() || "",
   phone: "",
   email: "",
   website: "",
@@ -180,6 +187,16 @@ const Partnership = () => {
   const [createdAccount, setCreatedAccount] = useState(EmptyAccountState);
   const [formData, setFormData] = useState(EmptyFormState);
 
+  const locationPicker = useAddressLocation({
+    onResolved: ({ address, city }) => {
+      setFormData((prev) => ({
+        ...prev,
+        address,
+        city: city || prev.city
+      }));
+    }
+  });
+
   const user = getCurrentUser();
   const authenticated = isAuthenticated();
   const isCompany =
@@ -204,6 +221,7 @@ const Partnership = () => {
             tax_number: payload.tax_number || "",
             address: payload.address || "",
             city: payload.city || "",
+            country_code: payload.country?.code || getSelectedCountryCode() || "",
             phone: payload.phone || "",
             email: payload.email || "",
             website: payload.website || "",
@@ -286,6 +304,7 @@ const Partnership = () => {
     if (formData.tax_number) payload.append("tax_number", formData.tax_number);
     if (formData.address) payload.append("address", formData.address);
     if (formData.city) payload.append("city", formData.city);
+    if (formData.country_code) payload.append("country_code", formData.country_code);
     if (formData.phone) payload.append("phone", formData.phone);
     if (formData.website) payload.append("website", formData.website);
     if (formData.description) payload.append("description", formData.description);
@@ -493,18 +512,26 @@ const Partnership = () => {
         {currentType.requiresLegalSpecialty ?
         <div className="md:col-span-2">
          <Field label="Profession juridique">
-          <select
+          <div className="relative">
+           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+            <Scale className="text-slate-400" size={18} />
+           </div>
+           <select
                     name="legal_specialty"
                     value={formData.legal_specialty}
                     onChange={handleChange}
-                    className={inputClassName}
+                    className={`${inputClassName} appearance-none truncate pl-11 pr-10`}
                     required>
 
-           <option value="">Selectionnez votre profession</option>
-           {LEGAL_SPECIALTY_OPTIONS.map((option) =>
+            <option value="">Selectionnez votre profession</option>
+            {LEGAL_SPECIALTY_OPTIONS.map((option) =>
                     <option key={option} value={option}>{option}</option>
                     )}
-          </select>
+           </select>
+           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+            <ChevronDown className="text-slate-400" size={18} />
+           </div>
+          </div>
          </Field>
         </div> :
         null}
@@ -542,6 +569,31 @@ const Partnership = () => {
                     className={`${inputClassName} pl-11`}
                     placeholder="Ex. Abidjan, Dakar ou Casablanca" />
 
+         </div>
+        </Field>
+
+        <Field label="Pays">
+         <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+           <Globe2 className="text-slate-400" size={18} />
+          </div>
+          <select
+                    name="country_code"
+                    value={formData.country_code}
+                    onChange={handleChange}
+                    className={`${inputClassName} appearance-none truncate pl-11 pr-10`}
+                    required>
+
+           <option value="">Selectionnez un pays</option>
+           {AFRICAN_COUNTRIES.map((country) =>
+                    <option key={country.code} value={country.code}>
+             {country.flag} {country.name}
+            </option>
+                    )}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+           <ChevronDown className="text-slate-400" size={18} />
+          </div>
          </div>
         </Field>
 
@@ -585,17 +637,73 @@ const Partnership = () => {
 
         </Field>
 
-        <div className="md:col-span-2">
-         <Field label="Adresse">
+        <div className="md:col-span-2 relative">
+         <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-sm font-medium text-slate-700">Adresse</span>
+          <div className="flex items-center gap-3 text-xs">
+           <button
+                    type="button"
+                    onClick={locationPicker.locateMe}
+                    disabled={locationPicker.locating}
+                    className="inline-flex items-center gap-1 font-medium text-[#0f62c9] hover:underline disabled:opacity-50">
+
+            <LocateFixed className="h-3.5 w-3.5" />
+            {locationPicker.locating ? "Localisation..." : "Me localiser"}
+           </button>
+           <button
+                    type="button"
+                    onClick={() => locationPicker.setShowMap((prev) => !prev)}
+                    className="inline-flex items-center gap-1 font-medium text-slate-700 hover:underline">
+
+            <MapIcon className="h-3.5 w-3.5" />
+            {locationPicker.showMap ? "Masquer la carte" : "Choisir sur la carte"}
+           </button>
+          </div>
+         </div>
+         <div className="relative mt-2">
           <input
                     type="text"
                     name="address"
                     value={formData.address}
-                    onChange={handleChange}
+                    onChange={(event) => { handleChange(event); locationPicker.handleInputChange(event.target.value); }}
+                    onFocus={() => formData.address.trim().length >= 3 && locationPicker.fetchSuggestions(formData.address.trim())}
+                    onBlur={() => setTimeout(() => locationPicker.clearSuggestions(), 150)}
+                    autoComplete="off"
                     className={inputClassName}
                     placeholder="Ex. Zone 4, Rue du Commerce, Abidjan" />
 
-         </Field>
+          {locationPicker.loadingSuggestions &&
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">...</span>
+                  }
+          {locationPicker.suggestions.length > 0 &&
+                  <div className="absolute z-20 mt-1.5 w-full max-h-56 overflow-y-auto border border-[#d7dde8] bg-white p-1.5 shadow-lg">
+           {locationPicker.suggestions.map((item) =>
+                    <button
+                      key={item.place_id}
+                      type="button"
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => locationPicker.selectSuggestion(item)}
+                      className="flex w-full items-start gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50">
+
+            <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+            <span className="text-slate-700">{item.display_name}</span>
+           </button>
+                    )}
+          </div>
+                  }
+         </div>
+         {locationPicker.geoError &&
+                <p className="mt-2 text-xs text-[#c76d4a]">{locationPicker.geoError}</p>
+                }
+         {locationPicker.showMap &&
+                <div className="relative z-0 mt-3 overflow-hidden border border-[#d7dde8]">
+          <div ref={locationPicker.mapContainerRef} className="relative z-0 h-56 w-full" />
+          <div className="flex items-center justify-between gap-2 bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+           <span>Cliquez sur la carte ou deplacez le repere pour ajuster la position.</span>
+           {locationPicker.reverseGeocoding && <span className="shrink-0">Recherche de l'adresse...</span>}
+          </div>
+         </div>
+                }
         </div>
 
         <div className="md:col-span-2">

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
@@ -33,8 +33,23 @@ const guides = [
   },
 ];
 
+const FITS_WITHOUT_SCROLL = guides.length <= 4;
+
 const GuidesSection = () => {
   const scrollRef = useRef(null);
+  const [canScroll, setCanScroll] = useState(false);
+
+  const checkOverflow = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScroll(el.scrollWidth > el.clientWidth + 1);
+  };
+
+  useEffect(() => {
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, []);
 
   const scrollRight = () => {
     if (scrollRef.current) {
@@ -56,14 +71,18 @@ const GuidesSection = () => {
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth pb-2"
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {guides.map((guide) => (
               <Link
                 key={guide.to}
                 to={guide.to}
-                className="group relative flex-shrink-0 w-[260px] sm:w-[300px] h-[210px] sm:h-[240px] overflow-hidden"
+                className={`group relative flex-shrink-0 snap-start w-[260px] h-[210px] sm:h-[240px] overflow-hidden ${
+                  FITS_WITHOUT_SCROLL
+                    ? "sm:w-auto sm:flex-1 sm:basis-0 sm:min-w-0"
+                    : "sm:w-[300px]"
+                }`}
               >
                 {/* Image de fond */}
                 <img
@@ -88,15 +107,17 @@ const GuidesSection = () => {
             ))}
           </div>
 
-          {/* Bouton scroll */}
-          <button
-            type="button"
-            onClick={scrollRight}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 items-center justify-center bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors"
-            aria-label="Voir plus"
-          >
-            <ChevronRight size={20} />
-          </button>
+          {/* Bouton scroll : desktop uniquement, et seulement si les cartes debordent du conteneur */}
+          {canScroll && (
+            <button
+              type="button"
+              onClick={scrollRight}
+              className="hidden sm:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors"
+              aria-label="Voir plus"
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
         </div>
       </div>
     </section>

@@ -26,7 +26,7 @@ const AgentCard = ({ agent }) => {
   const typeColor = AGENT_TYPE_COLORS[agent.agent_type] || "bg-slate-100 text-slate-600";
 
   return (
-    <div className="flex-shrink-0 flex flex-col" style={{ width: CARD_WIDTH }}>
+    <div className="flex-shrink-0 snap-start flex flex-col" style={{ width: CARD_WIDTH }}>
       {/* Photo */}
       <div className="overflow-hidden bg-slate-100 h-[260px] sm:h-[290px]">
         {avatarUrl ? (
@@ -140,10 +140,14 @@ const AgentsSection = () => {
         {/* Carousel */}
         {!loading && agents.length > 0 && (
           <div className="relative">
-            {/* Piste */}
-            <div ref={containerRef} className="overflow-hidden">
+            {/* Piste : swipe natif sur mobile, defilement par boutons a partir de sm */}
+            <div
+              ref={containerRef}
+              className="overflow-x-auto sm:overflow-hidden snap-x snap-mandatory scroll-smooth"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
               <div
-                className="flex transition-transform duration-400 ease-in-out"
+                className="flex transition-transform duration-400 ease-in-out sm:transition-transform"
                 style={{
                   gap: CARD_GAP,
                   transform: `translateX(-${translateX}px)`,
@@ -155,12 +159,12 @@ const AgentsSection = () => {
               </div>
             </div>
 
-            {/* Flèche gauche */}
+            {/* Fleche gauche (desktop uniquement — mobile: swipe) */}
             <button
               type="button"
               onClick={prev}
               disabled={!canPrev}
-              className={`absolute -left-5 top-[130px] -translate-y-1/2 flex h-11 w-11 items-center justify-center border shadow-md transition-all z-10
+              className={`hidden sm:flex absolute -left-5 top-[130px] -translate-y-1/2 h-11 w-11 items-center justify-center border shadow-md transition-all z-10
                 ${canPrev
                   ? "bg-white border-slate-200 text-slate-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 cursor-pointer"
                   : "bg-slate-100 border-slate-100 text-slate-300 cursor-not-allowed"
@@ -170,12 +174,12 @@ const AgentsSection = () => {
               <ChevronLeft size={20} />
             </button>
 
-            {/* Flèche droite */}
+            {/* Fleche droite (desktop uniquement — mobile: swipe) */}
             <button
               type="button"
               onClick={next}
               disabled={!canNext}
-              className={`absolute -right-5 top-[130px] -translate-y-1/2 flex h-11 w-11 items-center justify-center border shadow-md transition-all z-10
+              className={`hidden sm:flex absolute -right-5 top-[130px] -translate-y-1/2 h-11 w-11 items-center justify-center border shadow-md transition-all z-10
                 ${canNext
                   ? "bg-white border-slate-200 text-slate-700 hover:bg-blue-600 hover:text-white hover:border-blue-600 cursor-pointer"
                   : "bg-slate-100 border-slate-100 text-slate-300 cursor-not-allowed"
@@ -185,9 +189,9 @@ const AgentsSection = () => {
               <ChevronRight size={20} />
             </button>
 
-            {/* Indicateurs de page (points) */}
+            {/* Indicateurs de page (points, desktop uniquement) */}
             {agents.length > visibleCount && (
-              <div className="flex justify-center gap-2 mt-6">
+              <div className="hidden sm:flex justify-center gap-2 mt-6">
                 {Array.from({ length: maxIndex + 1 }).map((_, i) => (
                   <button
                     key={i}

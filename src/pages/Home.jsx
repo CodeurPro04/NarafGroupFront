@@ -508,23 +508,19 @@ const Home = () => {
   ];
 
   const sliderImages = useMemo(() => {
-    const allModelImages = houseModels
-      .flatMap((model) => [
-        toMediaUrl(model?.cover_image_url || model?.cover_image_path),
-        ...(Array.isArray(model?.gallery_image_urls)
-          ? model.gallery_image_urls.map(toMediaUrl)
-          : []),
-      ])
+    // Uniquement l'image principale de chaque modele ici : les images de
+    // galerie ne doivent apparaitre que dans la fiche detail du modele
+    // (section "Galerie du modele").
+    const coverImages = houseModels
+      .map((model) => toMediaUrl(model?.cover_image_url || model?.cover_image_path))
       .filter(Boolean);
 
-    const uniqueImages = Array.from(new Set(allModelImages));
+    const uniqueImages = Array.from(new Set(coverImages));
+    // Aucune image reelle : on retombe sur le visuel de secours. Des qu'il y a
+    // au moins une image de modele, on affiche uniquement ces images reelles
+    // (une seule => pas de diaporama a completer avec des photos de stock).
     if (uniqueImages.length === 0) return fallbackSliderImages;
-
-    const shuffledImages = [...uniqueImages].sort(() => Math.random() - 0.5);
-    const selectedImages = shuffledImages.slice(0, 4);
-
-    if (selectedImages.length === 4) return selectedImages;
-    return [...selectedImages, ...fallbackSliderImages].slice(0, 4);
+    return uniqueImages.slice(0, 4);
   }, [houseModels]);
 
   useEffect(() => {

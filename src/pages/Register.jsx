@@ -10,6 +10,7 @@ import {
   Globe,
   Building,
   Briefcase,
+  Check,
   CheckCircle,
   AlertCircle,
   Shield,
@@ -21,6 +22,12 @@ import {
 import { register } from "../api/axios";
 import { AFRICAN_COUNTRIES, getSelectedCountryCode, setSelectedCountryCode } from "../utils/countries";
 import { useToast } from "../components/ui/Toast";
+
+const AGENT_TYPE_OPTIONS = [
+  { value: "immobilier", label: "Immobilier" },
+  { value: "constructeur", label: "Construction" },
+  { value: "investissement", label: "Investissement" }
+];
 
 const PasswordStrength = ({ password }) => {
   if (!password) return null;
@@ -72,41 +79,75 @@ const PasswordStrength = ({ password }) => {
 
 };
 
-const UserTypeCard = ({ type, isSelected, onSelect }) =>
-<button
-  type="button"
-  onClick={() => onSelect(type.value)}
-  className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
-  isSelected ?
-  `border-${type.color}-600 bg-${type.color}-50 shadow-lg` :
-  "border-gray-200 hover:border-gray-300 hover:shadow-md"}`
-  }>
+// Classes Tailwind ecrites en toutes lettres (et non construites par
+// interpolation `border-${color}-600`) : le scanner JIT de Tailwind ne
+// genere du CSS que pour les noms de classes qu'il trouve tels quels dans
+// le code source, donc une classe assemblee dynamiquement à l'execution
+// (ex. "purple" ici) peut ne jamais être generee et rester invisible.
+const USER_TYPE_STYLES = {
+  blue: {
+    border: "border-blue-600",
+    bg: "bg-blue-50",
+    iconBg: "bg-blue-100",
+    iconText: "text-blue-600",
+    titleText: "text-blue-900"
+  },
+  emerald: {
+    border: "border-emerald-600",
+    bg: "bg-emerald-50",
+    iconBg: "bg-emerald-100",
+    iconText: "text-emerald-600",
+    titleText: "text-emerald-900"
+  },
+  purple: {
+    border: "border-purple-600",
+    bg: "bg-purple-50",
+    iconBg: "bg-purple-100",
+    iconText: "text-purple-600",
+    titleText: "text-purple-900"
+  }
+};
 
-    <div className="flex flex-col space-y-4">
-      <div className="flex items-center justify-between">
-        <div
-        className={`p-3 rounded-xl ${
-        isSelected ?
-        `bg-${type.color}-100 text-${type.color}-600` :
-        "bg-gray-100 text-gray-600"}`
-        }>
+const UserTypeCard = ({ type, isSelected, onSelect }) => {
+  const styles = USER_TYPE_STYLES[type.color] || USER_TYPE_STYLES.blue;
 
-          {type.icon}
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(type.value)}
+      className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left group hover:scale-[1.02] ${
+      isSelected ?
+      `${styles.border} ${styles.bg} shadow-lg` :
+      `border-gray-200 hover:${styles.border} hover:shadow-md`}`
+      }>
+
+      <div className="flex flex-col space-y-4">
+        <div className="flex items-center justify-between">
+          <div
+          className={`p-3 rounded-xl ${
+          isSelected ?
+          `${styles.iconBg} ${styles.iconText}` :
+          "bg-gray-100 text-gray-600"}`
+          }>
+
+            {type.icon}
+          </div>
+        </div>
+
+        <div>
+          <h3
+          className={`text-lg font-semibold ${
+          isSelected ? styles.titleText : "text-gray-900"}`
+          }>
+
+            {type.label}
+          </h3>
+          <p className="text-sm text-gray-600 mt-1">{type.description}</p>
         </div>
       </div>
+    </button>);
 
-      <div>
-        <h3
-        className={`text-lg font-semibold ${
-        isSelected ? `text-${type.color}-900` : "text-gray-900"}`
-        }>
-
-          {type.label}
-        </h3>
-        <p className="text-sm text-gray-600 mt-1">{type.description}</p>
-      </div>
-    </div>
-  </button>;
+};
 
 
 const Register = () => {
@@ -127,6 +168,7 @@ const Register = () => {
     confirmPassword: "",
     licenseNumber: "",
     agency: "",
+    agentType: "",
     terms: false
   });
   const [interests, setInterests] = useState([]);
@@ -289,6 +331,7 @@ const Register = () => {
         password_confirmation: formData.confirmPassword,
         role: roleMapping[userType],
         ...(userType === "visitor" && interests.length > 0 ? { interests } : {}),
+        ...(userType === "agent" && formData.agentType ? { agent_type: formData.agentType } : {}),
       };
 
       // Appel API avec la fonction register qui gère CSRF
@@ -340,6 +383,7 @@ const Register = () => {
           password: "password",
           license_number: "licenseNumber",
           agency: "agency",
+          agent_type: "agentType",
           role: "role",
           interests: "interests"
         };
@@ -507,6 +551,38 @@ const Register = () => {
                   }
                 </div>
               </div>
+
+              {userType === "agent" &&
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Type d'agent <span className="font-normal text-gray-400">(optionnel)</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Briefcase className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    value={formData.agentType}
+                    onChange={(e) => handleChange("agentType", e.target.value)}
+                    className="w-full appearance-none pl-12 pr-10 py-3.5 border-2 rounded-xl focus:ring-3 focus:ring-blue-200 outline-none transition-all bg-white truncate border-gray-200 focus:border-blue-500 hover:border-gray-300"
+                    disabled={isLoading}>
+
+                    <option value="">Je ne sais pas encore / a definir</option>
+                    {AGENT_TYPE_OPTIONS.map((option) =>
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    )}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  Immobilier, construction ou investissement. Vous pourrez le preciser plus tard aupres de l'administrateur si vous ne le connaissez pas encore.
+                </p>
+              </div>
+              }
             </div>
 
             {/* Coordonnées */}
@@ -773,6 +849,9 @@ const Register = () => {
                     "bg-blue-600 border-blue-600 group-hover:bg-blue-700 group-hover:border-blue-700" :
                     "border-gray-300 group-hover:border-gray-400"}`
                     }>
+                    {formData.terms &&
+                    <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+                    }
                   </div>
                 </div>
                 <span className="ml-3 text-sm text-gray-700">
